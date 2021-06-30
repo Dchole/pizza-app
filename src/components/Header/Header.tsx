@@ -8,23 +8,31 @@ import { useStyles } from "./useStyle"
 import { navLinks } from "./nav-links"
 
 const Header = () => {
-  const { root } = useStyles()
+  const classes = useStyles()
 
   return (
-    <AppBar elevation={0} classes={{ root }}>
+    <AppBar elevation={0} classes={{ root: classes.root }}>
       <Toolbar>
-        <div>logo</div>
-        <nav>
-          <ul>
-            {navLinks.map(({ label, path }) => (
-              <li key={label}>
-                <Link href={path}>{label}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
         <div>
-          <IconButton aria-label="account" onClick={() => {}}>
+          <div>logo</div>
+          <nav>
+            <ul>
+              {navLinks.map(({ label, path }) => (
+                <li key={label}>
+                  <Link href={path}>{label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+        <div className={classes.account}>
+          <IconButton
+            aria-label="account"
+            component={Link}
+            href="/cart"
+            naked
+            role={undefined}
+          >
             <BagIcon />
           </IconButton>
           <IconButton aria-label="account" onClick={() => {}}>

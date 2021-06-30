@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from "@material-ui/core"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
@@ -12,8 +12,20 @@ export const useStyles = makeStyles(theme =>
 
       "& nav ul": {
         display: "flex",
-        gap: theme.spacing(4)
+        listStyle: "none",
+        gap: theme.spacing(4),
+
+        "& a": {
+          fontSize: "1.2rem",
+          color: theme.palette.text.primary
+        }
       }
+    },
+    account: {
+      display: "flex",
+      alignItems: "center",
+      borderRadius: 24,
+      backgroundColor: "white"
     }
   })
 )
