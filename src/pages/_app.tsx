@@ -1,5 +1,5 @@
 import "@fontsource/rubik"
-import "@fontsource/montserrat"
+import "@fontsource/montserrat/700.css"
 
 import Head from "next/head"
 import { AppProps } from "next/app"

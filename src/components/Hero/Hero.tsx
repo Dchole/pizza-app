@@ -10,7 +10,7 @@ const Hero = () => {
   const classes = useStyles()
 
   return (
-    <Container component="section">
+    <Container component="section" maxWidth="xl" className={classes.root}>
       <Image
         src={cover}
         alt=""

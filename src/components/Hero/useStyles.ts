@@ -2,13 +2,28 @@ import { createStyles, makeStyles } from "@material-ui/core/styles"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
+    root: {
+      paddingBottom: 90,
+      height: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-end",
+
+      "& h1": {
+        width: "50%"
+      }
+    },
     cover: {
-      transform: "scaleX(-1)",
       zIndex: -1
     },
     buttons: {
       display: "flex",
-      gap: theme.spacing(2)
+      gap: theme.spacing(2),
+      marginTop: theme.spacing(4),
+
+      "& .MuiButton-outlinedPrimary": {
+        borderWidth: 2
+      }
     }
   })
 )

@@ -4,7 +4,7 @@ import IconButton from "@material-ui/core/IconButton"
 import BagIcon from "@material-ui/icons/LocalMall"
 import AccountIcon from "@material-ui/icons/AccountCircle"
 import Link from "@/components/Link"
-import { useStyles } from "./useStyle"
+import { useStyles } from "./useStyles"
 import { navLinks } from "./nav-links"
 
 const Header = () => {

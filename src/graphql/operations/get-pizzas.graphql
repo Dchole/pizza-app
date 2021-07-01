@@ -1,0 +1,10 @@
+query getPizzas {
+  pizzas {
+    id
+    name
+    price
+    image {
+      formats
+    }
+  }
+}

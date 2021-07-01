@@ -8,10 +8,12 @@ const theme = createMuiTheme({
       fontWeight: 700
     },
     h2: {
-      fontFamily: '"Montserrat", sans-serif'
+      fontFamily: '"Montserrat", sans-serif',
+      fontWeight: 700
     },
     h3: {
-      fontFamily: '"Montserrat", sans-serif'
+      fontFamily: '"Montserrat", sans-serif',
+      fontWeight: 700
     }
   },
   palette: {
