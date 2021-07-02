@@ -60,6 +60,7 @@ const Footer = () => {
             placeholder="example@gmail.com"
             margin="dense"
             classes={{
+              root: classes.input,
               adornedEnd: classes.adornedEnd,
               inputMarginDense: classes.inputMarginDense
             }}

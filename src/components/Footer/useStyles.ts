@@ -47,16 +47,21 @@ export const useStyles = makeStyles(theme =>
     adornedEnd: {
       paddingRight: 0
     },
+    input: {
+      borderRadius: 8
+    },
     inputMarginDense: {
       paddingTop: 8
     },
     inputButton: {
       borderTopLeftRadius: 0,
-      borderBottomLeftRadius: 0
+      borderBottomLeftRadius: 0,
+      borderTopRightRadius: 8,
+      borderBottomRightRadius: 8
     },
     base: {
       padding: theme.spacing(3),
-      backgroundColor: "white",
+      backgroundColor: lighten(theme.palette.primary.light, 0.6),
       marginTop: theme.spacing(4)
     }
   })
