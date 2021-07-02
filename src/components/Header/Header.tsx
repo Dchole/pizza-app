@@ -13,7 +13,6 @@ import React, { useEffect, useRef, useState } from "react"
 const Header = () => {
   const classes = useStyles()
   const scrollHeight = useRef(0)
-
   const [show, setShow] = useState(true)
 
   const handleScroll = () => {
