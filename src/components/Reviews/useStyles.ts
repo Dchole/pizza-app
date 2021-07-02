@@ -8,6 +8,10 @@ export const useStyles = makeStyles(theme =>
 
       "& .MuiTypography-alignCenter": {
         margin: theme.spacing(4, "auto")
+      },
+
+      "& > div": {
+        position: "relative"
       }
     }
   })

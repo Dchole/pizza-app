@@ -27,7 +27,7 @@ const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
   ) => event.stopPropagation()
 
   return (
-    <section className={classes.root}>
+    <section id="popular" className={classes.root}>
       <Typography variant="h2" align="center">
         Customer Favourites
       </Typography>

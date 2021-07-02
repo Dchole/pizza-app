@@ -14,6 +14,10 @@ const theme = createMuiTheme({
     h3: {
       fontFamily: '"Montserrat", sans-serif',
       fontWeight: 700
+    },
+    h4: {
+      fontFamily: '"Montserrat", sans-serif',
+      fontWeight: 700
     }
   },
   palette: {

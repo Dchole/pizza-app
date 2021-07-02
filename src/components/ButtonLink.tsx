@@ -11,14 +11,17 @@ import { forwardRef } from "react"
 export type ButtonLinkProps = Omit<ButtonProps, "href"> &
   Pick<LinkProps, "href" | "as" | "prefetch">
 
-const ButtonLink = forwardRef<ButtonLinkProps, any>((props, ref) => (
-  <Button
-    component={Link}
-    ref={ref}
-    {...props}
-    role={undefined} // remove role given to the button by material UI
-  />
-))
+const ButtonLink = forwardRef<ButtonLinkProps, ButtonLinkProps>(
+  (props, ref) => (
+    <Button
+      component={Link}
+      // @ts-ignore
+      ref={ref}
+      {...props}
+      role={undefined} // remove role given to the button by material UI
+    />
+  )
+)
 
 ButtonLink.displayName = "ButtonLink"
 

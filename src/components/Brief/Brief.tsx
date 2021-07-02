@@ -5,7 +5,7 @@ const Brief = () => {
   const classes = useStyles()
 
   return (
-    <section className={classes.root}>
+    <section id="about" className={classes.root}>
       <div>
         <Typography variant="h2" align="center">
           Our delivery service
