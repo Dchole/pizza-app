@@ -10,7 +10,7 @@ export const useStyles = makeStyles(theme =>
       "& > div": {
         display: "flex",
         justifyContent: "center",
-        gap: theme.spacing(10)
+        gap: theme.spacing(15)
       }
     },
     hiring: {
