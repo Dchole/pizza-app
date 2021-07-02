@@ -20,12 +20,6 @@ const loader = ({ src }: { src: string; width: number; quality: number }) =>
 const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
   const classes = useStyles()
 
-  const stopPropagation = (
-    event:
-      | React.MouseEvent<HTMLButtonElement>
-      | React.FocusEvent<HTMLButtonElement>
-  ) => event.stopPropagation()
-
   return (
     <section id="popular" className={classes.root}>
       <Typography variant="h2" align="center">
@@ -36,7 +30,7 @@ const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
       </Typography>
       <Grid justify="center" wrap="nowrap" className={classes.list} container>
         {pizzas.map(pizza => (
-          <div key={pizza.id}>
+          <div key={pizza.id} className={classes.product}>
             <ButtonBase
               className={classes.buttonBase}
               TouchRippleProps={{
@@ -56,13 +50,6 @@ const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
                 width={300}
                 height={240}
               />
-              <IconButton
-                aria-label={`add ${pizza.name} to shopping cart`}
-                onFocus={stopPropagation}
-                onMouseDown={stopPropagation}
-              >
-                <AddShoppingCartIcon />
-              </IconButton>
               <div className="details">
                 <Typography variant="h5" component="strong" align="center">
                   {pizza.name}
@@ -73,10 +60,13 @@ const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
                   align="center"
                   color="textSecondary"
                 >
-                  {pizza.price}
+                  ₵ {pizza.price}
                 </Typography>
               </div>
             </ButtonBase>
+            <IconButton aria-label={`add ${pizza.name} to shopping cart`}>
+              <AddShoppingCartIcon />
+            </IconButton>
           </div>
         ))}
       </Grid>

@@ -21,24 +21,8 @@ export const useStyles = makeStyles(theme =>
         }
       }
     },
-    buttonBase: {
-      display: "flex",
-      flexDirection: "column",
-      padding: theme.spacing(2),
-      borderRadius: 4,
-      transition: theme.transitions.create("box-shadow", {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.shortest
-      }),
-
-      "&:hover, &:focus": {
-        boxShadow: theme.shadows[2],
-
-        "& .MuiIconButton-root": {
-          backgroundColor: "white",
-          borderColor: theme.palette.grey[400]
-        }
-      },
+    product: {
+      position: "relative",
 
       "& .MuiIconButton-root": {
         position: "absolute",
@@ -55,6 +39,27 @@ export const useStyles = makeStyles(theme =>
           backgroundColor: "white",
           borderColor: theme.palette.grey[400]
         }
+      },
+
+      "&:hover, &:focus-within": {
+        "& .MuiIconButton-root": {
+          backgroundColor: "white",
+          borderColor: theme.palette.grey[400]
+        }
+      }
+    },
+    buttonBase: {
+      display: "flex",
+      flexDirection: "column",
+      padding: theme.spacing(2),
+      borderRadius: 4,
+      transition: theme.transitions.create("box-shadow", {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.shortest
+      }),
+
+      "&:hover, &:focus": {
+        boxShadow: theme.shadows[2]
       }
     },
     buttonWrapper: {
