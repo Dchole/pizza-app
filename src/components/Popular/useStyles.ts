@@ -49,7 +49,12 @@ export const useStyles = makeStyles(theme =>
         borderColor: "#fff2",
         transition: theme.transitions.create("background-color", {
           duration: theme.transitions.duration.shortest
-        })
+        }),
+
+        "&:focus": {
+          backgroundColor: "white",
+          borderColor: theme.palette.grey[400]
+        }
       }
     },
     buttonWrapper: {
