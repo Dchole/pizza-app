@@ -1,40 +1,63 @@
+import clsx from "clsx"
 import Image from "next/image"
 import Typography from "@material-ui/core/Typography"
 import ButtonBase from "@material-ui/core/ButtonBase"
-import { Query } from "@/graphql/generated"
+import Grid from "@material-ui/core/Grid"
+import { GetPizzasQuery } from "@/graphql/generated"
+import { cms } from "cms"
+import { useStyles } from "./useStyles"
 
 interface IPopularProps {
-  pizzas: Query["pizzas"]
+  pizzas: GetPizzasQuery["pizzas"]
 }
 
 const loader = ({ src }: { src: string; width: number; quality: number }) =>
-  `http://localhost:1337${src}`
+  `${cms}${src}`
 
 const Popular: React.FC<IPopularProps> = ({ pizzas }) => {
-  console.log({ pizzas })
+  const classes = useStyles()
+
   return (
     <section>
-      <Typography variant="h2">Customer Favourites</Typography>
-      <Typography variant="body1" color="textSecondary">
+      <Typography variant="h2" align="center">
+        Customer Favourites
+      </Typography>
+      <Typography variant="body1" align="center">
         Most purchased pizzas from our customers
       </Typography>
-      <div>
+      <Grid justify="center" wrap="nowrap" className={classes.list} container>
         {pizzas.map(pizza => (
-          <ButtonBase key={pizza.id}>
-            <Image
-              loader={loader}
-              src={pizza.image.formats.small.url}
-              alt={pizza.name}
-              width={300}
-              height={240}
-            />
-            <Typography align="center">{pizza.name}</Typography>
-            <Typography align="center" variant="body2">
-              {pizza.price}
-            </Typography>
-          </ButtonBase>
+          <div key={pizza.id}>
+            <ButtonBase
+              className={classes.buttonBase}
+              TouchRippleProps={{
+                classes: {
+                  child: classes.ripple,
+                  childPulsate: classes.childPulsate,
+                  rippleVisible: classes.rippleVisible
+                }
+              }}
+              focusRipple
+            >
+              <Image
+                loader={loader}
+                src={pizza.image.formats.small.url}
+                alt={pizza.name}
+                objectFit="cover"
+                width={300}
+                height={240}
+              />
+
+              <div className="details">
+                <Typography align="center">{pizza.name}</Typography>
+                <Typography align="center" variant="body2">
+                  {pizza.price}
+                </Typography>
+              </div>
+            </ButtonBase>
+          </div>
         ))}
-      </div>
+      </Grid>
     </section>
   )
 }

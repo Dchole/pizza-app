@@ -10,7 +10,7 @@ export const useStyles = makeStyles(theme =>
       justifyContent: "flex-end",
 
       "& h1": {
-        width: "50%"
+        width: "55%"
       }
     },
     cover: {

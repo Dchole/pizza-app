@@ -4,14 +4,15 @@ import Brief from "@/components/Brief"
 import Popular from "@/components/Popular"
 import { GetStaticProps, InferGetStaticPropsType } from "next"
 import { GraphQLClient } from "graphql-request"
-import { getSdk } from "../graphql/generated"
+import { getSdk, GetPizzasQuery } from "@/graphql/generated"
+import { cms } from "cms"
 
 interface IPizzaProps {
-  pizzas: any
+  pizzas: GetPizzasQuery["pizzas"]
 }
 
 export const getStaticProps: GetStaticProps<IPizzaProps> = async () => {
-  const client = new GraphQLClient("http://localhost:1337/graphql")
+  const client = new GraphQLClient(`${cms}/graphql`)
   const sdk = getSdk(client)
   const { pizzas } = await sdk.getPizzas()
 
