@@ -24,6 +24,11 @@ export const useStyles = makeStyles(theme =>
         boxShadow: theme.shadows[2]
       }
     },
+    buttonWrapper: {
+      display: "flex",
+      marginRight: theme.spacing(5),
+      justifyContent: "flex-end"
+    },
     ripple: {
       backgroundColor: theme.palette.primary.light
     },

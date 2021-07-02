@@ -1,11 +1,13 @@
-import clsx from "clsx"
 import Image from "next/image"
 import Typography from "@material-ui/core/Typography"
 import ButtonBase from "@material-ui/core/ButtonBase"
 import Grid from "@material-ui/core/Grid"
+import StoreIcon from "@material-ui/icons/Store"
 import { GetPizzasQuery } from "@/graphql/generated"
 import { cms } from "cms"
 import { useStyles } from "./useStyles"
+import Link from "../Link"
+import ButtonLink from "../ButtonLink"
 
 interface IPopularProps {
   pizzas: GetPizzasQuery["pizzas"]
@@ -58,6 +60,16 @@ const Popular: React.FC<IPopularProps> = ({ pizzas }) => {
           </div>
         ))}
       </Grid>
+      <div className={classes.buttonWrapper}>
+        <ButtonLink
+          href="/store"
+          variant="contained"
+          color="primary"
+          endIcon={<StoreIcon />}
+        >
+          Go to our store
+        </ButtonLink>
+      </div>
     </section>
   )
 }
