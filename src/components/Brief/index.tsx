@@ -1,2 +1,2 @@
-import Brief from "./Brief"
-export default Brief
+export { default } from "./Brief"
+export * from "./Brief"

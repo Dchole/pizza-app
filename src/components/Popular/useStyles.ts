@@ -10,7 +10,7 @@ export const useStyles = makeStyles(theme =>
       }
     },
     list: {
-      gap: "5vw",
+      gap: "3vw",
       margin: theme.spacing(5, "auto"),
 
       "& .details": {
@@ -32,16 +32,34 @@ export const useStyles = makeStyles(theme =>
       }),
 
       "&:hover, &:focus": {
-        boxShadow: theme.shadows[2]
+        boxShadow: theme.shadows[2],
+
+        "& .MuiIconButton-root": {
+          backgroundColor: "white",
+          borderColor: theme.palette.grey[400]
+        }
+      },
+
+      "& .MuiIconButton-root": {
+        position: "absolute",
+        top: 20,
+        left: 20,
+        backgroundColor: "#fffa",
+        border: `2px solid`,
+        borderColor: "#fff2",
+        transition: theme.transitions.create("background-color", {
+          duration: theme.transitions.duration.shortest
+        })
       }
     },
     buttonWrapper: {
       display: "flex",
-      marginRight: theme.spacing(5),
+      margin: theme.spacing(5, 20, 0, 0),
       justifyContent: "flex-end"
     },
     ripple: {
-      backgroundColor: theme.palette.primary.light
+      backgroundColor: theme.palette.primary.light,
+      opacity: 0.6
     },
     childPulsate: {
       animation: "none"

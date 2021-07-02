@@ -1,2 +1,2 @@
-import Popular from "./Popular"
-export default Popular
+export { default } from "./Popular"
+export * from "./Popular"

@@ -1,23 +1,30 @@
 import Image from "next/image"
 import Typography from "@material-ui/core/Typography"
 import ButtonBase from "@material-ui/core/ButtonBase"
+import IconButton from "@material-ui/core/IconButton"
 import Grid from "@material-ui/core/Grid"
 import StoreIcon from "@material-ui/icons/Store"
+import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import { GetPizzasQuery } from "@/graphql/generated"
 import { cms } from "cms"
 import { useStyles } from "./useStyles"
-import Link from "../Link"
 import ButtonLink from "../ButtonLink"
 
-interface IPopularProps {
+export interface IPizzaProps {
   pizzas: GetPizzasQuery["pizzas"]
 }
 
 const loader = ({ src }: { src: string; width: number; quality: number }) =>
   `${cms}${src}`
 
-const Popular: React.FC<IPopularProps> = ({ pizzas }) => {
+const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
   const classes = useStyles()
+
+  const stopPropagation = (
+    event:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.FocusEvent<HTMLButtonElement>
+  ) => event.stopPropagation()
 
   return (
     <section className={classes.root}>
@@ -49,7 +56,13 @@ const Popular: React.FC<IPopularProps> = ({ pizzas }) => {
                 width={300}
                 height={240}
               />
-
+              <IconButton
+                aria-label={`add ${pizza.name} to shopping cart`}
+                onFocus={stopPropagation}
+                onMouseDown={stopPropagation}
+              >
+                <AddShoppingCartIcon />
+              </IconButton>
               <div className="details">
                 <Typography variant="h5" component="strong" align="center">
                   {pizza.name}
