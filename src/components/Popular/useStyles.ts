@@ -2,12 +2,23 @@ import { createStyles, makeStyles } from "@material-ui/core/styles"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
+    root: {
+      padding: theme.spacing(18, 0),
+
+      "& h2": {
+        marginBottom: 10
+      }
+    },
     list: {
       gap: "5vw",
       margin: theme.spacing(5, "auto"),
 
       "& .details": {
-        marginTop: theme.spacing(2)
+        marginTop: theme.spacing(2),
+
+        "& *": {
+          display: "block"
+        }
       }
     },
     buttonBase: {

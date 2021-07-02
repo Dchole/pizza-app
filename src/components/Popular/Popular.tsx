@@ -20,11 +20,11 @@ const Popular: React.FC<IPopularProps> = ({ pizzas }) => {
   const classes = useStyles()
 
   return (
-    <section>
+    <section className={classes.root}>
       <Typography variant="h2" align="center">
         Customer Favourites
       </Typography>
-      <Typography variant="body1" align="center">
+      <Typography variant="h6" component="p" align="center">
         Most purchased pizzas from our customers
       </Typography>
       <Grid justify="center" wrap="nowrap" className={classes.list} container>
@@ -51,8 +51,15 @@ const Popular: React.FC<IPopularProps> = ({ pizzas }) => {
               />
 
               <div className="details">
-                <Typography align="center">{pizza.name}</Typography>
-                <Typography align="center" variant="body2">
+                <Typography variant="h5" component="strong" align="center">
+                  {pizza.name}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  component="span"
+                  align="center"
+                  color="textSecondary"
+                >
                   {pizza.price}
                 </Typography>
               </div>
