@@ -57,6 +57,7 @@ const Footer = () => {
           <OutlinedInput
             id="subscribe-input"
             name="subscribe"
+            type="email"
             placeholder="example@gmail.com"
             margin="dense"
             classes={{

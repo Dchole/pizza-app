@@ -1,4 +1,5 @@
 import Image from "next/image"
+import dynamic from "next/dynamic"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import IconButton from "@material-ui/core/IconButton"
@@ -10,10 +11,15 @@ import { useStyles } from "./useStyles"
 import { navLinks } from "./nav-links"
 import React, { useEffect, useRef, useState } from "react"
 
+const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
+
 const Header = () => {
   const classes = useStyles()
   const scrollHeight = useRef(0)
   const [show, setShow] = useState(true)
+  const [open, setOpen] = useState(false)
+
+  const closeDrawer = () => setOpen(false)
 
   const handleScroll = () => {
     scrollHeight.current > window.scrollY ? setShow(true) : setShow(false)
@@ -61,13 +67,15 @@ const Header = () => {
             <IconButton
               aria-label="account"
               component={Link}
-              href="/account"
+              href="#auth"
               role={undefined}
+              onClick={() => setOpen(true)}
               naked
             >
               <AccountIcon />
             </IconButton>
           </div>
+          <AuthDrawer open={open} handleClose={closeDrawer} />
         </Toolbar>
       </AppBar>
     </Slide>
