@@ -20,6 +20,7 @@ const Register = () => {
             id="firstName"
             component={TextField}
             name="firstName"
+            margin="normal"
             variant="outlined"
             label="First Name"
             autoComplete="given-name"
@@ -31,6 +32,7 @@ const Register = () => {
             id="lastName"
             component={TextField}
             name="lastName"
+            margin="normal"
             variant="outlined"
             label="Last Name"
             autoComplete="family-name"
@@ -42,6 +44,7 @@ const Register = () => {
             component={TextField}
             name="phoneNumber"
             type="tel"
+            margin="normal"
             variant="outlined"
             label="Phone Number"
             autoComplete="tel"
@@ -52,6 +55,7 @@ const Register = () => {
             component={TextField}
             name="password"
             type="password"
+            margin="normal"
             variant="outlined"
             label="Password"
             autoComplete="new-password"

@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import Image from "next/image"
 import dynamic from "next/dynamic"
 import AppBar from "@material-ui/core/AppBar"
@@ -16,12 +17,16 @@ const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
 const Header = () => {
   const classes = useStyles()
   const scrollHeight = useRef(0)
+  const headerRef = useRef<HTMLElement>(null)
   const [show, setShow] = useState(true)
   const [open, setOpen] = useState(false)
+  const [scrollDown, setScrollDown] = useState(false)
 
   const closeDrawer = () => setOpen(false)
 
   const handleScroll = () => {
+    window.scrollY > 200 ? setScrollDown(true) : setScrollDown(false)
+
     scrollHeight.current > window.scrollY ? setShow(true) : setShow(false)
     scrollHeight.current = window.scrollY
   }
@@ -33,7 +38,13 @@ const Header = () => {
 
   return (
     <Slide direction="down" in={show}>
-      <AppBar variant="outlined" classes={{ root: classes.root }}>
+      <AppBar
+        ref={headerRef}
+        variant="outlined"
+        classes={{
+          root: scrollDown ? classes.root : clsx(classes.root, classes.top)
+        }}
+      >
         <Toolbar>
           <div className={classes.nav}>
             <div className={classes.logo}>

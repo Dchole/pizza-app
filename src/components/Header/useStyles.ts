@@ -21,6 +21,10 @@ export const useStyles = makeStyles(theme =>
         }
       }
     },
+    top: {
+      backgroundColor: "transparent",
+      border: "none"
+    },
     account: {
       display: "flex",
       alignItems: "center",
