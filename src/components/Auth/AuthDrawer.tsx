@@ -1,32 +1,28 @@
 import Drawer from "@material-ui/core/Drawer"
-import { useState } from "react"
 import FormWrapper from "./FormWrapper"
 import Register from "./Register"
 import Login from "./Login"
 import { useDrawerStyles } from "./styles/useDrawerStyles"
+import { TAuthView } from "../Header"
 
 interface IAuthDrawerProps {
-  open: boolean
+  view: TAuthView
   handleClose: () => void
 }
 
-const AuthDrawer: React.FC<IAuthDrawerProps> = ({ open, handleClose }) => {
+const AuthDrawer: React.FC<IAuthDrawerProps> = ({ view, handleClose }) => {
   const classes = useDrawerStyles()
-  const [view, setView] = useState<"register" | "login">("register")
-
-  const handleChangeView = () =>
-    setView(prevView => (prevView === "login" ? "register" : "login"))
 
   return (
     <Drawer
-      open={open}
+      open={Boolean(view)}
       anchor="right"
       onClose={handleClose}
       PaperProps={{ variant: "outlined" }}
       ModalProps={{ BackdropProps: { className: classes.backdrop } }}
       classes={{ paper: classes.paper }}
     >
-      <FormWrapper view={view} handleChangeView={handleChangeView}>
+      <FormWrapper view={view}>
         {view === "register" ? <Register /> : <Login />}
       </FormWrapper>
     </Drawer>

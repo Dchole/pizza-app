@@ -1,4 +1,6 @@
 import clsx from "clsx"
+import { useTheme } from "@material-ui/core/styles"
+import useMediaQuery from "@material-ui/core/useMediaQuery"
 import Image from "next/image"
 import dynamic from "next/dynamic"
 import AppBar from "@material-ui/core/AppBar"
@@ -11,18 +13,26 @@ import Link from "@/components/Link"
 import { useStyles } from "./useStyles"
 import { navLinks } from "./nav-links"
 import React, { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/router"
 
 const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
 
+export type TAuthView = "login" | "register" | null
+
 const Header = () => {
   const classes = useStyles()
+  const router = useRouter()
   const scrollHeight = useRef(0)
   const headerRef = useRef<HTMLElement>(null)
   const [show, setShow] = useState(true)
-  const [open, setOpen] = useState(false)
   const [scrollDown, setScrollDown] = useState(false)
+  const [authView, setAuthView] = useState<TAuthView>(
+    router.asPath.substring(2) as TAuthView
+  )
+  const { breakpoints } = useTheme()
+  const mobile = useMediaQuery(breakpoints.down("xs"))
 
-  const closeDrawer = () => setOpen(false)
+  const closeDrawer = () => router.push("/")
 
   const handleScroll = () => {
     window.scrollY > 200 ? setScrollDown(true) : setScrollDown(false)
@@ -33,8 +43,14 @@ const Header = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll)
+
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  useEffect(() => {
+    let view = router.asPath.substring(2) as TAuthView
+    setAuthView(view)
+  }, [router.asPath])
 
   return (
     <Slide direction="down" in={show}>
@@ -78,15 +94,14 @@ const Header = () => {
             <IconButton
               aria-label="account"
               component={Link}
-              href="#auth"
+              href={mobile ? "/register" : "#register"}
               role={undefined}
-              onClick={() => setOpen(true)}
               naked
             >
               <AccountIcon />
             </IconButton>
           </div>
-          <AuthDrawer open={open} handleClose={closeDrawer} />
+          <AuthDrawer view={authView} handleClose={closeDrawer} />
         </Toolbar>
       </AppBar>
     </Slide>

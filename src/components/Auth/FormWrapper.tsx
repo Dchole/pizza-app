@@ -48,7 +48,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({
             <>
               Don&apos;t have an account?&nbsp;
               <Link
-                href={onAuthPage ? "/register" : "#auth"}
+                href={onAuthPage ? "/register" : "#register"}
                 onClick={handleChangeView}
               >
                 Create an account
@@ -58,7 +58,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({
             <>
               Already have an account?&nbsp;
               <Link
-                href={onAuthPage ? "/login" : "#auth"}
+                href={onAuthPage ? "/login" : "#login"}
                 onClick={handleChangeView}
               >
                 Login
