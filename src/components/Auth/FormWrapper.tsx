@@ -27,6 +27,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({
       <Typography
         variant={onAuthPage ? "h3" : "h4"}
         component={onAuthPage ? "h1" : "h2"}
+        align="center"
         gutterBottom
       >
         {onLoginPage ? "Login to Your Account" : "Create a New Account"}

@@ -66,12 +66,7 @@ const Footer = () => {
             }}
             endAdornment={
               <InputAdornment position="end">
-                <Button
-                  color="primary"
-                  variant="contained"
-                  className={classes.inputButton}
-                  disableElevation
-                >
+                <Button color="primary" variant="contained" disableElevation>
                   Subscribe
                 </Button>
               </InputAdornment>
