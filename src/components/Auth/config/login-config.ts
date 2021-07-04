@@ -1,5 +1,6 @@
 import { FormikHelpers } from "formik"
 import Router from "next/router"
+import { mutate } from "swr"
 import * as Yup from "yup"
 
 export const initialValues = {
@@ -28,6 +29,9 @@ export const handleSubmit = async (
     if (!res.ok) {
       throw new Error("")
     }
+
+    const user = await res.json()
+    mutate("/api/user", user)
 
     Router.push("/store")
   } catch (error) {
