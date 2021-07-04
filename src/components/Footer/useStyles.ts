@@ -47,9 +47,6 @@ export const useStyles = makeStyles(theme =>
     adornedEnd: {
       paddingRight: 0
     },
-    input: {
-      borderRadius: 8
-    },
     inputMarginDense: {
       paddingTop: 8
     },

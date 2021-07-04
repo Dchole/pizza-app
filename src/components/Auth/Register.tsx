@@ -1,13 +1,22 @@
-import Button from "@material-ui/core/Button"
 import { Formik, Form, Field } from "formik"
 import { TextField } from "formik-material-ui"
+import Button from "@material-ui/core/Button"
+import InputAdornment from "@material-ui/core/InputAdornment"
+import IconButton from "@material-ui/core/IconButton"
+import Visibility from "@material-ui/icons/Visibility"
+import VisibilityOff from "@material-ui/icons/VisibilityOff"
+import useToggleVisibility from "@/hooks/useToggleVisibilty"
 import {
   handleSubmit,
   validationSchema,
   initialValues
-} from "./register-config"
+} from "./config/register-config"
+import { useFormStyles } from "./styles/useFormStyles"
 
 const Register = () => {
+  const classes = useFormStyles()
+  const { showPassword, handleToggle } = useToggleVisibility()
+
   return (
     <Formik
       initialValues={initialValues}
@@ -54,23 +63,38 @@ const Register = () => {
             id="new-password"
             component={TextField}
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             margin="normal"
             variant="outlined"
             label="Password"
             autoComplete="new-password"
             fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleToggle}
+                    aria-label={
+                      showPassword ? "hide password" : "show password"
+                    }
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={isSubmitting}
-            disableElevation={isSubmitting}
-            fullWidth
-          >
-            Sign up
-          </Button>
+          <div className={classes.button}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isSubmitting}
+              disableElevation={isSubmitting}
+            >
+              Sign up
+            </Button>
+          </div>
         </Form>
       )}
     </Formik>

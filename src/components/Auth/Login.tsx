@@ -1,9 +1,19 @@
-import Button from "@material-ui/core/Button"
 import { Formik, Form, Field } from "formik"
 import { TextField } from "formik-material-ui"
-import { handleSubmit, initialValues } from "./login-config"
+import Button from "@material-ui/core/Button"
+import InputAdornment from "@material-ui/core/InputAdornment"
+import IconButton from "@material-ui/core/IconButton"
+import Visibility from "@material-ui/icons/Visibility"
+import VisibilityOff from "@material-ui/icons/VisibilityOff"
+import useToggleVisibility from "@/hooks/useToggleVisibilty"
+import { handleSubmit, initialValues } from "./config/login-config"
+import { useFormStyles } from "./styles/useFormStyles"
+import Link from "../Link"
 
 const Login = () => {
+  const classes = useFormStyles()
+  const { showPassword, handleToggle } = useToggleVisibility()
+
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
       {({ isSubmitting }) => (
@@ -13,6 +23,7 @@ const Login = () => {
             component={TextField}
             name="phoneNumber"
             type="tel"
+            margin="normal"
             variant="outlined"
             label="Phone Number"
             autoComplete="tel"
@@ -23,20 +34,40 @@ const Login = () => {
             id="current-password"
             component={TextField}
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
+            margin="normal"
             variant="outlined"
             label="Password"
             autoComplete="current-password"
             fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleToggle}
+                    aria-label={
+                      showPassword ? "hide password" : "show password"
+                    }
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={isSubmitting}
-            disableElevation={isSubmitting}
-          >
-            Sign in
-          </Button>
+          <div className={classes.link}>
+            <Link href="/forgot-password">Forgot Password</Link>
+          </div>
+          <div className={classes.button}>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={isSubmitting}
+              disableElevation={isSubmitting}
+            >
+              Sign in
+            </Button>
+          </div>
         </Form>
       )}
     </Formik>
