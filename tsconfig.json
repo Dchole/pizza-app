@@ -17,6 +17,7 @@
     "paths": {
       "@/lib/*": ["lib/*"],
       "@/utils/*": ["utils/*"],
+      "@/hooks/*": ["hooks/*"],
       "@/graphql/*": ["graphql/*"],
       "@/components/*": ["components/*"]
     }

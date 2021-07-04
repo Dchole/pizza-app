@@ -23,6 +23,7 @@ const Register = () => {
             variant="outlined"
             label="First Name"
             autoComplete="given-name"
+            autoCapitalize="on"
             autoFocus
             fullWidth
           />
@@ -33,6 +34,7 @@ const Register = () => {
             variant="outlined"
             label="Last Name"
             autoComplete="family-name"
+            autoCapitalize="on"
             fullWidth
           />
           <Field
@@ -43,7 +45,6 @@ const Register = () => {
             variant="outlined"
             label="Phone Number"
             autoComplete="tel"
-            autoFocus
             fullWidth
           />
           <Field
@@ -62,6 +63,7 @@ const Register = () => {
             color="primary"
             disabled={isSubmitting}
             disableElevation={isSubmitting}
+            fullWidth
           >
             Sign up
           </Button>
