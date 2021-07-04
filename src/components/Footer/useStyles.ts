@@ -54,6 +54,12 @@ export const useStyles = makeStyles(theme =>
       padding: theme.spacing(3),
       backgroundColor: lighten(theme.palette.primary.light, 0.6),
       marginTop: theme.spacing(4)
+    },
+    fab: {
+      position: "absolute",
+      bottom: "12%",
+      right: "5%",
+      backgroundColor: lighten(theme.palette.secondary.light, 0.5)
     }
   })
 )

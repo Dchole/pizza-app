@@ -60,7 +60,7 @@ const Header = () => {
               />
             </div>
             <nav>
-              <ul>
+              <ul id="navigation">
                 {navLinks.map(({ label, path }) => (
                   <li key={label}>
                     <Link href={path}>{label}</Link>

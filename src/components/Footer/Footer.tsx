@@ -6,6 +6,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import OutlinedInput from "@material-ui/core/OutlinedInput"
 import InputAdornment from "@material-ui/core/InputAdornment"
 import Button from "@material-ui/core/Button"
+import Fab from "@material-ui/core/Fab"
+import ArrowUpWardIcon from "@material-ui/icons/ArrowUpward"
 import ButtonLink from "../ButtonLink"
 import { contacts } from "./contacts"
 import { useStyles } from "./useStyles"
@@ -37,7 +39,7 @@ const Footer = () => {
           <Typography variant="h4" component="h3">
             Contact Us
           </Typography>
-          <List disablePadding dense>
+          <List id="contacts" disablePadding dense>
             {contacts.map(({ contact, icon }, index) => (
               <ListItem disableGutters key={index}>
                 <ListItemIcon>{icon}</ListItemIcon>
@@ -79,6 +81,15 @@ const Footer = () => {
           &copy; Copyright by [Company Name], 2021. All Rights reserved
         </Typography>
       </div>
+      <Fab
+        className={classes.fab}
+        href="#skip-navigation"
+        title="scroll to top"
+        aria-label="scroll to top"
+        role={undefined}
+      >
+        <ArrowUpWardIcon />
+      </Fab>
     </footer>
   )
 }

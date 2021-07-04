@@ -6,6 +6,7 @@ import { AppProps } from "next/app"
 import { useEffect } from "react"
 import { ThemeProvider } from "@material-ui/core/styles"
 import CssBaseline from "@material-ui/core/CssBaseline"
+import Layout from "@/components/Layout"
 import theme from "@/lib/theme"
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -29,8 +30,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </ThemeProvider>
+      <style jsx global>{`
+        :root {
+          scroll-behavior: smooth;
+        }
+      `}</style>
     </>
   )
 }
