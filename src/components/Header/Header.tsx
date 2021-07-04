@@ -8,34 +8,24 @@ import Toolbar from "@material-ui/core/Toolbar"
 import IconButton from "@material-ui/core/IconButton"
 import Slide from "@material-ui/core/Slide"
 import BagIcon from "@material-ui/icons/LocalMall"
-import AccountIcon from "@material-ui/icons/AccountCircle"
 import Link from "@/components/Link"
 import { useStyles } from "./useStyles"
 import { navLinks } from "./nav-links"
 import React, { useEffect, useRef, useState } from "react"
-import { useRouter } from "next/router"
 import useUser from "@/hooks/useUser"
 import { Avatar } from "@material-ui/core"
 
 const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
-
-export type TAuthView = "login" | "register" | null
 
 const Header = () => {
   const { user } = useUser()
   const { breakpoints } = useTheme()
   const mobile = useMediaQuery(breakpoints.down("xs"))
   const classes = useStyles()
-  const router = useRouter()
   const scrollHeight = useRef(0)
   const headerRef = useRef<HTMLElement>(null)
   const [show, setShow] = useState(true)
   const [scrollDown, setScrollDown] = useState(false)
-  const [authView, setAuthView] = useState<TAuthView>(
-    router.asPath.substring(2) as TAuthView
-  )
-
-  const closeDrawer = () => router.push("/")
 
   const handleScroll = () => {
     window.scrollY > 200 ? setScrollDown(true) : setScrollDown(false)
@@ -49,11 +39,6 @@ const Header = () => {
 
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
-
-  useEffect(() => {
-    let view = router.asPath.substring(2) as TAuthView
-    setAuthView(view)
-  }, [router.asPath])
 
   return (
     <Slide direction="down" in={show}>
@@ -111,7 +96,7 @@ const Header = () => {
               <Avatar />
             </IconButton>
           </div>
-          <AuthDrawer view={authView} handleClose={closeDrawer} />
+          <AuthDrawer />
         </Toolbar>
       </AppBar>
     </Slide>

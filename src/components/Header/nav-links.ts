@@ -5,7 +5,7 @@ export const navLinks = [
   },
   {
     label: "Contact Us",
-    path: "#contact"
+    path: "#contacts"
   },
   {
     label: "Store",

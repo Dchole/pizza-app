@@ -1,8 +1,8 @@
 import Image from "next/image"
 import Container from "@material-ui/core/Container"
 import Typography from "@material-ui/core/Typography"
-import Button from "@material-ui/core/Button"
 import BagIcon from "@material-ui/icons/LocalMall"
+import ButtonLink from "../ButtonLink"
 import cover from "../../../public/cover.webp"
 import { useStyles } from "./useStyles"
 
@@ -30,12 +30,17 @@ const Hero = () => {
         Brighten your day with a delicious pizza
       </Typography>
       <div className={classes.buttons}>
-        <Button variant="contained" color="primary" endIcon={<BagIcon />}>
+        <ButtonLink
+          href="/store"
+          variant="contained"
+          color="primary"
+          endIcon={<BagIcon />}
+        >
           Make an order
-        </Button>
-        <Button variant="outlined" color="primary">
+        </ButtonLink>
+        <ButtonLink href="#contact" variant="outlined" color="primary">
           Contact us
-        </Button>
+        </ButtonLink>
       </div>
     </Container>
   )
