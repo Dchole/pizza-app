@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from "@material-ui/core/styles"
+import { createStyles, lighten, makeStyles } from "@material-ui/core/styles"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
@@ -39,6 +39,24 @@ export const useStyles = makeStyles(theme =>
       display: "flex",
       alignItems: "center",
       gap: theme.spacing(4)
+    },
+    avatar: {
+      padding: 8,
+
+      "&:hover, &:focus": {
+        "& .MuiAvatar-root": {
+          backgroundColor: theme.palette.primary.dark
+        }
+      },
+
+      "& .MuiAvatar-root": {
+        width: 32,
+        height: 32,
+        backgroundColor: theme.palette.text.secondary,
+        transition: theme.transitions.create("background-color", {
+          duration: theme.transitions.duration.shortest
+        })
+      }
     }
   })
 )

@@ -14,12 +14,17 @@ import { useStyles } from "./useStyles"
 import { navLinks } from "./nav-links"
 import React, { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/router"
+import useUser from "@/hooks/useUser"
+import { Avatar } from "@material-ui/core"
 
 const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
 
 export type TAuthView = "login" | "register" | null
 
 const Header = () => {
+  const { user } = useUser()
+  const { breakpoints } = useTheme()
+  const mobile = useMediaQuery(breakpoints.down("xs"))
   const classes = useStyles()
   const router = useRouter()
   const scrollHeight = useRef(0)
@@ -29,8 +34,6 @@ const Header = () => {
   const [authView, setAuthView] = useState<TAuthView>(
     router.asPath.substring(2) as TAuthView
   )
-  const { breakpoints } = useTheme()
-  const mobile = useMediaQuery(breakpoints.down("xs"))
 
   const closeDrawer = () => router.push("/")
 
@@ -92,13 +95,20 @@ const Header = () => {
               <BagIcon />
             </IconButton>
             <IconButton
-              aria-label="account"
+              aria-label={user?.isLoggedIn ? "account" : "sign up"}
               component={Link}
-              href={mobile ? "/register" : "#register"}
+              href={
+                user?.isLoggedIn
+                  ? "/account"
+                  : mobile
+                  ? "/register"
+                  : "#register"
+              }
               role={undefined}
+              className={classes.avatar}
               naked
             >
-              <AccountIcon />
+              <Avatar />
             </IconButton>
           </div>
           <AuthDrawer view={authView} handleClose={closeDrawer} />

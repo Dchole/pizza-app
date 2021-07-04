@@ -24,11 +24,13 @@ const Home: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <>
       <Header />
-      <Hero />
-      <Brief />
-      <Popular pizzas={pizzas} />
-      <Services />
-      <Reviews />
+      <main id="main-content">
+        <Hero />
+        <Brief />
+        <Popular pizzas={pizzas} />
+        <Services />
+        <Reviews />
+      </main>
       <Footer />
     </>
   )

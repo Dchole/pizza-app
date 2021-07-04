@@ -60,6 +60,7 @@ const Login = () => {
           </div>
           <div className={classes.button}>
             <Button
+              type="submit"
               variant="contained"
               color="primary"
               disabled={isSubmitting}
