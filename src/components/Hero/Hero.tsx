@@ -30,11 +30,7 @@ const Hero = () => {
         priority
         aria-hidden // Hiding from screen readers because it's just a background Image; no need to announce
       />
-      <Typography
-        component="h1"
-        variant={mobile ? "h3" : tablet ? "h2" : "h1"}
-        align={mobile ? "center" : "left"}
-      >
+      <Typography variant="h1" align={mobile ? "center" : "left"}>
         Brighten your day with a delicious pizza
       </Typography>
       <div className={classes.buttons}>

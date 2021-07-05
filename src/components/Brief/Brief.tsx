@@ -1,12 +1,14 @@
 import Typography from "@material-ui/core/Typography"
+import useScreenSize from "@/hooks/usScreenSize"
 import { useStyles } from "./useStyles"
 
 const Brief = () => {
   const classes = useStyles()
+  const mobile = useScreenSize()
 
   return (
-    <section id="about" className={classes.root}>
-      <div>
+    <div className={classes.root}>
+      <section id="about">
         <Typography variant="h2" align="center">
           Our delivery service
         </Typography>
@@ -21,8 +23,8 @@ const Brief = () => {
           constantly growing our network so if you’re outside our location hold
           on tight, we’ll reach your location soon.
         </Typography>
-      </div>
-    </section>
+      </section>
+    </div>
   )
 }
 

@@ -1,6 +1,6 @@
-import { createMuiTheme } from "@material-ui/core/styles"
+import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles"
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   typography: {
     fontFamily: '"Rubik", sans-serif',
     h1: {
@@ -31,6 +31,10 @@ const theme = createMuiTheme({
   shape: {
     borderRadius: 0
   }
+})
+
+theme = responsiveFontSizes(theme, {
+  factor: 3
 })
 
 export default theme
