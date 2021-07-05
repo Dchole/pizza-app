@@ -30,6 +30,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
             href={path}
             onClick={path ? handleClose : logout}
             role={undefined}
+            divider={index === 1}
             button
           >
             <ListItemIcon>{icon}</ListItemIcon>
