@@ -1,4 +1,4 @@
-import { createStyles, lighten, makeStyles } from "@material-ui/core/styles"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
@@ -38,7 +38,10 @@ export const useStyles = makeStyles(theme =>
     nav: {
       display: "flex",
       alignItems: "center",
-      gap: theme.spacing(4)
+
+      [theme.breakpoints.up("sm")]: {
+        gap: theme.spacing(4)
+      }
     },
     avatar: {
       padding: 8,

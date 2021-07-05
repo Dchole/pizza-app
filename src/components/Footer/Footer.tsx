@@ -83,7 +83,7 @@ const Footer = () => {
       </div>
       <Fab
         className={classes.fab}
-        href="#skip-navigation"
+        href="#top"
         title="scroll to top"
         aria-label="scroll to top"
         role={undefined}

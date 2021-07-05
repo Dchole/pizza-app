@@ -7,7 +7,7 @@ const Layout: React.FC = ({ children }) => {
   const classes = useStyles()
 
   return (
-    <>
+    <div id="top">
       <Link
         id="skip-navigation"
         href="#main-content"
@@ -19,7 +19,7 @@ const Layout: React.FC = ({ children }) => {
       <Header />
       {children}
       <Footer />
-    </>
+    </div>
   )
 }
 
