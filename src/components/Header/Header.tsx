@@ -13,10 +13,11 @@ import Link from "@/components/Link"
 import useUser from "@/hooks/useUser"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useStyles } from "./useStyles"
-import { navLinks } from "./nav-links"
+import { navLinks } from "./links"
 
 const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
 const Sidebar = dynamic(() => import("@/components/Sidebar"))
+const AccountPopup = dynamic(() => import("./AccountPopup"))
 
 const Header = () => {
   const { user } = useUser()
@@ -26,6 +27,7 @@ const Header = () => {
   const headerRef = useRef<HTMLElement>(null)
   const [show, setShow] = useState(true)
   const [open, setOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [scrollDown, setScrollDown] = useState(false)
 
   const handleScroll = () => {
@@ -37,6 +39,10 @@ const Header = () => {
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+  const setAnchor = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget)
+  const clearAnchor = () => setAnchorEl(null)
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll)
@@ -86,24 +92,29 @@ const Header = () => {
             >
               <BagIcon />
             </IconButton>
-            <IconButton
-              aria-label={user?.isLoggedIn ? "account" : "sign up"}
-              component={Link}
-              href={
-                user?.isLoggedIn
-                  ? "/account"
-                  : mobile
-                  ? "/register"
-                  : "#register"
-              }
-              role={undefined}
-              className={classes.avatar}
-              naked
-            >
-              <Avatar />
-            </IconButton>
+            {user?.isLoggedIn ? (
+              <IconButton
+                aria-label="open menu"
+                className={classes.avatar}
+                onClick={setAnchor}
+              >
+                <Avatar />
+              </IconButton>
+            ) : (
+              <IconButton
+                aria-label="sign up"
+                component={Link}
+                href={mobile ? "/register" : "#register"}
+                role={undefined}
+                className={classes.avatar}
+                naked
+              >
+                <Avatar />
+              </IconButton>
+            )}
           </div>
           <Sidebar open={open} handleClose={handleClose} />
+          <AccountPopup anchorEl={anchorEl} handleClose={clearAnchor} />
           <AuthDrawer />
         </Toolbar>
       </AppBar>
