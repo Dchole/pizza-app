@@ -27,7 +27,6 @@ export const useStyles = makeStyles(theme =>
     },
     hiring: {
       maxWidth: 270,
-      display: "none",
 
       [theme.breakpoints.up("md")]: {
         display: "block"
