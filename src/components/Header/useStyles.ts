@@ -33,11 +33,21 @@ export const useStyles = makeStyles(theme =>
       boxShadow: theme.shadows[1]
     },
     logo: {
-      margin: theme.spacing(1, 0)
+      margin: 0,
+
+      [theme.breakpoints.up("sm")]: {
+        margin: theme.spacing(1, 0)
+      }
     },
     nav: {
       display: "flex",
       alignItems: "center",
+
+      "& .MuiIconButton-root": {
+        [theme.breakpoints.up("sm")]: {
+          display: "none"
+        }
+      },
 
       [theme.breakpoints.up("sm")]: {
         gap: theme.spacing(4)

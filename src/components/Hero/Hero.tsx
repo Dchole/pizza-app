@@ -2,12 +2,15 @@ import Image from "next/image"
 import Container from "@material-ui/core/Container"
 import Typography from "@material-ui/core/Typography"
 import BagIcon from "@material-ui/icons/LocalMall"
+import useScreenSize from "@/hooks/usScreenSize"
 import ButtonLink from "../ButtonLink"
 import cover from "../../../public/cover.webp"
 import { useStyles } from "./useStyles"
 
 const Hero = () => {
   const classes = useStyles()
+  const mobile = useScreenSize("sm")
+  const tablet = useScreenSize("md")
 
   return (
     <Container
@@ -15,6 +18,7 @@ const Hero = () => {
       component="section"
       maxWidth="xl"
       className={classes.root}
+      disableGutters={mobile}
     >
       <Image
         src={cover}
@@ -24,9 +28,13 @@ const Hero = () => {
         placeholder="blur"
         className={classes.cover}
         priority
-        aria-hidden
+        aria-hidden // Hiding from screen readers because it's just a background Image; no need to announce
       />
-      <Typography variant="h1">
+      <Typography
+        component="h1"
+        variant={mobile ? "h3" : tablet ? "h2" : "h1"}
+        align={mobile ? "center" : "left"}
+      >
         Brighten your day with a delicious pizza
       </Typography>
       <div className={classes.buttons}>

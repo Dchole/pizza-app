@@ -11,7 +11,7 @@ import BagIcon from "@material-ui/icons/LocalMall"
 import MenuIcon from "@material-ui/icons/Menu"
 import Link from "@/components/Link"
 import useUser from "@/hooks/useUser"
-import useSmallScreen from "@/hooks/useSmallScreen"
+import useScreenSize from "@/hooks/usScreenSize"
 import { useStyles } from "./useStyles"
 import { navLinks } from "./nav-links"
 
@@ -20,7 +20,7 @@ const Sidebar = dynamic(() => import("@/components/Sidebar"))
 
 const Header = () => {
   const { user } = useUser()
-  const mobile = useSmallScreen()
+  const mobile = useScreenSize()
   const classes = useStyles()
   const scrollHeight = useRef(0)
   const headerRef = useRef<HTMLElement>(null)
@@ -55,15 +55,15 @@ const Header = () => {
       >
         <Toolbar>
           <div className={classes.nav}>
-            <IconButton onClick={handleOpen} hidden={!mobile}>
+            <IconButton onClick={handleOpen}>
               <MenuIcon />
             </IconButton>
             <div className={classes.logo}>
               <Image
                 src="/logo-placeholder.svg"
                 alt="logo"
-                width={40}
-                height={65}
+                width={mobile ? 35 : 40}
+                height={mobile ? 58 : 65}
               />
             </div>
             <nav hidden={mobile}>
