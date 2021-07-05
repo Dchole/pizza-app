@@ -4,17 +4,34 @@ export const useStyles = makeStyles(theme =>
   createStyles({
     root: {
       position: "relative",
-      padding: theme.spacing(8, 0, 0),
+      paddingTop: 40,
       backgroundColor: lighten(theme.palette.primary.light, 0.8),
 
       "& > div": {
+        padding: 8,
         display: "flex",
-        justifyContent: "center",
-        gap: theme.spacing(15)
+        flexDirection: "column-reverse",
+        flexWrap: "wrap",
+        gap: 48
+      },
+
+      [theme.breakpoints.up("sm")]: {
+        paddingTop: 64,
+
+        "& > div": {
+          flexDirection: "row",
+          justifyContent: "center",
+          gap: theme.spacing(15)
+        }
       }
     },
     hiring: {
       maxWidth: 270,
+      display: "none",
+
+      [theme.breakpoints.up("md")]: {
+        display: "block"
+      },
 
       "& p": {
         maxWidth: 200,
@@ -56,10 +73,14 @@ export const useStyles = makeStyles(theme =>
       marginTop: theme.spacing(4)
     },
     fab: {
-      position: "absolute",
-      bottom: "12%",
-      right: "5%",
-      backgroundColor: lighten(theme.palette.secondary.light, 0.5)
+      display: "none",
+
+      [theme.breakpoints.up("sm")]: {
+        position: "absolute",
+        backgroundColor: lighten(theme.palette.secondary.light, 0.5),
+        bottom: "12%",
+        right: "5%"
+      }
     }
   })
 )

@@ -3,15 +3,34 @@ import { createStyles, makeStyles } from "@material-ui/core/styles"
 export const useStyles = makeStyles(theme =>
   createStyles({
     root: {
-      padding: theme.spacing(18, 0),
+      padding: theme.spacing(8, 0),
+
+      [theme.breakpoints.up("sm")]: {
+        padding: theme.spacing(18, 0)
+      },
 
       "& h2": {
         marginBottom: 10
       }
     },
+    text: {
+      padding: theme.spacing(0, 1)
+    },
     list: {
-      gap: "3vw",
+      gap: 16,
       margin: theme.spacing(5, "auto"),
+      padding: theme.spacing(1),
+      width: "100%",
+      overflow: "auto",
+
+      [theme.breakpoints.up("sm")]: {
+        gap: "3vw",
+        padding: theme.spacing(1, 2)
+      },
+
+      [theme.breakpoints.up("md")]: {
+        justifyContent: "center"
+      },
 
       "& .details": {
         marginTop: theme.spacing(2),
@@ -50,6 +69,7 @@ export const useStyles = makeStyles(theme =>
     },
     buttonBase: {
       display: "flex",
+      minWidth: 300,
       flexDirection: "column",
       padding: theme.spacing(2),
       borderRadius: 4,
@@ -64,8 +84,8 @@ export const useStyles = makeStyles(theme =>
     },
     buttonWrapper: {
       display: "flex",
-      margin: theme.spacing(5, 20, 0, 0),
-      justifyContent: "flex-end"
+      justifyContent: "flex-end",
+      marginRight: 16
     },
     ripple: {
       backgroundColor: theme.palette.primary.light,

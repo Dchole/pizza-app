@@ -10,7 +10,6 @@ import { useStyles } from "./useStyles"
 const Hero = () => {
   const classes = useStyles()
   const mobile = useScreenSize("sm")
-  const tablet = useScreenSize("md")
 
   return (
     <Container

@@ -22,13 +22,15 @@ const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
 
   return (
     <section id="popular" className={classes.root}>
-      <Typography variant="h2" align="center">
-        Customer Favourites
-      </Typography>
-      <Typography variant="h6" component="p" align="center">
-        Most purchased pizzas from our customers
-      </Typography>
-      <Grid justify="center" wrap="nowrap" className={classes.list} container>
+      <div className={classes.text}>
+        <Typography variant="h2" align="center">
+          Customers&apos; Favourites
+        </Typography>
+        <Typography variant="h6" component="p" align="center">
+          Most purchased pizzas from our customers
+        </Typography>
+      </div>
+      <Grid wrap="nowrap" className={classes.list} container>
         {pizzas.map(pizza => (
           <div key={pizza.id} className={classes.product}>
             <ButtonBase

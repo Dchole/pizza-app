@@ -12,9 +12,9 @@ const Services = () => {
       <Typography variant="h2" align="center">
         Why choose our food
       </Typography>
-      <Grid justify="center" wrap="nowrap" container>
+      <Grid justify="center" className={classes.grid} container>
         {reasons.map(({ title, icon, description }) => (
-          <div key={title}>
+          <div key={title} className={classes.card}>
             <Image src={icon} alt={title} width={66} height={94} />
             <Typography variant="h4" component="h3">
               {title}

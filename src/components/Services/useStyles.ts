@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from "@material-ui/core"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
@@ -14,6 +14,14 @@ export const useStyles = makeStyles(theme =>
         gap: theme.spacing(6),
         margin: theme.spacing(4, "auto")
       }
+    },
+    grid: {
+      [theme.breakpoints.up("md")]: {
+        flexWrap: "nowrap"
+      }
+    },
+    card: {
+      minWidth: 288
     }
   })
 )

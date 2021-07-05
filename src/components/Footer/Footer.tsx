@@ -77,7 +77,7 @@ const Footer = () => {
         </div>
       </div>
       <div className={classes.base}>
-        <Typography color="textSecondary">
+        <Typography color="textSecondary" align="center">
           &copy; Copyright by [Company Name], 2021. All Rights reserved
         </Typography>
       </div>
