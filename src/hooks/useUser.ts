@@ -1,6 +1,6 @@
 import useSWR from "swr"
 
-interface IUser {
+export interface IUser {
   firstName: string
   lastName: string
   phoneNumber?: string

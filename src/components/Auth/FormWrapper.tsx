@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
-import useUser from "@/hooks/useUser"
+import useUser, { IUser } from "@/hooks/useUser"
 import { init } from "@/lib/google-auth"
 import GoogleIcon from "./GoogleIcon"
 import Link from "../Link"
@@ -37,7 +37,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
         imageUrl: basicProfile.getImageUrl()
       }
 
-      const currentUser = await fetcher("/api/google-auth", {
+      const currentUser = await fetcher<IUser>("/api/google-auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

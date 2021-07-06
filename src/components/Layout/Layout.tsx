@@ -19,7 +19,7 @@ const Layout: React.FC = ({ children }) => {
       >
         skip navigation
       </Link>
-      {!onAuthPage && <Header />}
+      {pathname === "/" && <Header />}
       {children}
       {!onAuthPage && <Footer />}
     </div>
