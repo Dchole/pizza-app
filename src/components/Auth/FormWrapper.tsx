@@ -18,7 +18,7 @@ interface IFormWrapperProps {
 }
 
 const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
-  const { pathname } = useRouter()
+  const { pathname, replace } = useRouter()
   const { mutate } = useUser()
   const classes = useWrapperStyles()
   const onLoginPage = pathname === "/login" || view === "login"
@@ -46,6 +46,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
       })
 
       mutate(currentUser)
+      replace("/store")
     } catch (error) {
       console.log(error.message)
     }
