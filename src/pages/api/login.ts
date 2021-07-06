@@ -1,42 +1,41 @@
-import { IReq, withSession } from "@/lib/session"
-import { NextApiResponse } from "next"
+import { withSession } from "@/lib/session"
 import { connectToDatabase } from "@/lib/mongodb"
 import { compare } from "bcryptjs"
 
-export default withSession(
-  async (req: IReq, res: NextApiResponse<Record<string, any>>) => {
-    if (req.method === "POST") {
-      const { db } = await connectToDatabase()
+export default withSession(async (req, res) => {
+  if (req.method === "POST") {
+    const { db } = await connectToDatabase()
 
-      try {
-        const { password, ...user } = await db
-          .collection("users")
-          .findOne({ phoneNumber: req.body.phoneNumber })
+    try {
+      const user = await db
+        .collection("users")
+        .findOne({ phoneNumber: req.body.phoneNumber })
 
-        if (!user)
-          res.status(400).json({
-            key: "phoneNumber",
-            message: "No account with this Phone Number"
-          })
+      if (!user)
+        res.status(400).json({
+          key: "phoneNumber",
+          message: "No account with this Phone Number"
+        })
 
-        const isPasswordValid = await compare(req.body.password, password)
+      const { password, ...rest } = user
 
-        if (!isPasswordValid)
-          res.status(400).json({
-            key: "password",
-            message: "Password Incorrect"
-          })
+      const isPasswordValid = await compare(req.body.password, password)
 
-        const userSession = { isLoggedIn: true, ...user }
+      if (!isPasswordValid)
+        res.status(400).json({
+          key: "password",
+          message: "Password Incorrect"
+        })
 
-        await req.session.set("user", userSession)
-        await req.session.save()
+      const userSession = { isLoggedIn: true, ...rest }
 
-        res.json(userSession)
-      } catch (error) {
-        console.log(error.message)
-        res.end("Something went wrong!")
-      }
+      await req.session.set("user", userSession)
+      await req.session.save()
+
+      res.json(userSession)
+    } catch (error) {
+      console.log(error.message)
+      res.end("Something went wrong!")
     }
   }
-)
+})

@@ -12,9 +12,13 @@ export const useWrapperStyles = makeStyles(theme =>
       justifyContent: "center",
 
       "& .MuiButtonBase-root": {
-        width: "60%",
+        width: "100%",
         backgroundColor: theme.palette.secondary.main,
-        color: "white"
+        color: "white",
+
+        [theme.breakpoints.up("sm")]: {
+          width: "60%"
+        }
       },
 
       "& .MuiButton-startIcon": {

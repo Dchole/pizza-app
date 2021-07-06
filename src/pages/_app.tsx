@@ -8,6 +8,7 @@ import { ThemeProvider } from "@material-ui/core/styles"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import Layout from "@/components/Layout"
 import theme from "@/lib/theme"
+import { mutate } from "swr"
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -17,6 +18,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       jssStyles.parentElement!.removeChild(jssStyles)
     }
   }, [])
+
+  useEffect(() => {
+    const GoogleAuth = gapi.auth2.getAuthInstance()
+
+    if (GoogleAuth.isSignedIn) {
+      GoogleAuth.currentUser.listen(() => mutate("/api/user"))
+    }
+  })
 
   return (
     <>

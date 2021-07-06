@@ -4,22 +4,20 @@ import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
+import useUser from "@/hooks/useUser"
 import { init } from "@/lib/google-auth"
 import GoogleIcon from "./GoogleIcon"
 import Link from "../Link"
+import Login from "./Login"
+import Register from "./Register"
 import { useWrapperStyles } from "./styles/useWrapperStyles"
-import useUser from "@/hooks/useUser"
+import { fetcher } from "@/utils/fetcher"
 
 interface IFormWrapperProps {
-  view: "login" | "register"
-  handleChangeView?: () => void
+  view?: "login" | "register"
 }
 
-const FormWrapper: React.FC<IFormWrapperProps> = ({
-  view,
-  children,
-  handleChangeView
-}) => {
+const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
   const { pathname } = useRouter()
   const { mutate } = useUser()
   const classes = useWrapperStyles()
@@ -27,18 +25,29 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({
   const onAuthPage = pathname === "/login" || pathname === "/register"
 
   const loginWithGoogle = async () => {
-    const GoogleAuth = gapi.auth2.getAuthInstance()
-    const data = await GoogleAuth.signIn({ fetch_basic_profile: true })
-    const basicProfile = data.getBasicProfile()
+    try {
+      const GoogleAuth = gapi.auth2.getAuthInstance()
+      const data = await GoogleAuth.signIn({ fetch_basic_profile: true })
+      const basicProfile = data.getBasicProfile()
 
-    const user = {
-      name: basicProfile.getName(),
-      email: basicProfile.getEmail(),
-      imageUrl: basicProfile.getImageUrl()
-    }
+      const user = {
+        firstName: basicProfile.getName(),
+        lastName: basicProfile.getName(),
+        email: basicProfile.getEmail(),
+        imageUrl: basicProfile.getImageUrl()
+      }
 
-    if (GoogleAuth.isSignedIn) {
-      mutate(user)
+      const currentUser = await fetcher("/api/google-auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(user)
+      })
+
+      mutate(currentUser)
+    } catch (error) {
+      console.log(error.message)
     }
   }
 
@@ -70,28 +79,20 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({
         <span>OR</span>
         <Divider />
       </div>
-      {children}
+      {onLoginPage ? <Login /> : <Register />}
       <Grid alignItems="center" justify="space-between" container>
         <Typography component="span">
           {onLoginPage ? (
             <>
               Don&apos;t have an account?&nbsp;
-              <Link
-                href={onAuthPage ? "/register" : "#register"}
-                onClick={handleChangeView}
-              >
+              <Link href={onAuthPage ? "/register" : "#register"}>
                 Create an account
               </Link>
             </>
           ) : (
             <>
               Already have an account?&nbsp;
-              <Link
-                href={onAuthPage ? "/login" : "#login"}
-                onClick={handleChangeView}
-              >
-                Login
-              </Link>
+              <Link href={onAuthPage ? "/login" : "#login"}>Login</Link>
             </>
           )}
         </Typography>

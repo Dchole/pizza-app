@@ -2,8 +2,6 @@ import { useRouter } from "next/router"
 import { useMemo } from "react"
 import Drawer from "@material-ui/core/Drawer"
 import FormWrapper from "./FormWrapper"
-import Register from "./Register"
-import Login from "./Login"
 import { useDrawerStyles } from "./styles/useDrawerStyles"
 
 export type TAuthView = "login" | "register" | null
@@ -28,9 +26,7 @@ const AuthDrawer = () => {
       ModalProps={{ BackdropProps: { className: classes.backdrop } }}
       classes={{ paper: classes.paper }}
     >
-      <FormWrapper view={authView}>
-        {authView === "register" ? <Register /> : <Login />}
-      </FormWrapper>
+      <FormWrapper view={authView} />
     </Drawer>
   )
 }

@@ -9,7 +9,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const salt = await genSalt(10)
       req.body.password = await hash(req.body.password, salt)
-      const result = await db.collection("users").insertOne(req.body)
+
+      const result = await db
+        .collection("users")
+        .insertOne({ ...req.body, authMethod: "local" })
 
       res.json(result)
     } catch (error) {
