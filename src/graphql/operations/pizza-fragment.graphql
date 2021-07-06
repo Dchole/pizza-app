@@ -1,0 +1,8 @@
+fragment Card on Pizzas {
+  id
+  name
+  price
+  image {
+    formats
+  }
+}

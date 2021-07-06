@@ -1,10 +1,7 @@
+#import "./pizza-fragment.graphql"
+
 query getPizzas {
   pizzas {
-    id
-    name
-    price
-    image {
-      formats
-    }
+    ...Card
   }
 }

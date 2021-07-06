@@ -11,7 +11,7 @@ import { cms } from "cms"
 export const getStaticProps: GetStaticProps<IPizzaProps> = async () => {
   const client = new GraphQLClient(`${cms}/graphql`)
   const sdk = getSdk(client)
-  const { pizzas } = await sdk.getPizzas()
+  const { pizzas } = await sdk.getPopularPizzas()
 
   return { props: { pizzas } }
 }

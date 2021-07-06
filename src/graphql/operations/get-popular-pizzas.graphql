@@ -1,0 +1,7 @@
+#import "./someFragment.graphql"
+
+query getPopularPizzas {
+  pizzas(limit: 3) {
+    ...Card
+  }
+}

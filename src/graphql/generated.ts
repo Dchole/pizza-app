@@ -1055,27 +1055,54 @@ export type GetPizzasQuery = (
   { __typename?: 'Query' }
   & { pizzas?: Maybe<Array<Maybe<(
     { __typename?: 'Pizzas' }
-    & Pick<Pizzas, 'id' | 'name' | 'price'>
-    & { image?: Maybe<(
-      { __typename?: 'UploadFile' }
-      & Pick<UploadFile, 'formats'>
-    )> }
+    & CardFragment
   )>>> }
 );
 
+export type GetPopularPizzasQueryVariables = Exact<{ [key: string]: never; }>;
 
-export const GetPizzasDocument = gql`
-    query getPizzas {
-  pizzas {
-    id
-    name
-    price
-    image {
-      formats
-    }
+
+export type GetPopularPizzasQuery = (
+  { __typename?: 'Query' }
+  & { pizzas?: Maybe<Array<Maybe<(
+    { __typename?: 'Pizzas' }
+    & CardFragment
+  )>>> }
+);
+
+export type CardFragment = (
+  { __typename?: 'Pizzas' }
+  & Pick<Pizzas, 'id' | 'name' | 'price'>
+  & { image?: Maybe<(
+    { __typename?: 'UploadFile' }
+    & Pick<UploadFile, 'formats'>
+  )> }
+);
+
+export const CardFragmentDoc = gql`
+    fragment Card on Pizzas {
+  id
+  name
+  price
+  image {
+    formats
   }
 }
     `;
+export const GetPizzasDocument = gql`
+    query getPizzas {
+  pizzas {
+    ...Card
+  }
+}
+    ${CardFragmentDoc}`;
+export const GetPopularPizzasDocument = gql`
+    query getPopularPizzas {
+  pizzas(limit: 3) {
+    ...Card
+  }
+}
+    ${CardFragmentDoc}`;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 
@@ -1086,6 +1113,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     getPizzas(variables?: GetPizzasQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPizzasQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPizzasQuery>(GetPizzasDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPizzas');
+    },
+    getPopularPizzas(variables?: GetPopularPizzasQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPopularPizzasQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetPopularPizzasQuery>(GetPopularPizzasDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPopularPizzas');
     }
   };
 }
