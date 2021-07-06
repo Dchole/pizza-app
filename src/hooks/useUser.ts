@@ -7,6 +7,7 @@ export interface IUser {
   email?: string
   imageUrl?: string
   isLoggedIn: boolean
+  authMethod: "google" | "local"
 }
 
 const useUser = () => {

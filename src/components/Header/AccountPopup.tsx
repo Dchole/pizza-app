@@ -4,6 +4,8 @@ import MenuList from "@material-ui/core/MenuList"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import Link from "../Link"
+import useUser from "@/hooks/useUser"
+import { fetcher } from "@/utils/fetcher"
 import { accountLinks } from "./links"
 
 interface IAccountPopupProps {
@@ -15,8 +17,16 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
   anchorEl,
   handleClose
 }) => {
-  const logout = () => {
-    handleClose()
+  const { user, mutate } = useUser()
+
+  const logout = async () => {
+    if (user.authMethod === "google") {
+      const GoogleAuth = gapi.auth2.getAuthInstance()
+      GoogleAuth.signOut()
+    }
+
+    await fetcher("/api/logout")
+    mutate()
   }
 
   return (

@@ -1,11 +1,9 @@
 import { useRouter } from "next/router"
-import Script from "next/script"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
 import useUser, { IUser } from "@/hooks/useUser"
-import { init } from "@/lib/google-auth"
 import GoogleIcon from "./GoogleIcon"
 import Link from "../Link"
 import Login from "./Login"
@@ -54,10 +52,6 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
 
   return (
     <>
-      <Script
-        src="https://apis.google.com/js/api.js"
-        onLoad={() => gapi.load("client", init)}
-      ></Script>
       <Typography
         variant={onAuthPage ? "h3" : "h4"}
         component={onAuthPage ? "h1" : "h2"}
