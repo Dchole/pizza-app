@@ -28,11 +28,13 @@ const PageBackdrop: React.FC = ({ children }) => {
       <Slide direction={direction} in={!open}>
         <Paper className={classes.paper}>{children}</Paper>
       </Slide>
-      <div className={classes.cart}>
-        <IconButton>
-          <ShoppingCartIcon />
-        </IconButton>
-      </div>
+      <Slide direction="left" in={!open}>
+        <div className={classes.cart}>
+          <IconButton>
+            <ShoppingCartIcon />
+          </IconButton>
+        </div>
+      </Slide>
     </div>
   )
 }
