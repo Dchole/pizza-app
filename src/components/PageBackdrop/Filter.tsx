@@ -1,5 +1,3 @@
-import "@fontsource/montserrat/500.css"
-
 import { useEffect, useMemo, useRef } from "react"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import OutlinedInput from "@material-ui/core/OutlinedInput"

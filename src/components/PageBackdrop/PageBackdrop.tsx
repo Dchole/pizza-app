@@ -1,3 +1,5 @@
+import "@fontsource/montserrat/500.css"
+
 import { useState, useCallback } from "react"
 import clsx from "clsx"
 import dynamic from "next/dynamic"
@@ -51,7 +53,7 @@ const PageBackdrop: React.FC = ({ children }) => {
         </div>
       )}
       <Slide direction="left" in={!open}>
-        <div className={classes.cartWrapper}>
+        <div className={clsx(classes.hideIconBtn, classes.cartWrapper)}>
           <div className="cart-drawer">
             <IconButton>
               <ShoppingCartIcon />
