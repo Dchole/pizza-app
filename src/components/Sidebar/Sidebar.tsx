@@ -7,9 +7,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import Divider from "@material-ui/core/Divider"
 import CloseIcon from "@material-ui/icons/Close"
-import useUser from "@/hooks/useUser"
+import useGroupLinks from "@/hooks/useGroupLinks"
 import Link from "../Link"
-import { sidebarLinks } from "./links"
 import { useStyles } from "./useStyles"
 
 interface ISidebarProps {
@@ -17,20 +16,9 @@ interface ISidebarProps {
   handleClose: () => void
 }
 
-type TLink = typeof sidebarLinks
-
 const Sidebar: React.FC<ISidebarProps> = ({ open, handleClose }) => {
   const classes = useStyles()
-  const linksGroup = useRef<TLink>([])
-  const { user } = useUser()
-
-  linksGroup.current = sidebarLinks.map((links, index) => {
-    if (index === 0 && !user?.isLoggedIn) {
-      return links.filter((_, index) => index > 1)
-    }
-
-    return links
-  })
+  const linksGroups = useGroupLinks()
 
   return (
     <Drawer
@@ -43,7 +31,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ open, handleClose }) => {
           <CloseIcon />
         </IconButton>
       </div>
-      {linksGroup.current.map((links, index) => (
+      {linksGroups.map((links, index) => (
         <Fragment key={index}>
           {index !== 0 && <Divider />}
           <List className={classes.list}>

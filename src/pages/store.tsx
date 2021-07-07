@@ -38,7 +38,7 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <title>Store</title>
       </Head>
 
-      <PageBackdrop>
+      <PageBackdrop pizzas={pizzas}>
         <main className={classes.main}>
           {pizzas?.map(pizza => (
             <ProductCard key={pizza.id} pizza={pizza} />

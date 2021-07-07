@@ -4,11 +4,15 @@ import Slide from "@material-ui/core/Slide"
 import IconButton from "@material-ui/core/IconButton"
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import Navbar from "./Navbar"
+import SideNav from "./SideNav"
+import Filter from "./Filter"
 import { useStyles } from "./useStyles"
+import { IPizzaProps } from "../Popular"
+import { useCallback } from "react"
 
 type TDirection = "left" | "right"
 
-const PageBackdrop: React.FC = ({ children }) => {
+const PageBackdrop: React.FC<Partial<IPizzaProps>> = ({ pizzas, children }) => {
   const classes = useStyles()
   const [direction, setDirection] = useState<TDirection>("left")
   const [open, setOpen] = useState(false)
@@ -20,7 +24,7 @@ const PageBackdrop: React.FC = ({ children }) => {
     setDirection(direction as TDirection)
   }
 
-  const handleClose = () => setOpen(false)
+  const handleClose = useCallback(() => setOpen(false), [])
 
   return (
     <div className={classes.root}>
@@ -28,6 +32,12 @@ const PageBackdrop: React.FC = ({ children }) => {
       <Slide direction={direction} in={!open}>
         <Paper className={classes.paper}>{children}</Paper>
       </Slide>
+      <div className={direction === "left" ? classes.sidenav : classes.hide}>
+        <SideNav handleClose={handleClose} />
+      </div>
+      <div className={direction === "right" ? classes.filter : classes.hide}>
+        <Filter pizzas={pizzas} handleClose={handleClose} />
+      </div>
       <Slide direction="left" in={!open}>
         <div className={classes.cart}>
           <IconButton>

@@ -24,10 +24,10 @@ const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
     let timeout: NodeJS.Timeout
 
     if (open) {
-      timeout = setTimeout(() => setNavElTransition(open), 350)
+      timeout = setTimeout(() => setNavElTransition(open), 150)
       setCloseBtnTransition(open)
     } else {
-      timeout = setTimeout(() => setCloseBtnTransition(open), 350)
+      timeout = setTimeout(() => setCloseBtnTransition(open), 150)
       setNavElTransition(open)
     }
 
