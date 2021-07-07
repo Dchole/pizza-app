@@ -1,4 +1,6 @@
-import { useMemo } from "react"
+import "@fontsource/montserrat/500.css"
+
+import { useEffect, useMemo, useRef } from "react"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import OutlinedInput from "@material-ui/core/OutlinedInput"
 import List from "@material-ui/core/List"
@@ -29,11 +31,13 @@ const useStyles = makeStyles(theme =>
 )
 
 interface IFilterProps {
+  showing: boolean
   handleClose: () => void
 }
 
-const Filter: React.FC<IFilterProps> = ({ handleClose }) => {
+const Filter: React.FC<IFilterProps> = ({ showing, handleClose }) => {
   const classes = useStyles()
+  const inputRef = useRef<HTMLInputElement>()
   const { allPizzas, filter, reset } = usePizzaContext()
 
   const {
@@ -45,30 +49,37 @@ const Filter: React.FC<IFilterProps> = ({ handleClose }) => {
     getListboxProps
   } = useAutocomplete({
     id: "pizza-autocomplete",
+    openOnFocus: true,
     options: allPizzas,
+    autoSelect: true,
+    onClose: () => {
+      reset()
+      handleClose()
+    },
     getOptionLabel: option => option.name
   })
 
   useMemo(() => {
-    if ((value as Exclude<typeof value, string>)?.name === inputValue) {
+    if ((value as Exclude<typeof value, string>)?.name === inputValue)
       filter([value as Exclude<typeof value, string>])
-      handleClose()
-    } else {
-      reset()
-    }
-  }, [value, inputValue, handleClose, filter, reset])
+  }, [value, inputValue, filter])
+
+  useEffect(() => {
+    showing && inputRef.current.focus()
+  }, [showing])
 
   return (
     <aside className={classes.root}>
       <OutlinedInput
-        id="search-input"
+        {...getInputProps()}
         name="search"
         type="search"
+        inputRef={inputRef}
         placeholder="Search Pizza"
         classes={{ input: classes.input }}
         inputProps={{ "aria-label": "Search pizza" }}
         fullWidth
-        {...getInputProps()}
+        autoCapitalize="words"
       />
       {groupedOptions.length > 0 && (
         <List {...getListboxProps()} classes={{ padding: classes.listPadding }}>
