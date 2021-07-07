@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Toolbar from "@material-ui/core/Toolbar"
 import Grid from "@material-ui/core/Grid"
@@ -7,7 +8,6 @@ import MenuIcon from "@material-ui/icons/Menu"
 import SearchIcon from "@material-ui/icons/Search"
 import CloseIcon from "@material-ui/icons/Close"
 import { useStyles } from "./useStyles"
-import { useEffect, useState } from "react"
 
 interface INavbarProps {
   open: boolean

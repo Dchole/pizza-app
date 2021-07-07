@@ -28,16 +28,17 @@ export const useStyles = makeStyles(theme =>
         padding: theme.spacing(3)
       }
     },
+    aside: {
+      position: "fixed",
+      width: "100%"
+    },
     sidenav: {
-      position: "absolute",
-      width: "100%",
       top: "50%",
       left: "50%",
+      overflowX: "hidden",
       transform: "translate(-50%, -50%)"
     },
     filter: {
-      position: "absolute",
-      width: "100%",
       top: 100
     },
     cartWrapper: {

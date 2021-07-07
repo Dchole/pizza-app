@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
+import clsx from "clsx"
 import dynamic from "next/dynamic"
 import Paper from "@material-ui/core/Paper"
 import Slide from "@material-ui/core/Slide"
@@ -6,40 +7,43 @@ import IconButton from "@material-ui/core/IconButton"
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import Navbar from "./Navbar"
 import { useStyles } from "./useStyles"
-import { useCallback } from "react"
 
 const SideNav = dynamic(() => import("./SideNav"))
 const Filter = dynamic(() => import("./Filter"))
 
-type TDirection = "left" | "right"
+type TDirection = "left" | "right" | "up"
 
 const PageBackdrop: React.FC = ({ children }) => {
   const classes = useStyles()
-  const [direction, setDirection] = useState<TDirection>("left")
+  const [direction, setDirection] = useState<TDirection>("up")
   const [open, setOpen] = useState(false)
+  const [show, setShow] = useState(false)
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true)
+    setShow(true)
 
     const { direction } = event.currentTarget.dataset
     setDirection(direction as TDirection)
   }
+
+  const handleHide = () => setShow(false)
 
   const handleClose = useCallback(() => setOpen(false), [])
 
   return (
     <div className={classes.root}>
       <Navbar open={open} handleOpen={handleOpen} handleClose={handleClose} />
-      <Slide direction={direction} in={!open}>
+      <Slide direction={direction} in={!open} onEntered={handleHide}>
         <Paper className={classes.paper}>{children}</Paper>
       </Slide>
-      {direction === "left" && (
-        <div className={classes.sidenav}>
-          <SideNav handleClose={handleClose} />
+      {show && direction === "left" && (
+        <div className={clsx(classes.aside, classes.sidenav)}>
+          <SideNav />
         </div>
       )}
-      {direction === "right" && (
-        <div className={classes.filter}>
+      {show && direction === "right" && (
+        <div className={clsx(classes.aside, classes.filter)}>
           <Filter
             showing={direction === "right" && open}
             handleClose={handleClose}
