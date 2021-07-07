@@ -7,6 +7,8 @@ import { GraphQLClient } from "graphql-request"
 import { cms } from "cms"
 import { getSdk } from "@/graphql/generated"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
+import { usePizzaContext } from "@/components/PizzaContext"
+import { useEffect } from "react"
 
 const useStyles = makeStyles(
   createStyles({
@@ -31,6 +33,11 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   pizzas
 }) => {
   const classes = useStyles()
+  const { filteredPizzas, getAll } = usePizzaContext()
+
+  useEffect(() => {
+    getAll(pizzas)
+  }, [pizzas, getAll])
 
   return (
     <>
@@ -38,11 +45,13 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <title>Store</title>
       </Head>
 
-      <PageBackdrop pizzas={pizzas}>
+      <PageBackdrop>
         <main className={classes.main}>
-          {pizzas?.map(pizza => (
-            <ProductCard key={pizza.id} pizza={pizza} />
-          ))}
+          {[...(filteredPizzas.length > 0 ? filteredPizzas : pizzas)]?.map(
+            pizza => (
+              <ProductCard key={pizza.id} pizza={pizza} />
+            )
+          )}
         </main>
       </PageBackdrop>
     </>

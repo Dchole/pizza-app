@@ -12,7 +12,7 @@ import { useCallback } from "react"
 
 type TDirection = "left" | "right"
 
-const PageBackdrop: React.FC<Partial<IPizzaProps>> = ({ pizzas, children }) => {
+const PageBackdrop: React.FC = ({ children }) => {
   const classes = useStyles()
   const [direction, setDirection] = useState<TDirection>("left")
   const [open, setOpen] = useState(false)
@@ -36,13 +36,15 @@ const PageBackdrop: React.FC<Partial<IPizzaProps>> = ({ pizzas, children }) => {
         <SideNav handleClose={handleClose} />
       </div>
       <div className={direction === "right" ? classes.filter : classes.hide}>
-        <Filter pizzas={pizzas} handleClose={handleClose} />
+        <Filter handleClose={handleClose} />
       </div>
       <Slide direction="left" in={!open}>
-        <div className={classes.cart}>
-          <IconButton>
-            <ShoppingCartIcon />
-          </IconButton>
+        <div className={classes.cartWrapper}>
+          <div className="cart-drawer">
+            <IconButton>
+              <ShoppingCartIcon />
+            </IconButton>
+          </div>
         </div>
       </Slide>
     </div>

@@ -1,13 +1,10 @@
-import { createStyles, makeStyles } from "@material-ui/core"
+import { useMemo } from "react"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 import OutlinedInput from "@material-ui/core/OutlinedInput"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
-import IconButton from "@material-ui/core/IconButton"
-import InputAdornment from "@material-ui/core/InputAdornment"
-import SearchIcon from "@material-ui/icons/Search"
 import useAutocomplete from "@material-ui/lab/useAutocomplete"
-import { IPizzaProps } from "../Popular"
-import { useMemo, useState } from "react"
+import { usePizzaContext } from "../PizzaContext"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -31,26 +28,35 @@ const useStyles = makeStyles(theme =>
   })
 )
 
-interface IFilterProps extends IPizzaProps {
+interface IFilterProps {
   handleClose: () => void
 }
 
-const Filter: React.FC<IFilterProps> = ({ pizzas, handleClose }) => {
+const Filter: React.FC<IFilterProps> = ({ handleClose }) => {
   const classes = useStyles()
+  const { allPizzas, filter, reset } = usePizzaContext()
 
   const {
     value,
+    inputValue,
     groupedOptions,
     getOptionProps,
     getInputProps,
     getListboxProps
   } = useAutocomplete({
     id: "pizza-autocomplete",
-    options: pizzas,
+    options: allPizzas,
     getOptionLabel: option => option.name
   })
 
-  useMemo(() => value && handleClose(), [value, handleClose])
+  useMemo(() => {
+    if ((value as Exclude<typeof value, string>)?.name === inputValue) {
+      filter([value as Exclude<typeof value, string>])
+      handleClose()
+    } else {
+      reset()
+    }
+  }, [value, inputValue, handleClose, filter, reset])
 
   return (
     <aside className={classes.root}>

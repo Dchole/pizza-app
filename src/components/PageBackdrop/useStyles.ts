@@ -22,6 +22,7 @@ export const useStyles = makeStyles(theme =>
                   0px -1px 1px -1px rgb(0 0 0 / 20%)`,
       position: "relative",
       zIndex: theme.zIndex.appBar,
+      minHeight: "100vh",
 
       [theme.breakpoints.up("sm")]: {
         padding: theme.spacing(3)
@@ -39,16 +40,21 @@ export const useStyles = makeStyles(theme =>
       width: "100%",
       top: 100
     },
-    cart: {
+    cartWrapper: {
       position: "fixed",
       right: 0,
       bottom: 0,
-      padding: theme.spacing(1, 2, 1, 1),
-      backgroundColor: lighten(theme.palette.primary.light, 0.6),
-      boxShadow: theme.shadows[3]
+      zIndex: theme.zIndex.modal,
+      filter: `drop-shadow(-1px 0px 2px rgba(50, 50, 0, 0.3))`,
+
+      "& .cart-drawer": {
+        padding: theme.spacing(1.4, 2, 1),
+        clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0 100%, 0 40%)",
+        backgroundColor: lighten(theme.palette.primary.light, 0.6)
+      }
     },
     hide: {
-      visibility: "hidden"
+      display: "none"
     }
   })
 )
