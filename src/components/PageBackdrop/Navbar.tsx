@@ -1,4 +1,3 @@
-import clsx from "clsx"
 import Image from "next/image"
 import Toolbar from "@material-ui/core/Toolbar"
 import Grid from "@material-ui/core/Grid"
@@ -18,18 +17,18 @@ interface INavbarProps {
 
 const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
   const classes = useStyles()
-  const [openTransition, setOpenTransition] = useState(false) // Transition for elements that appear when closed
-  const [closeTransition, setCloseTransition] = useState(false) // Transition for elements that appear when open
+  const [navElTransition, setNavElTransition] = useState(false)
+  const [closeBtnTransition, setCloseBtnTransition] = useState(false)
 
   useEffect(() => {
     let timeout: NodeJS.Timeout
 
     if (open) {
-      timeout = setTimeout(() => setOpenTransition(open), 350)
-      setCloseTransition(open)
+      timeout = setTimeout(() => setNavElTransition(open), 350)
+      setCloseBtnTransition(open)
     } else {
-      timeout = setTimeout(() => setCloseTransition(open), 350)
-      setOpenTransition(open)
+      timeout = setTimeout(() => setCloseBtnTransition(open), 350)
+      setNavElTransition(open)
     }
 
     return () => clearTimeout(timeout)
@@ -38,7 +37,7 @@ const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
   return (
     <Toolbar component="header" className={classes.toolbar}>
       <Grid alignItems="center" container>
-        <Zoom in={!closeTransition} timeout={150} unmountOnExit mountOnEnter>
+        <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
           <IconButton
             data-direction="left"
             aria-label="open navigation menu"
@@ -47,7 +46,7 @@ const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
             <MenuIcon />
           </IconButton>
         </Zoom>
-        <Zoom in={!closeTransition} timeout={150} unmountOnExit mountOnEnter>
+        <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
           <div>
             <Image
               src="/logo-placeholder.svg"
@@ -58,9 +57,8 @@ const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
           </div>
         </Zoom>
       </Grid>
-      <Zoom in={!closeTransition} timeout={150} unmountOnExit mountOnEnter>
+      <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
         <IconButton
-          className={open ? clsx(classes.navEl, classes.shrink) : classes.navEl}
           data-direction="right"
           aria-label="open search and filter options"
           onClick={handleOpen}
@@ -68,7 +66,7 @@ const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
           <SearchIcon />
         </IconButton>
       </Zoom>
-      <Zoom unmountOnExit mountOnEnter in={openTransition} timeout={150}>
+      <Zoom unmountOnExit mountOnEnter in={navElTransition} timeout={150}>
         <IconButton aria-label="close menu" onClick={handleClose}>
           <CloseIcon />
         </IconButton>

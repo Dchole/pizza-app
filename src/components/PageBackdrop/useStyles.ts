@@ -28,15 +28,6 @@ export const useStyles = makeStyles(theme =>
       padding: theme.spacing(1, 2, 1, 1),
       backgroundColor: lighten(theme.palette.primary.light, 0.6),
       boxShadow: theme.shadows[3]
-    },
-    navEl: {
-      transition: theme.transitions.create("transform", {
-        duration: theme.transitions.duration.shortest,
-        delay: theme.transitions.duration.shortest
-      })
-    },
-    shrink: {
-      transform: "scale(0)"
     }
   })
 )
