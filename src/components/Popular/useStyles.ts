@@ -30,14 +30,6 @@ export const useStyles = makeStyles(theme =>
 
       [theme.breakpoints.up("md")]: {
         justifyContent: "center"
-      },
-
-      "& .details": {
-        marginTop: theme.spacing(2),
-
-        "& *": {
-          display: "block"
-        }
       }
     },
     buttonWrapper: {

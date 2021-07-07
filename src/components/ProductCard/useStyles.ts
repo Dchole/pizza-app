@@ -27,6 +27,14 @@ export const useStyles = makeStyles(theme =>
           backgroundColor: "white",
           borderColor: theme.palette.grey[400]
         }
+      },
+
+      "& .details": {
+        marginTop: theme.spacing(2),
+
+        "& *": {
+          display: "block"
+        }
       }
     },
     buttonBase: {
