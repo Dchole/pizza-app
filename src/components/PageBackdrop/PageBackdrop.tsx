@@ -7,9 +7,11 @@ import Paper from "@material-ui/core/Paper"
 import Slide from "@material-ui/core/Slide"
 import IconButton from "@material-ui/core/IconButton"
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
-import Navbar from "./Navbar"
+import MobileNavbar from "./MobileNavbar"
+import useScreenSize from "@/hooks/usScreenSize"
 import { useStyles } from "./useStyles"
 
+const DesktopNavbar = dynamic(() => import("./DesktopNavbar"))
 const SideNav = dynamic(() => import("./SideNav"))
 const Filter = dynamic(() => import("./Filter"))
 
@@ -20,6 +22,7 @@ const PageBackdrop: React.FC = ({ children }) => {
   const [direction, setDirection] = useState<TDirection>("up")
   const [open, setOpen] = useState(false)
   const [show, setShow] = useState(false)
+  const mobile = useScreenSize()
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true)
@@ -35,7 +38,15 @@ const PageBackdrop: React.FC = ({ children }) => {
 
   return (
     <div className={classes.root}>
-      <Navbar open={open} handleOpen={handleOpen} handleClose={handleClose} />
+      {mobile ? (
+        <MobileNavbar
+          open={open}
+          handleOpen={handleOpen}
+          handleClose={handleClose}
+        />
+      ) : (
+        <DesktopNavbar />
+      )}
       <Slide direction={direction} in={!open} onEntered={handleHide}>
         <Paper className={classes.paper}>{children}</Paper>
       </Slide>
@@ -53,7 +64,7 @@ const PageBackdrop: React.FC = ({ children }) => {
         </div>
       )}
       <Slide direction="left" in={!open}>
-        <div className={clsx(classes.hideIconBtn, classes.cartWrapper)}>
+        <div className={clsx(classes.hideOnLarge, classes.cartWrapper)}>
           <div className="cart-drawer">
             <IconButton>
               <ShoppingCartIcon />

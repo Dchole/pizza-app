@@ -6,54 +6,9 @@ export const useStyles = makeStyles(theme =>
       backgroundColor: lighten(theme.palette.primary.light, 0.6),
       paddingTop: 70
     },
-    toolbar: {
-      paddingTop: 8,
-      paddingBottom: 8,
-      height: 70,
-      top: 0,
-      position: "fixed",
-      width: "100%",
-      zIndex: 0,
-
-      "& .MuiGrid-root": {
-        width: "unset"
-      },
-
-      [theme.breakpoints.up("sm")]: {
-        display: "flex",
-        gap: "2rem",
-        justifyContent: "space-between"
-      }
-    },
-    nav: {
-      [theme.breakpoints.up("sm")]: {
-        display: "flex"
-      }
-    },
-    navLinks: {
-      display: "flex",
-      listStyle: "none",
-      gap: "2rem",
-
-      "& a": {
-        fontFamily: theme.typography.h1.fontFamily,
-        fontSize: "1.12rem",
-        color: theme.palette.grey[800],
-
-        "&:hover": {
-          textDecoration: "none"
-        }
-      }
-    },
-    hideIconBtn: {
+    hideOnLarge: {
       [theme.breakpoints.up("sm")]: {
         display: "none"
-      }
-    },
-    hideOnLarge: {
-      display: "none",
-      [theme.breakpoints.up("sm")]: {
-        display: "block"
       }
     },
     paper: {
@@ -97,37 +52,6 @@ export const useStyles = makeStyles(theme =>
     },
     hide: {
       display: "none"
-    },
-    inline: {
-      display: "flex",
-      gap: 8,
-      alignItems: "center"
-    },
-    avatar: {
-      padding: 8,
-
-      "& .MuiAvatar-root": {
-        width: 45,
-        height: 45
-      }
-    },
-    inputBase: {
-      backgroundColor: "#fff8",
-      padding: theme.spacing(0.2, 2),
-      flexGrow: 1,
-      maxWidth: "30%",
-      fontFamily: theme.typography.h1.fontFamily,
-      transition: theme.transitions.create("backgound-color", {
-        duration: theme.transitions.duration.shortest
-      }),
-
-      "&:hover, &:focus-within": {
-        backgroundColor: "#fffa"
-      },
-
-      "&:focus-within": {
-        outline: "2px solid #454545"
-      }
     }
   })
 )

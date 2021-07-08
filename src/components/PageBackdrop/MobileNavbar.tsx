@@ -1,34 +1,28 @@
-import { useEffect, useState } from "react"
-import clsx from "clsx"
 import Image from "next/image"
 import Toolbar from "@material-ui/core/Toolbar"
 import Grid from "@material-ui/core/Grid"
 import Zoom from "@material-ui/core/Zoom"
 import IconButton from "@material-ui/core/IconButton"
-import Avatar from "@material-ui/core/Avatar"
-import Badge from "@material-ui/core/Badge"
-import InputBase from "@material-ui/core/InputBase"
 import MenuIcon from "@material-ui/icons/Menu"
-import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import SearchIcon from "@material-ui/icons/Search"
 import CloseIcon from "@material-ui/icons/Close"
-import Autocomplete from "@material-ui/lab/Autocomplete"
-import Link from "../Link"
-import { useStyles } from "./useStyles"
-import { navLinks } from "../Header/links"
-import { usePizzaContext } from "../PizzaContext"
+import { useEffect, useState } from "react"
+import { useMobileNavStyles } from "./useMobileNavStyles"
 
-interface INavbarProps {
+interface IMobileNavbarProps {
   open: boolean
   handleClose: () => void
   handleOpen: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
-  const classes = useStyles()
+const MobileNavbar: React.FC<IMobileNavbarProps> = ({
+  open,
+  handleOpen,
+  handleClose
+}) => {
+  const classes = useMobileNavStyles()
   const [navElTransition, setNavElTransition] = useState(false)
   const [closeBtnTransition, setCloseBtnTransition] = useState(false)
-  const { allPizzas } = usePizzaContext()
 
   useEffect(() => {
     let timeout: NodeJS.Timeout
@@ -52,7 +46,6 @@ const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
             data-direction="left"
             aria-label="open navigation menu"
             onClick={handleOpen}
-            className={classes.hideIconBtn}
           >
             <MenuIcon />
           </IconButton>
@@ -67,22 +60,12 @@ const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
             />
           </div>
         </Zoom>
-        <nav className={clsx(classes.hideOnLarge, classes.nav)}>
-          <ul className={classes.navLinks}>
-            {navLinks.map(({ label, path }, index) => (
-              <li key={index}>
-                <Link href={path}>{label}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
       </Grid>
       <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
         <IconButton
           data-direction="right"
           aria-label="open search and filter options"
           onClick={handleOpen}
-          className={classes.hideIconBtn}
         >
           <SearchIcon />
         </IconButton>
@@ -92,37 +75,8 @@ const Navbar: React.FC<INavbarProps> = ({ open, handleOpen, handleClose }) => {
           <CloseIcon />
         </IconButton>
       </Zoom>
-      <Autocomplete
-        id="search-input"
-        options={allPizzas}
-        getOptionLabel={option => option.name}
-        className={clsx(classes.hideOnLarge, classes.inputBase)}
-        renderInput={params => (
-          <div ref={params.InputProps.ref}>
-            <InputBase {...params.inputProps} placeholder="Search" />
-          </div>
-        )}
-      />
-      <div className={classes.inline}>
-        <Badge>
-          <IconButton
-            component={Link}
-            href="/cart"
-            aria-label="cart"
-            className={classes.hideOnLarge}
-          >
-            <ShoppingCartIcon />
-          </IconButton>
-        </Badge>
-        <IconButton
-          aria-label="account"
-          className={clsx(classes.hideOnLarge, classes.avatar)}
-        >
-          <Avatar />
-        </IconButton>
-      </div>
     </Toolbar>
   )
 }
 
-export default Navbar
+export default MobileNavbar
