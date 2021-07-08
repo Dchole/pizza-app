@@ -11,8 +11,6 @@ export default withSession(async (req, res) => {
       const userSession = req.session.get<IUser>("user")
       if (!userSession) throw new Error("Unauthenticated")
 
-      console.log(userSession)
-
       const { value } = await db
         .collection("users")
         .findOneAndUpdate(
