@@ -1,10 +1,8 @@
 import Typography from "@material-ui/core/Typography"
-import useScreenSize from "@/hooks/usScreenSize"
 import { useStyles } from "./useStyles"
 
 const Brief = () => {
   const classes = useStyles()
-  const mobile = useScreenSize()
 
   return (
     <div className={classes.root}>

@@ -4,12 +4,19 @@ import IconButton from "@material-ui/core/IconButton"
 import Avatar from "@material-ui/core/Avatar"
 import Badge from "@material-ui/core/Badge"
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
+import AccountPopup from "../Header/AccountPopup"
 import Link from "../Link"
 import { navLinks } from "../Header/links"
 import { useDesktopNavStyles } from "./useDesktopNavStyles"
+import { useState } from "react"
 
 const DesktopNavbar = () => {
   const classes = useDesktopNavStyles()
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget)
+  const handleClose = () => setAnchorEl(null)
 
   return (
     <Toolbar component="header" className={classes.toolbar}>
@@ -29,10 +36,15 @@ const DesktopNavbar = () => {
             <ShoppingCartIcon />
           </IconButton>
         </Badge>
-        <IconButton aria-label="account" className={classes.avatar}>
+        <IconButton
+          aria-label="account"
+          className={classes.avatar}
+          onClick={handleOpen}
+        >
           <Avatar />
         </IconButton>
       </div>
+      <AccountPopup anchorEl={anchorEl} handleClose={handleClose} />
     </Toolbar>
   )
 }
