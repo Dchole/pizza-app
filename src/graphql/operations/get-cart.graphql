@@ -1,0 +1,7 @@
+#import "./pizza-fragment.graphql"
+
+query getCartPizzas($filter: JSON) {
+  pizzas(where: $filter) {
+    ...Card
+  }
+}

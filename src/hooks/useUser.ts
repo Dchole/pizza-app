@@ -9,11 +9,15 @@ export interface IUser {
   imageUrl?: string
   isLoggedIn: boolean
   authMethod: "google" | "local"
+  cart: {
+    id: string
+    quantity: number
+  }[]
 }
 
 const useUser = () => {
-  const { data: user, mutate } = useSWR<IUser>("/api/user")
-  return { user, mutate }
+  const { data: user, ...rest } = useSWR<Partial<IUser>>("/api/user")
+  return { user, ...rest }
 }
 
 export default useUser

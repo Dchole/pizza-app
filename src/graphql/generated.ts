@@ -1048,6 +1048,19 @@ export type UpdateUserPayload = {
   user?: Maybe<UsersPermissionsUser>;
 };
 
+export type GetCartPizzasQueryVariables = Exact<{
+  filter?: Maybe<Scalars['JSON']>;
+}>;
+
+
+export type GetCartPizzasQuery = (
+  { __typename?: 'Query' }
+  & { pizzas?: Maybe<Array<Maybe<(
+    { __typename?: 'Pizzas' }
+    & CardFragment
+  )>>> }
+);
+
 export type GetPizzasQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1089,6 +1102,13 @@ export const CardFragmentDoc = gql`
   }
 }
     `;
+export const GetCartPizzasDocument = gql`
+    query getCartPizzas($filter: JSON) {
+  pizzas(where: $filter) {
+    ...Card
+  }
+}
+    ${CardFragmentDoc}`;
 export const GetPizzasDocument = gql`
     query getPizzas {
   pizzas {
@@ -1111,6 +1131,9 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName) => action();
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    getCartPizzas(variables?: GetCartPizzasQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCartPizzasQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCartPizzasQuery>(GetCartPizzasDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCartPizzas');
+    },
     getPizzas(variables?: GetPizzasQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPizzasQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPizzasQuery>(GetPizzasDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPizzas');
     },

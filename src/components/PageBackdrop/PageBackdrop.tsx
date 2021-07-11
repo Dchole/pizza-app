@@ -1,5 +1,6 @@
 import "@fontsource/montserrat/500.css"
 
+import { useRouter } from "next/router"
 import { useState, useCallback } from "react"
 import clsx from "clsx"
 import dynamic from "next/dynamic"
@@ -18,6 +19,7 @@ const Filter = dynamic(() => import("./Filter"))
 type TDirection = "left" | "right" | "up"
 
 const PageBackdrop: React.FC = ({ children }) => {
+  const { pathname } = useRouter()
   const classes = useStyles()
   const [direction, setDirection] = useState<TDirection>("up")
   const [open, setOpen] = useState(false)
@@ -63,15 +65,17 @@ const PageBackdrop: React.FC = ({ children }) => {
           />
         </div>
       )}
-      <Slide direction="left" in={!open}>
-        <div className={clsx(classes.hideOnLarge, classes.cartWrapper)}>
-          <div className="cart-drawer">
-            <IconButton>
-              <ShoppingCartIcon />
-            </IconButton>
+      {pathname !== "/cart" && (
+        <Slide direction="left" in={!open}>
+          <div className={clsx(classes.hideOnLarge, classes.cartWrapper)}>
+            <div className="cart-drawer">
+              <IconButton>
+                <ShoppingCartIcon />
+              </IconButton>
+            </div>
           </div>
-        </div>
-      </Slide>
+        </Slide>
+      )}
     </div>
   )
 }
