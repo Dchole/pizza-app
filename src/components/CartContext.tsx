@@ -8,13 +8,10 @@ import CartDatabase, { ICartTable } from "@/indexedDB/cart"
 
 type TPizza = GetPizzasQuery["pizzas"][0]
 
-interface ICart {
-  id: string
-  quantity: number
-}
+type TCart = Pick<ICartTable, "id" | "quantity">[]
 
 interface ICartContextProps {
-  cart: ICart[]
+  cart: TCart
   totalAmount: number
   addItem: (pizza: TPizza) => () => void
   removeItem: (pizza: TPizza) => () => void
@@ -24,7 +21,7 @@ interface ICartContextProps {
   isItemInCart: (id: string) => boolean
 }
 
-const fetchCart = async (cart: ICart[]) => {
+const fetchCart = async (cart: TCart) => {
   const client = new GraphQLClient(cmsLinks.api)
   const sdk = getSdk(client)
   const { pizzas } = await sdk.getCartPizzas({
@@ -42,7 +39,7 @@ const fetchCart = async (cart: ICart[]) => {
 const CartContext = createContext({} as ICartContextProps)
 
 const CartContextProvider: React.FC = ({ children }) => {
-  const [cart, setCart] = useState<ICart[]>([])
+  const [cart, setCart] = useState<TCart>([])
   const dbRef = useRef<CartDatabase>()
   const [totalAmount, setTotalAmount] = useState(0)
   const [cartItems, setCartItems] = useState<ICartTable[]>([])
@@ -88,12 +85,13 @@ const CartContextProvider: React.FC = ({ children }) => {
 
         const { current: db } = dbRef
         const cachedCart = await db.getCart.toArray()
+        setCartItems(cachedCart)
 
         const cartData = user?.cart?.length
           ? user.cart
           : cachedCart.map(item => ({
               id: item.id,
-              quantity: item.quantity ?? 0
+              quantity: item.quantity ?? 1
             }))
 
         if (user?.cart?.length && !cachedCart.length) {

@@ -3,15 +3,17 @@ import Toolbar from "@material-ui/core/Toolbar"
 import IconButton from "@material-ui/core/IconButton"
 import Avatar from "@material-ui/core/Avatar"
 import Badge from "@material-ui/core/Badge"
-import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
+import BagIcon from "@material-ui/icons/LocalMall"
 import AccountPopup from "../Header/AccountPopup"
 import Link from "../Link"
 import { navLinks } from "../Header/links"
-import { useDesktopNavStyles } from "./useDesktopNavStyles"
+import { useCart } from "../CartContext"
 import { useState } from "react"
+import { useDesktopNavStyles } from "./useDesktopNavStyles"
 
 const DesktopNavbar = () => {
   const classes = useDesktopNavStyles()
+  const { cart } = useCart()
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) =>
@@ -31,11 +33,16 @@ const DesktopNavbar = () => {
         </ul>
       </nav>
       <div className={classes.inline}>
-        <Badge>
-          <IconButton component={Link} href="/cart" aria-label="cart">
-            <ShoppingCartIcon />
-          </IconButton>
-        </Badge>
+        <IconButton component={Link} href="/cart" aria-label="cart">
+          <Badge
+            max={9}
+            color="error"
+            overlap="circle"
+            badgeContent={cart.length}
+          >
+            <BagIcon />
+          </Badge>
+        </IconButton>
         <IconButton
           aria-label="account"
           className={classes.avatar}
