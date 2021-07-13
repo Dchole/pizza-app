@@ -1,101 +1,133 @@
 import useUser from "@/hooks/useUser"
-import { getSdk } from "@/graphql/generated"
-import { cms } from "cms"
+import { GetPizzasQuery, getSdk } from "@/graphql/generated"
+import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
-import { createContext, useContext, useEffect, useState } from "react"
-import Cart, { IPayload } from "../indexedDB/cart"
+import { createContext, useContext, useEffect, useRef, useState } from "react"
+import { fetcher } from "@/utils/fetcher"
+import CartDatabase, { ICartTable } from "@/indexedDB/cart"
 
-interface ICartContextProps {
-  cart: ICart[]
-  totalAmount: number
-  addItem: (id: string) => void
-  removeItem: (id: string) => void
-  increment: (id: string) => void
-  decrement: (id: string) => void
-  cartItems: IPayload[]
-}
+type TPizza = GetPizzasQuery["pizzas"][0]
 
 interface ICart {
   id: string
   quantity: number
 }
 
+interface ICartContextProps {
+  cart: ICart[]
+  totalAmount: number
+  addItem: (pizza: TPizza) => () => void
+  removeItem: (pizza: TPizza) => () => void
+  increment: (event: React.MouseEvent<HTMLButtonElement>) => void
+  decrement: (event: React.MouseEvent<HTMLButtonElement>) => void
+  cartItems: ICartTable[]
+  isItemInCart: (id: string) => boolean
+}
+
+const fetchCart = async (cart: ICart[]) => {
+  const client = new GraphQLClient(cmsLinks.api)
+  const sdk = getSdk(client)
+  const { pizzas } = await sdk.getCartPizzas({
+    filter: { id_in: cart.map(({ id }) => id) }
+  })
+
+  const networkCart = pizzas.map(pizza => ({
+    ...cart.find(({ id }) => id === pizza.id),
+    ...pizza
+  }))
+
+  return networkCart
+}
+
 const CartContext = createContext({} as ICartContextProps)
 
 const CartContextProvider: React.FC = ({ children }) => {
   const [cart, setCart] = useState<ICart[]>([])
+  const dbRef = useRef<CartDatabase>()
   const [totalAmount, setTotalAmount] = useState(0)
-  const [cartItems, setCartItems] = useState<IPayload[]>([])
-  const { user } = useUser()
+  const [cartItems, setCartItems] = useState<ICartTable[]>([])
+  const { user, mutate } = useUser()
 
-  const addItem = (id: string) => {
-    setCart(prevCart => [...prevCart, { id, quantity: 1 }])
+  const addItem = (pizza: TPizza) => () => {
+    setCart(prevCart => [...prevCart, { id: pizza.id, quantity: 1 }])
+    dbRef.current.getCart.add({ ...pizza, quantity: 1 })
   }
 
-  const removeItem = (id: string) => {
-    setCart(prevCart => prevCart.filter(pizza => pizza.id !== id))
+  const removeItem = (pizza: TPizza) => () => {
+    setCart(prevCart => prevCart.filter(({ id }) => id !== pizza.id))
+    dbRef.current.getCart.delete(pizza.id)
   }
 
-  const increment = (id: string) => {
+  const increment = (event: React.MouseEvent<HTMLButtonElement>) => {
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === event.currentTarget.dataset.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
       )
     )
   }
 
-  const decrement = (id: string) => {
+  const decrement = (event: React.MouseEvent<HTMLButtonElement>) => {
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+        item.id === event.currentTarget.dataset.id
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
       )
     )
   }
+
+  const isItemInCart = (id: string) =>
+    Boolean(cart.find(item => item.id === id))
 
   useEffect(() => {
-    ;(async () => {
-      const cache = new Cart()
-      const cachedCart = await cache.getCart()
+    if (!cart.length) {
+      ;(async () => {
+        dbRef.current = new CartDatabase()
 
-      const cartData = user?.cart.length
-        ? user.cart
-        : cachedCart.map(item => ({
-            id: item.id,
-            quantity: item.quantity
-          }))
+        const { current: db } = dbRef
+        const cachedCart = await db.getCart.toArray()
 
-      if (user?.cart.length && !cachedCart.length) {
-        const client = new GraphQLClient(`${cms}/graphql`)
-        const sdk = getSdk(client)
-        const { pizzas } = await sdk.getCartPizzas({
-          filter: { id_in: user.cart.map(({ id }) => id) }
-        })
+        const cartData = user?.cart?.length
+          ? user.cart
+          : cachedCart.map(item => ({
+              id: item.id,
+              quantity: item.quantity ?? 0
+            }))
 
-        const networkCart = pizzas.map(pizza => ({
-          ...user.cart.find(({ id }) => id === pizza.id),
-          ...pizza
-        }))
+        if (user?.cart?.length && !cachedCart.length) {
+          const networkCart = await fetchCart(user.cart)
+          setCartItems(networkCart)
 
-        setCartItems(networkCart)
-        await cache.saveCart(networkCart)
-      }
+          await db.getCart.bulkPut(networkCart)
+        }
 
-      setCartItems(cachedCart)
-      setCart(cartData)
-    })()
-  }, [user?.cart])
+        setCart(cartData)
+      })()
+    }
+  }, [user?.cart, cart.length])
 
   useEffect(() => {
     const amount = cartItems.reduce(
       (accumulator, currentValue) =>
         accumulator +
         currentValue.price *
-          cart.find(({ id }) => id === currentValue.id).quantity,
+          cart.find(({ id }) => id === currentValue.id)?.quantity,
       0
     )
 
     setTotalAmount(amount)
   }, [cart, cartItems])
+
+  useEffect(() => {
+    if (cart.length && user?.isLoggedIn) {
+      fetcher("/api/add-to-cart", {
+        method: "POST",
+        body: JSON.stringify(cart)
+      }).then(mutate)
+    }
+  }, [cart, user, mutate])
 
   return (
     <CartContext.Provider
@@ -106,7 +138,8 @@ const CartContextProvider: React.FC = ({ children }) => {
         increment,
         decrement,
         cartItems,
-        totalAmount
+        totalAmount,
+        isItemInCart
       }}
     >
       {children}

@@ -15,9 +15,12 @@ export default withSession(async (req, res) => {
         .collection("users")
         .findOneAndUpdate(
           { _id: new ObjectID(userSession._id) },
-          { $set: { cart: req.body } },
+          { $set: { cart: JSON.parse(req.body) } },
           { returnDocument: "after" }
         )
+
+      req.session.set("user", value)
+      await req.session.save()
 
       res.json(value.cart)
     } catch (error) {

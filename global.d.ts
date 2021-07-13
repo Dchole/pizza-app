@@ -13,3 +13,9 @@ declare namespace NodeJS {
     mongo: IMongoConfig
   }
 }
+
+interface CartDBWindow extends Window {
+  db: CartDatabase
+}
+
+declare var window: CartDBWindow

@@ -6,7 +6,7 @@ import PageBackdrop from "@/components/PageBackdrop"
 import ProductCard from "@/components/ProductCard"
 import { IPizzaProps } from "@/components/Popular"
 import { GraphQLClient } from "graphql-request"
-import { cms } from "cms"
+import { cmsLinks } from "cms"
 import { getSdk } from "@/graphql/generated"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { usePizzaContext } from "@/components/PizzaContext"
@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme =>
 )
 
 export const getStaticProps: GetStaticProps<IPizzaProps> = async () => {
-  const client = new GraphQLClient(`${cms}/graphql`)
+  const client = new GraphQLClient(cmsLinks.api)
   const sdk = getSdk(client)
   const { pizzas } = await sdk.getPizzas()
 

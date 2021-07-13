@@ -3,19 +3,22 @@ import ButtonBase from "@material-ui/core/ButtonBase"
 import Typography from "@material-ui/core/Typography"
 import IconButton from "@material-ui/core/IconButton"
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
+import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
 import { GetPizzasQuery } from "@/graphql/generated"
 import { useStyles } from "./useStyles"
-import { cms } from "cms"
+import { cmsLinks } from "cms"
+import { useCart } from "../CartContext"
 
 export interface IProductProps {
   pizza: GetPizzasQuery["pizzas"][0]
 }
 
 const loader = ({ src }: { src: string; width: number; quality: number }) =>
-  `${cms}${src}`
+  `${cmsLinks.hostname}${src}`
 
 const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
   const classes = useStyles()
+  const { addItem, removeItem, isItemInCart } = useCart()
 
   return (
     <div className={classes.root}>
@@ -52,8 +55,15 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
           </Typography>
         </div>
       </ButtonBase>
-      <IconButton aria-label={`add ${pizza.name} to shopping cart`}>
-        <AddShoppingCartIcon />
+      <IconButton
+        aria-label={`add ${pizza.name} to shopping cart`}
+        onClick={isItemInCart(pizza.id) ? removeItem(pizza) : addItem(pizza)}
+      >
+        {isItemInCart(pizza.id) ? (
+          <RemoveShoppingCartIcon />
+        ) : (
+          <AddShoppingCartIcon />
+        )}
       </IconButton>
     </div>
   )
