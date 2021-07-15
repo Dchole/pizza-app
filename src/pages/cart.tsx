@@ -1,16 +1,23 @@
-import CircularProgress from "@material-ui/core/CircularProgress"
+import Container from "@material-ui/core/Container"
 import PageBackdrop from "@/components/PageBackdrop"
-import { createStyles, makeStyles } from "@material-ui/core/styles"
 import CartItem from "@/components/CartItem"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { useCart } from "@/components/CartContext"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
     root: {
-      display: "flex",
-      flexDirection: "column",
+      display: "grid",
       gap: 16,
-      backgroundColor: theme.palette.background.default
+      backgroundColor: theme.palette.background.default,
+      height: "100%",
+      width: "100%",
+
+      [theme.breakpoints.up("sm")]: {
+        gridTemplateColumns: "1fr 1fr",
+        backgroundColor: "white",
+        gap: 24
+      }
     }
   })
 )
@@ -21,11 +28,11 @@ const Cart = () => {
 
   return (
     <PageBackdrop>
-      <main className={classes.root}>
+      <Container maxWidth="md" className={classes.root}>
         {cartItems.map(item => (
           <CartItem key={item.id} item={item} />
         ))}
-      </main>
+      </Container>
     </PageBackdrop>
   )
 }
