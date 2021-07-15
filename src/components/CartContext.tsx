@@ -7,7 +7,6 @@ import { fetcher } from "@/utils/fetcher"
 import CartDatabase, { ICartTable } from "@/indexedDB/cart"
 
 type TPizza = GetPizzasQuery["pizzas"][0]
-
 type TCart = Pick<ICartTable, "id" | "quantity">[]
 
 interface ICartContextProps {
@@ -56,21 +55,21 @@ const CartContextProvider: React.FC = ({ children }) => {
   }
 
   const increment = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { id } = event.currentTarget.dataset
+
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === event.currentTarget.dataset.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     )
   }
 
   const decrement = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { id } = event.currentTarget.dataset
+
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === event.currentTarget.dataset.id
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
+        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
       )
     )
   }
@@ -109,14 +108,25 @@ const CartContextProvider: React.FC = ({ children }) => {
   useEffect(() => {
     const amount = cartItems.reduce(
       (accumulator, currentValue) =>
-        accumulator +
-        currentValue.price *
-          cart.find(({ id }) => id === currentValue.id)?.quantity,
+        accumulator + currentValue.price * currentValue.quantity,
       0
     )
 
     setTotalAmount(amount)
-  }, [cart, cartItems])
+  }, [cartItems])
+
+  useEffect(() => {
+    const updatedList = (c: ICartTable[]) =>
+      c.map(item => ({ ...item, ...cart.find(({ id }) => id === item.id) }))
+
+    setCartItems(updatedList)
+
+    const { current: db } = dbRef
+
+    db.getCart
+      .toArray()
+      .then(existingCart => db.getCart.bulkPut(updatedList(existingCart)))
+  }, [cart])
 
   useEffect(() => {
     if (cart.length && user?.isLoggedIn) {
