@@ -4,17 +4,15 @@ import Typography from "@material-ui/core/Typography"
 import IconButton from "@material-ui/core/IconButton"
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
+import Link from "../Link"
 import { GetPizzasQuery } from "@/graphql/generated"
-import { useStyles } from "./useStyles"
-import { cmsLinks } from "cms"
+import { loader } from "@/utils/imageLoader"
 import { useCart } from "../CartContext"
+import { useStyles } from "./useStyles"
 
 export interface IProductProps {
   pizza: GetPizzasQuery["pizzas"][0]
 }
-
-const loader = ({ src }: { src: string; width: number; quality: number }) =>
-  `${cmsLinks.hostname}${src}`
 
 const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
   const classes = useStyles()
@@ -23,6 +21,8 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
   return (
     <div className={classes.root}>
       <ButtonBase
+        component={Link}
+        href={`/pizza/${pizza.slug}`}
         className={classes.buttonBase}
         TouchRippleProps={{
           classes: {
@@ -32,6 +32,7 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
           }
         }}
         focusRipple
+        naked
       >
         <Image
           loader={loader}

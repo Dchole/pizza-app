@@ -68,7 +68,7 @@ export type InputId = {
 
 
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Pizzas | PizzasConnection | PizzasAggregator | PizzasAggregatorSum | PizzasAggregatorAvg | PizzasAggregatorMin | PizzasAggregatorMax | PizzasGroupBy | PizzasConnectionId | PizzasConnection_Id | PizzasConnectionCreatedAt | PizzasConnectionUpdatedAt | PizzasConnectionName | PizzasConnectionDescription | PizzasConnectionPrice | PizzasConnectionImage | PizzasConnectionPublished_At | CreatePizzaPayload | UpdatePizzaPayload | DeletePizzaPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnection_Id | UploadFileConnectionCreatedAt | UploadFileConnectionUpdatedAt | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | DeleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnection_Id | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnection_Id | UsersPermissionsUserConnectionCreatedAt | UsersPermissionsUserConnectionUpdatedAt | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | CreateUserPayload | UpdateUserPayload | DeleteUserPayload;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Pizzas | PizzasConnection | PizzasAggregator | PizzasAggregatorSum | PizzasAggregatorAvg | PizzasAggregatorMin | PizzasAggregatorMax | PizzasGroupBy | PizzasConnectionId | PizzasConnection_Id | PizzasConnectionCreatedAt | PizzasConnectionUpdatedAt | PizzasConnectionName | PizzasConnectionDescription | PizzasConnectionPrice | PizzasConnectionImage | PizzasConnectionSlug | PizzasConnectionPublished_At | CreatePizzaPayload | UpdatePizzaPayload | DeletePizzaPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnection_Id | UploadFileConnectionCreatedAt | UploadFileConnectionUpdatedAt | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | DeleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnection_Id | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnection_Id | UsersPermissionsUserConnectionCreatedAt | UsersPermissionsUserConnectionUpdatedAt | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | CreateUserPayload | UpdateUserPayload | DeleteUserPayload;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -206,6 +206,7 @@ export type PizzaInput = {
   description: Scalars['String'];
   price: Scalars['Float'];
   image?: Maybe<Scalars['ID']>;
+  slug?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -221,6 +222,7 @@ export type Pizzas = {
   description: Scalars['String'];
   price: Scalars['Float'];
   image?: Maybe<UploadFile>;
+  slug?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
 };
 
@@ -303,6 +305,12 @@ export type PizzasConnectionPublished_At = {
   connection?: Maybe<PizzasConnection>;
 };
 
+export type PizzasConnectionSlug = {
+  __typename?: 'PizzasConnectionSlug';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PizzasConnection>;
+};
+
 export type PizzasConnectionUpdatedAt = {
   __typename?: 'PizzasConnectionUpdatedAt';
   key?: Maybe<Scalars['DateTime']>;
@@ -325,6 +333,7 @@ export type PizzasGroupBy = {
   description?: Maybe<Array<Maybe<PizzasConnectionDescription>>>;
   price?: Maybe<Array<Maybe<PizzasConnectionPrice>>>;
   image?: Maybe<Array<Maybe<PizzasConnectionImage>>>;
+  slug?: Maybe<Array<Maybe<PizzasConnectionSlug>>>;
   published_at?: Maybe<Array<Maybe<PizzasConnectionPublished_At>>>;
 };
 
@@ -989,6 +998,7 @@ export type EditPizzaInput = {
   description?: Maybe<Scalars['String']>;
   price?: Maybe<Scalars['Float']>;
   image?: Maybe<Scalars['ID']>;
+  slug?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -1061,6 +1071,20 @@ export type GetCartPizzasQuery = (
   )>>> }
 );
 
+export type GetPizzaDetailsQueryVariables = Exact<{
+  filter: Scalars['JSON'];
+}>;
+
+
+export type GetPizzaDetailsQuery = (
+  { __typename?: 'Query' }
+  & { pizzas?: Maybe<Array<Maybe<(
+    { __typename?: 'Pizzas' }
+    & Pick<Pizzas, 'description'>
+    & CardFragment
+  )>>> }
+);
+
 export type GetPizzasQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1085,7 +1109,7 @@ export type GetPopularPizzasQuery = (
 
 export type CardFragment = (
   { __typename?: 'Pizzas' }
-  & Pick<Pizzas, 'id' | 'name' | 'price'>
+  & Pick<Pizzas, 'id' | 'name' | 'price' | 'slug'>
   & { image?: Maybe<(
     { __typename?: 'UploadFile' }
     & Pick<UploadFile, 'formats'>
@@ -1097,6 +1121,7 @@ export const CardFragmentDoc = gql`
   id
   name
   price
+  slug
   image {
     formats
   }
@@ -1106,6 +1131,14 @@ export const GetCartPizzasDocument = gql`
     query getCartPizzas($filter: JSON) {
   pizzas(where: $filter) {
     ...Card
+  }
+}
+    ${CardFragmentDoc}`;
+export const GetPizzaDetailsDocument = gql`
+    query getPizzaDetails($filter: JSON!) {
+  pizzas(where: $filter) {
+    ...Card
+    description
   }
 }
     ${CardFragmentDoc}`;
@@ -1133,6 +1166,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     getCartPizzas(variables?: GetCartPizzasQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCartPizzasQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetCartPizzasQuery>(GetCartPizzasDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCartPizzas');
+    },
+    getPizzaDetails(variables: GetPizzaDetailsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPizzaDetailsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetPizzaDetailsQuery>(GetPizzaDetailsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPizzaDetails');
     },
     getPizzas(variables?: GetPizzasQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPizzasQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPizzasQuery>(GetPizzasDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPizzas');

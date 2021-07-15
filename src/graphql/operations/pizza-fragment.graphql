@@ -2,6 +2,7 @@ fragment Card on Pizzas {
   id
   name
   price
+  slug
   image {
     formats
   }
