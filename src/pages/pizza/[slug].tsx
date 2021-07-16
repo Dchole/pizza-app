@@ -8,13 +8,18 @@ import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
 import PageBackdrop from "@/components/PageBackdrop"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
-import { GetPizzaDetailsQuery, getSdk } from "@/graphql/generated"
+import {
+  Enum_Pizzas_Size,
+  GetPizzaDetailsQuery,
+  getSdk
+} from "@/graphql/generated"
 import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
 import { loader } from "@/utils/imageLoader"
 import { useCart } from "@/components/CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
+import { useState } from "react"
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -121,6 +126,13 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     isItemInCart
   } = useCart()
 
+  const [size, setSize] = useState<Enum_Pizzas_Size>(Enum_Pizzas_Size["Medium"])
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setSize(Enum_Pizzas_Size[event.currentTarget.textContent])
+    selectSize(event)
+  }
+
   return (
     <PageBackdrop>
       <Container component="main" maxWidth="md" disableGutters={mobile}>
@@ -150,38 +162,34 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <Typography color="textSecondary" className={classes.description}>
           {pizza.description}
         </Typography>
-        <ButtonGroup
-          color="secondary"
-          aria-label="choose pizza size"
-          className={classes.sizes}
-          disableElevation
-          data-id={pizza.id}
-        >
-          <Button
-            variant={
-              getItemSize(pizza.id) === "small" ? "contained" : undefined
-            }
-            onClick={selectSize}
+        {cartItems.some(({ id }) => id === pizza.id) && (
+          <ButtonGroup
+            color="secondary"
+            aria-label="choose pizza size"
+            className={classes.sizes}
+            disableElevation
+            data-id={pizza.id}
           >
-            Small
-          </Button>
-          <Button
-            variant={
-              getItemSize(pizza.id) === "medium" ? "contained" : undefined
-            }
-            onClick={selectSize}
-          >
-            Medium
-          </Button>
-          <Button
-            variant={
-              getItemSize(pizza.id) === "large" ? "contained" : undefined
-            }
-            onClick={selectSize}
-          >
-            Large
-          </Button>
-        </ButtonGroup>
+            <Button
+              variant={size === "small" ? "contained" : undefined}
+              onClick={handleClick}
+            >
+              Small
+            </Button>
+            <Button
+              variant={size === "medium" ? "contained" : undefined}
+              onClick={handleClick}
+            >
+              Medium
+            </Button>
+            <Button
+              variant={size === "large" ? "contained" : undefined}
+              onClick={handleClick}
+            >
+              Large
+            </Button>
+          </ButtonGroup>
+        )}
         <div className={classes.actions}>
           <Button
             variant="outlined"
