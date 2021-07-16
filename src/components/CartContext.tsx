@@ -46,32 +46,36 @@ const CartContextProvider: React.FC = ({ children }) => {
 
   const addItem = (pizza: TPizza) => () => {
     setCart(prevCart => [...prevCart, { id: pizza.id, quantity: 1 }])
-    dbRef.current.getCart.add({ ...pizza, quantity: 1 })
+    setCartItems(prevCartItems => [...prevCartItems, { ...pizza, quantity: 1 }])
   }
 
   const removeItem = (pizza: TPizza) => () => {
     setCart(prevCart => prevCart.filter(({ id }) => id !== pizza.id))
-    dbRef.current.getCart.delete(pizza.id)
+    setCartItems(prevCart => prevCart.filter(({ id }) => id !== pizza.id))
   }
 
   const increment = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { id } = event.currentTarget.dataset
 
-    setCart(prevCart =>
-      prevCart.map(item =>
+    const updatedList = (c: ICartTable[]) =>
+      c.map(item =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
-    )
+
+    setCart(updatedList)
+    setCartItems(updatedList)
   }
 
   const decrement = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { id } = event.currentTarget.dataset
 
-    setCart(prevCart =>
-      prevCart.map(item =>
+    const updatedList = (c: ICartTable[]) =>
+      c.map(item =>
         item.id === id ? { ...item, quantity: item.quantity - 1 } : item
       )
-    )
+
+    setCart(updatedList)
+    setCartItems(updatedList)
   }
 
   const isItemInCart = (id: string) =>
@@ -113,20 +117,10 @@ const CartContextProvider: React.FC = ({ children }) => {
     )
 
     setTotalAmount(amount)
-  }, [cartItems])
-
-  useEffect(() => {
-    const updatedList = (c: ICartTable[]) =>
-      c.map(item => ({ ...item, ...cart.find(({ id }) => id === item.id) }))
-
-    setCartItems(updatedList)
 
     const { current: db } = dbRef
-
-    db.getCart
-      .toArray()
-      .then(existingCart => db.getCart.bulkPut(updatedList(existingCart)))
-  }, [cart])
+    db.getCart.bulkPut(cartItems)
+  }, [cartItems])
 
   useEffect(() => {
     if (cart.length && user?.isLoggedIn) {
