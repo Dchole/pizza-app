@@ -18,6 +18,7 @@ export const useStyles = makeStyles(theme =>
                   0px -1px 1px -1px rgb(0 0 0 / 20%)`,
       position: "relative",
       zIndex: theme.zIndex.appBar,
+      minHeight: "80vh",
 
       "@media(max-width: 320px)": {
         padding: theme.spacing(1, 1, 4)

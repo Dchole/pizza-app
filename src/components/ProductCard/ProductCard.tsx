@@ -52,7 +52,7 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
             align="center"
             color="textSecondary"
           >
-            ₵ {pizza.price}
+            ₵ {pizza.price_of_medium}
           </Typography>
         </div>
       </ButtonBase>

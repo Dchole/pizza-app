@@ -36,6 +36,12 @@ export type AdminUser = {
 
 
 
+export enum Enum_Pizzas_Size {
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large'
+}
+
 export type FileInfoInput = {
   name?: Maybe<Scalars['String']>;
   alternativeText?: Maybe<Scalars['String']>;
@@ -68,7 +74,7 @@ export type InputId = {
 
 
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Pizzas | PizzasConnection | PizzasAggregator | PizzasAggregatorSum | PizzasAggregatorAvg | PizzasAggregatorMin | PizzasAggregatorMax | PizzasGroupBy | PizzasConnectionId | PizzasConnection_Id | PizzasConnectionCreatedAt | PizzasConnectionUpdatedAt | PizzasConnectionName | PizzasConnectionDescription | PizzasConnectionPrice | PizzasConnectionImage | PizzasConnectionSlug | PizzasConnectionPublished_At | CreatePizzaPayload | UpdatePizzaPayload | DeletePizzaPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnection_Id | UploadFileConnectionCreatedAt | UploadFileConnectionUpdatedAt | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | DeleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnection_Id | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnection_Id | UsersPermissionsUserConnectionCreatedAt | UsersPermissionsUserConnectionUpdatedAt | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | CreateUserPayload | UpdateUserPayload | DeleteUserPayload;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Pizzas | PizzasConnection | PizzasAggregator | PizzasAggregatorSum | PizzasAggregatorAvg | PizzasAggregatorMin | PizzasAggregatorMax | PizzasGroupBy | PizzasConnectionId | PizzasConnection_Id | PizzasConnectionCreatedAt | PizzasConnectionUpdatedAt | PizzasConnectionName | PizzasConnectionDescription | PizzasConnectionImage | PizzasConnectionSlug | PizzasConnectionSize | PizzasConnectionPrice_Of_Small | PizzasConnectionPrice_Of_Medium | PizzasConnectionPrice_Of_Large | PizzasConnectionPublished_At | CreatePizzaPayload | UpdatePizzaPayload | DeletePizzaPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnection_Id | UploadFileConnectionCreatedAt | UploadFileConnectionUpdatedAt | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | DeleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnection_Id | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnection_Id | UsersPermissionsUserConnectionCreatedAt | UsersPermissionsUserConnectionUpdatedAt | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | CreateUserPayload | UpdateUserPayload | DeleteUserPayload;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -204,9 +210,12 @@ export type MutationEmailConfirmationArgs = {
 export type PizzaInput = {
   name: Scalars['String'];
   description: Scalars['String'];
-  price: Scalars['Float'];
   image?: Maybe<Scalars['ID']>;
   slug?: Maybe<Scalars['String']>;
+  size?: Maybe<Enum_Pizzas_Size>;
+  price_of_small: Scalars['Float'];
+  price_of_medium?: Maybe<Scalars['Float']>;
+  price_of_large?: Maybe<Scalars['Float']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -220,9 +229,12 @@ export type Pizzas = {
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
   description: Scalars['String'];
-  price: Scalars['Float'];
   image?: Maybe<UploadFile>;
   slug?: Maybe<Scalars['String']>;
+  size?: Maybe<Enum_Pizzas_Size>;
+  price_of_small: Scalars['Float'];
+  price_of_medium?: Maybe<Scalars['Float']>;
+  price_of_large?: Maybe<Scalars['Float']>;
   published_at?: Maybe<Scalars['DateTime']>;
 };
 
@@ -238,22 +250,30 @@ export type PizzasAggregator = {
 
 export type PizzasAggregatorAvg = {
   __typename?: 'PizzasAggregatorAvg';
-  price?: Maybe<Scalars['Float']>;
+  price_of_small?: Maybe<Scalars['Float']>;
+  price_of_medium?: Maybe<Scalars['Float']>;
+  price_of_large?: Maybe<Scalars['Float']>;
 };
 
 export type PizzasAggregatorMax = {
   __typename?: 'PizzasAggregatorMax';
-  price?: Maybe<Scalars['Float']>;
+  price_of_small?: Maybe<Scalars['Float']>;
+  price_of_medium?: Maybe<Scalars['Float']>;
+  price_of_large?: Maybe<Scalars['Float']>;
 };
 
 export type PizzasAggregatorMin = {
   __typename?: 'PizzasAggregatorMin';
-  price?: Maybe<Scalars['Float']>;
+  price_of_small?: Maybe<Scalars['Float']>;
+  price_of_medium?: Maybe<Scalars['Float']>;
+  price_of_large?: Maybe<Scalars['Float']>;
 };
 
 export type PizzasAggregatorSum = {
   __typename?: 'PizzasAggregatorSum';
-  price?: Maybe<Scalars['Float']>;
+  price_of_small?: Maybe<Scalars['Float']>;
+  price_of_medium?: Maybe<Scalars['Float']>;
+  price_of_large?: Maybe<Scalars['Float']>;
 };
 
 export type PizzasConnection = {
@@ -293,8 +313,20 @@ export type PizzasConnectionName = {
   connection?: Maybe<PizzasConnection>;
 };
 
-export type PizzasConnectionPrice = {
-  __typename?: 'PizzasConnectionPrice';
+export type PizzasConnectionPrice_Of_Large = {
+  __typename?: 'PizzasConnectionPrice_of_large';
+  key?: Maybe<Scalars['Float']>;
+  connection?: Maybe<PizzasConnection>;
+};
+
+export type PizzasConnectionPrice_Of_Medium = {
+  __typename?: 'PizzasConnectionPrice_of_medium';
+  key?: Maybe<Scalars['Float']>;
+  connection?: Maybe<PizzasConnection>;
+};
+
+export type PizzasConnectionPrice_Of_Small = {
+  __typename?: 'PizzasConnectionPrice_of_small';
   key?: Maybe<Scalars['Float']>;
   connection?: Maybe<PizzasConnection>;
 };
@@ -302,6 +334,12 @@ export type PizzasConnectionPrice = {
 export type PizzasConnectionPublished_At = {
   __typename?: 'PizzasConnectionPublished_at';
   key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<PizzasConnection>;
+};
+
+export type PizzasConnectionSize = {
+  __typename?: 'PizzasConnectionSize';
+  key?: Maybe<Scalars['String']>;
   connection?: Maybe<PizzasConnection>;
 };
 
@@ -331,9 +369,12 @@ export type PizzasGroupBy = {
   updatedAt?: Maybe<Array<Maybe<PizzasConnectionUpdatedAt>>>;
   name?: Maybe<Array<Maybe<PizzasConnectionName>>>;
   description?: Maybe<Array<Maybe<PizzasConnectionDescription>>>;
-  price?: Maybe<Array<Maybe<PizzasConnectionPrice>>>;
   image?: Maybe<Array<Maybe<PizzasConnectionImage>>>;
   slug?: Maybe<Array<Maybe<PizzasConnectionSlug>>>;
+  size?: Maybe<Array<Maybe<PizzasConnectionSize>>>;
+  price_of_small?: Maybe<Array<Maybe<PizzasConnectionPrice_Of_Small>>>;
+  price_of_medium?: Maybe<Array<Maybe<PizzasConnectionPrice_Of_Medium>>>;
+  price_of_large?: Maybe<Array<Maybe<PizzasConnectionPrice_Of_Large>>>;
   published_at?: Maybe<Array<Maybe<PizzasConnectionPublished_At>>>;
 };
 
@@ -996,9 +1037,12 @@ export type EditFileInput = {
 export type EditPizzaInput = {
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  price?: Maybe<Scalars['Float']>;
   image?: Maybe<Scalars['ID']>;
   slug?: Maybe<Scalars['String']>;
+  size?: Maybe<Enum_Pizzas_Size>;
+  price_of_small?: Maybe<Scalars['Float']>;
+  price_of_medium?: Maybe<Scalars['Float']>;
+  price_of_large?: Maybe<Scalars['Float']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -1109,7 +1153,7 @@ export type GetPopularPizzasQuery = (
 
 export type CardFragment = (
   { __typename?: 'Pizzas' }
-  & Pick<Pizzas, 'id' | 'name' | 'price' | 'slug'>
+  & Pick<Pizzas, 'id' | 'name' | 'slug' | 'price_of_small' | 'price_of_medium' | 'price_of_large' | 'size'>
   & { image?: Maybe<(
     { __typename?: 'UploadFile' }
     & Pick<UploadFile, 'formats'>
@@ -1120,8 +1164,11 @@ export const CardFragmentDoc = gql`
     fragment Card on Pizzas {
   id
   name
-  price
   slug
+  price_of_small
+  price_of_medium
+  price_of_large
+  size
   image {
     formats
   }

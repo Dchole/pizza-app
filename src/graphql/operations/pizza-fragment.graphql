@@ -1,8 +1,11 @@
 fragment Card on Pizzas {
   id
   name
-  price
   slug
+  price_of_small
+  price_of_medium
+  price_of_large
+  size
   image {
     formats
   }

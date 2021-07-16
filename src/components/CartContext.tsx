@@ -1,13 +1,19 @@
 import useUser from "@/hooks/useUser"
-import { GetPizzasQuery, getSdk } from "@/graphql/generated"
+import { Enum_Pizzas_Size, GetPizzasQuery, getSdk } from "@/graphql/generated"
 import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
-import { createContext, useContext, useEffect, useRef, useState } from "react"
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from "react"
 import { fetcher } from "@/utils/fetcher"
 import CartDatabase, { ICartTable } from "@/indexedDB/cart"
 
 type TPizza = GetPizzasQuery["pizzas"][0]
-type TCart = Pick<ICartTable, "id" | "quantity">[]
+type TCart = Pick<ICartTable, "id" | "quantity" | "size">[]
 
 interface ICartContextProps {
   cart: TCart
@@ -16,8 +22,16 @@ interface ICartContextProps {
   removeItem: (pizza: TPizza) => () => void
   increment: (event: React.MouseEvent<HTMLButtonElement>) => void
   decrement: (event: React.MouseEvent<HTMLButtonElement>) => void
+  selectSize: (event: React.MouseEvent<HTMLButtonElement>) => void
   cartItems: ICartTable[]
   isItemInCart: (id: string) => boolean
+  getItemSize: (id: string) => Enum_Pizzas_Size
+  getItemPrice: (
+    item: Pick<
+      ICartTable,
+      "size" | "price_of_small" | "price_of_medium" | "price_of_large"
+    >
+  ) => number
 }
 
 const fetchCart = async (cart: TCart) => {
@@ -78,8 +92,40 @@ const CartContextProvider: React.FC = ({ children }) => {
     setCartItems(updatedList)
   }
 
+  const selectSize = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { id } = event.currentTarget.parentElement.dataset
+    const size = Enum_Pizzas_Size[event.currentTarget.textContent]
+
+    const updatedList = (c: ICartTable[]) =>
+      c.map(item => (item.id === id ? { ...item, size } : item))
+
+    setCart(updatedList)
+    setCartItems(updatedList)
+  }
+
   const isItemInCart = (id: string) =>
     Boolean(cart.find(item => item.id === id))
+
+  const getItemSize = (id: string) => cart.find(item => item.id === id)?.size
+  const getItemPrice = (
+    item: Pick<
+      ICartTable,
+      "size" | "price_of_small" | "price_of_medium" | "price_of_large"
+    >
+  ) => {
+    try {
+      switch (item.size) {
+        case "small":
+          return item.price_of_small
+        case "medium":
+          return item.price_of_medium
+        case "large":
+          return item.price_of_large
+      }
+    } catch (error) {
+      return
+    }
+  }
 
   useEffect(() => {
     if (!cart.length) {
@@ -94,6 +140,7 @@ const CartContextProvider: React.FC = ({ children }) => {
           ? user.cart
           : cachedCart.map(item => ({
               id: item.id,
+              size: item.size,
               quantity: item.quantity ?? 1
             }))
 
@@ -112,7 +159,7 @@ const CartContextProvider: React.FC = ({ children }) => {
   useEffect(() => {
     const amount = cartItems.reduce(
       (accumulator, currentValue) =>
-        accumulator + currentValue.price * currentValue.quantity,
+        accumulator + getItemPrice(currentValue) * currentValue.quantity,
       0
     )
 
@@ -143,12 +190,15 @@ const CartContextProvider: React.FC = ({ children }) => {
       value={{
         cart,
         addItem,
+        selectSize,
         removeItem,
         increment,
         decrement,
         cartItems,
         totalAmount,
-        isItemInCart
+        isItemInCart,
+        getItemSize,
+        getItemPrice
       }}
     >
       {children}

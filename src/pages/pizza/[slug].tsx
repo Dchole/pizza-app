@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Button from "@material-ui/core/Button"
+import ButtonGroup from "@material-ui/core/ButtonGroup"
 import Container from "@material-ui/core/Container"
 import Typography from "@material-ui/core/Typography"
 import PaymentIcon from "@material-ui/icons/Payment"
@@ -85,6 +86,10 @@ export const useStyles = makeStyles(theme =>
         width: "100%"
       },
 
+      "@media(max-width: 320px)": {
+        gap: 8
+      },
+
       [theme.breakpoints.up("sm")]: {
         flexWrap: "nowrap",
 
@@ -92,6 +97,11 @@ export const useStyles = makeStyles(theme =>
           width: "initial"
         }
       }
+    },
+    sizes: {
+      display: "flex",
+      margin: theme.spacing(2, "auto"),
+      justifyContent: "center"
     }
   })
 )
@@ -101,7 +111,15 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }) => {
   const classes = useStyles()
   const mobile = useScreenSize()
-  const { addItem, removeItem, isItemInCart } = useCart()
+  const {
+    cartItems,
+    getItemSize,
+    getItemPrice,
+    addItem,
+    removeItem,
+    selectSize,
+    isItemInCart
+  } = useCart()
 
   return (
     <PageBackdrop>
@@ -122,16 +140,52 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             {pizza.name}
           </Typography>
           <Typography variant="h5" component="p">
-            <span>₵</span>&nbsp;<span>{pizza.price}</span>
+            <span>₵</span>&nbsp;
+            <span>
+              {getItemPrice(cartItems.find(({ id }) => pizza.id === id)) ??
+                pizza.price_of_medium}
+            </span>
           </Typography>
         </div>
         <Typography color="textSecondary" className={classes.description}>
           {pizza.description}
         </Typography>
+        <ButtonGroup
+          color="secondary"
+          aria-label="choose pizza size"
+          className={classes.sizes}
+          disableElevation
+          data-id={pizza.id}
+        >
+          <Button
+            variant={
+              getItemSize(pizza.id) === "small" ? "contained" : undefined
+            }
+            onClick={selectSize}
+          >
+            Small
+          </Button>
+          <Button
+            variant={
+              getItemSize(pizza.id) === "medium" ? "contained" : undefined
+            }
+            onClick={selectSize}
+          >
+            Medium
+          </Button>
+          <Button
+            variant={
+              getItemSize(pizza.id) === "large" ? "contained" : undefined
+            }
+            onClick={selectSize}
+          >
+            Large
+          </Button>
+        </ButtonGroup>
         <div className={classes.actions}>
           <Button
             variant="outlined"
-            color="secondary"
+            color="primary"
             endIcon={
               isItemInCart(pizza.id) ? (
                 <RemoveShoppingCartIcon />
@@ -145,11 +199,7 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           >
             {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
           </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            endIcon={<PaymentIcon />}
-          >
+          <Button variant="contained" color="primary" endIcon={<PaymentIcon />}>
             Order Now
           </Button>
         </div>

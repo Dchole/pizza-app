@@ -1,3 +1,4 @@
+import { Enum_Pizzas_Size } from "@/graphql/generated"
 import useSWR from "swr"
 
 export interface IUser {
@@ -11,6 +12,7 @@ export interface IUser {
   authMethod: "google" | "local"
   cart: {
     id: string
+    size: Enum_Pizzas_Size
     quantity: number
   }[]
 }

@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography"
 import IconButton from "@material-ui/core/IconButton"
 import AddIcon from "@material-ui/icons/Add"
 import RemoveIcon from "@material-ui/icons/Remove"
+import Link from "../Link"
 import { loader } from "@/utils/imageLoader"
 import { useStyles } from "./useStyles"
 import { ICartTable } from "@/indexedDB/cart"
@@ -19,11 +20,15 @@ interface ICartItemProps {
 
 const CartItem: React.FC<ICartItemProps> = ({ item }) => {
   const classes = useStyles()
-  const { increment, decrement } = useCart()
+  const { increment, decrement, getItemPrice } = useCart()
 
   return (
     <Card variant="outlined" className={classes.root}>
-      <CardActionArea className={classes.actionArea}>
+      <CardActionArea
+        component={Link}
+        href={`/pizza/${item.slug}`}
+        className={classes.actionArea}
+      >
         <CardMedia className={classes.cover}>
           <Image
             loader={loader}
@@ -40,7 +45,7 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
           <Typography component="p" variant="h5">
             {item.name}
           </Typography>
-          <Typography color="textSecondary">₵ {item.price}</Typography>
+          <Typography color="textSecondary">₵ {getItemPrice(item)}</Typography>
         </CardContent>
         <div className={classes.controls}>
           <IconButton

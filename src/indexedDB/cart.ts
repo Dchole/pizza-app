@@ -12,7 +12,7 @@ export default class CartDatabase extends Dexie {
   public constructor() {
     super("CartDatabase")
     this.version(1).stores({
-      cart: "id,name,image,price,quantity"
+      cart: "id,name,image,size,quantity"
     })
 
     this.cart = this.table("cart")
