@@ -128,33 +128,31 @@ const CartContextProvider: React.FC = ({ children }) => {
   }
 
   useEffect(() => {
-    if (!cart.length) {
-      ;(async () => {
-        dbRef.current = new CartDatabase()
+    ;(async () => {
+      dbRef.current = new CartDatabase()
 
-        const { current: db } = dbRef
-        const cachedCart = await db.getCart.toArray()
-        setCartItems(cachedCart)
+      const { current: db } = dbRef
+      const cachedCart = await db.getCart.toArray()
+      setCartItems(cachedCart)
 
-        const cartData = user?.cart?.length
-          ? user.cart
-          : cachedCart.map(item => ({
-              id: item.id,
-              size: item.size,
-              quantity: item.quantity ?? 1
-            }))
+      const cartData = user?.cart?.length
+        ? user.cart
+        : cachedCart.map(item => ({
+            id: item.id,
+            size: item.size,
+            quantity: item.quantity ?? 1
+          }))
 
-        if (user?.cart?.length && !cachedCart.length) {
-          const networkCart = await fetchCart(user.cart)
-          setCartItems(networkCart)
+      if (user?.cart?.length && !cachedCart.length) {
+        const networkCart = await fetchCart(user.cart)
+        setCartItems(networkCart)
 
-          await db.getCart.bulkPut(networkCart)
-        }
+        db.getCart.bulkPut(networkCart)
+      }
 
-        setCart(cartData)
-      })()
-    }
-  }, [user?.cart, cart.length])
+      setCart(cartData)
+    })()
+  }, [user?.cart])
 
   useEffect(() => {
     const amount = cartItems.reduce(
@@ -166,7 +164,7 @@ const CartContextProvider: React.FC = ({ children }) => {
     setTotalAmount(amount)
 
     const { current: db } = dbRef
-    db.getCart.bulkPut(cartItems)
+    cartItems.length ? db.getCart.bulkPut(cartItems) : db.getCart.clear()
   }, [cartItems])
 
   useEffect(() => {

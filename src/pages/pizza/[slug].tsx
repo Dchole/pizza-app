@@ -49,7 +49,7 @@ export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
   return { props: { pizza } }
 }
 
-export const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(theme =>
   createStyles({
     root: {
       "& h1": {
