@@ -3,15 +3,17 @@ import { useMemo } from "react"
 import Drawer from "@material-ui/core/Drawer"
 import FormWrapper from "./FormWrapper"
 import { useDrawerStyles } from "./styles/useDrawerStyles"
+import useScreenSize from "@/hooks/usScreenSize"
 
 export type TAuthView = "login" | "register" | null
 
 const AuthDrawer = () => {
   const classes = useDrawerStyles()
-  const { asPath, push } = useRouter()
+  const mobile = useScreenSize()
+  const { asPath, push, pathname } = useRouter()
   const authView = useMemo(
     () =>
-      ["login", "register"].includes(asPath.substring(2))
+      asPath.endsWith("#login") || asPath.endsWith("#register")
         ? (asPath.substring(2) as TAuthView)
         : null,
     [asPath]
@@ -19,9 +21,9 @@ const AuthDrawer = () => {
 
   return (
     <Drawer
-      open={Boolean(authView)}
+      open={!mobile && Boolean(authView)}
       anchor="right"
-      onClose={() => push("/")}
+      onClose={() => push(pathname)}
       PaperProps={{ variant: "outlined" }}
       ModalProps={{ BackdropProps: { className: classes.backdrop } }}
       classes={{ paper: classes.paper }}

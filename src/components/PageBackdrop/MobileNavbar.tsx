@@ -5,9 +5,13 @@ import Zoom from "@material-ui/core/Zoom"
 import IconButton from "@material-ui/core/IconButton"
 import MenuIcon from "@material-ui/icons/Menu"
 import SearchIcon from "@material-ui/icons/Search"
+import MoreIcon from "@material-ui/icons/MoreVert"
 import CloseIcon from "@material-ui/icons/Close"
+import ButtonLink from "../ButtonLink"
 import { useEffect, useState } from "react"
 import { useMobileNavStyles } from "./useMobileNavStyles"
+import useUser from "@/hooks/useUser"
+import { useRouter } from "next/router"
 
 interface IMobileNavbarProps {
   open: boolean
@@ -21,6 +25,8 @@ const MobileNavbar: React.FC<IMobileNavbarProps> = ({
   handleClose
 }) => {
   const classes = useMobileNavStyles()
+  const { user } = useUser()
+  const { pathname } = useRouter()
   const [navElTransition, setNavElTransition] = useState(false)
   const [closeBtnTransition, setCloseBtnTransition] = useState(false)
 
@@ -61,15 +67,35 @@ const MobileNavbar: React.FC<IMobileNavbarProps> = ({
           </div>
         </Zoom>
       </Grid>
-      <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
+      {!user?.isLoggedIn && (
+        <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
+          <ButtonLink href="/login" variant="outlined">
+            Login
+          </ButtonLink>
+        </Zoom>
+      )}
+      <Zoom
+        in={!closeBtnTransition && pathname === "/store"}
+        timeout={150}
+        unmountOnExit
+        mountOnEnter
+      >
         <IconButton
           data-direction="right"
           aria-label="open search and filter options"
           onClick={handleOpen}
+          style={{ marginLeft: 8 }}
         >
           <SearchIcon />
         </IconButton>
       </Zoom>
+      {user?.isLoggedIn && (
+        <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
+          <IconButton data-direction="right" aria-label="open account options">
+            <MoreIcon />
+          </IconButton>
+        </Zoom>
+      )}
       <Zoom unmountOnExit mountOnEnter in={navElTransition} timeout={150}>
         <IconButton aria-label="close menu" onClick={handleClose}>
           <CloseIcon />

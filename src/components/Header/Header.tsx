@@ -14,13 +14,13 @@ import useUser from "@/hooks/useUser"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useStyles } from "./useStyles"
 import { navLinks } from "./links"
+import AvatarButton from "../AvatarButton"
 
 const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
 const Sidebar = dynamic(() => import("@/components/Sidebar"))
 const AccountPopup = dynamic(() => import("./AccountPopup"))
 
 const Header = () => {
-  const { user } = useUser()
   const mobile = useScreenSize()
   const classes = useStyles()
   const scrollHeight = useRef(0)
@@ -39,10 +39,6 @@ const Header = () => {
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-
-  const setAnchor = (event: React.MouseEvent<HTMLButtonElement>) =>
-    setAnchorEl(event.currentTarget)
-  const clearAnchor = () => setAnchorEl(null)
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll)
@@ -92,29 +88,9 @@ const Header = () => {
             >
               <BagIcon />
             </IconButton>
-            {user?.isLoggedIn ? (
-              <IconButton
-                aria-label="open menu"
-                className={classes.avatar}
-                onClick={setAnchor}
-              >
-                <Avatar />
-              </IconButton>
-            ) : (
-              <IconButton
-                aria-label="sign up"
-                component={Link}
-                href={mobile ? "/register" : "#register"}
-                role={undefined}
-                className={classes.avatar}
-                naked
-              >
-                <Avatar />
-              </IconButton>
-            )}
+            <AvatarButton className={classes.avatar} />
           </div>
           <Sidebar open={open} handleClose={handleClose} />
-          <AccountPopup anchorEl={anchorEl} handleClose={clearAnchor} />
           <AuthDrawer />
         </Toolbar>
       </AppBar>

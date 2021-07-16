@@ -69,7 +69,7 @@ const PageBackdrop: React.FC = ({ children }) => {
           />
         </div>
       )}
-      {pathname !== "/cart" && (
+      {pathname === "/store" && (
         <Slide direction="left" in={!open}>
           <div className={clsx(classes.hideOnLarge, classes.cartWrapper)}>
             <div className="cart-drawer">
