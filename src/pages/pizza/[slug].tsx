@@ -19,7 +19,7 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
 import { loader } from "@/utils/imageLoader"
 import { useCart } from "@/components/CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -106,7 +106,11 @@ const useStyles = makeStyles(theme =>
     sizes: {
       display: "flex",
       margin: theme.spacing(2, "auto"),
-      justifyContent: "center"
+      justifyContent: "center",
+
+      [theme.breakpoints.up("sm")]: {
+        margin: theme.spacing(5, "auto")
+      }
     }
   })
 )
@@ -117,8 +121,8 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const classes = useStyles()
   const mobile = useScreenSize()
   const {
+    cart,
     cartItems,
-    getItemSize,
     getItemPrice,
     addItem,
     removeItem,
@@ -128,10 +132,10 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   const [size, setSize] = useState<Enum_Pizzas_Size>(Enum_Pizzas_Size["Medium"])
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setSize(Enum_Pizzas_Size[event.currentTarget.textContent])
-    selectSize(event)
-  }
+  useEffect(() => {
+    const item = cart.find(({ id }) => id === pizza.id)
+    item && setSize(item.size)
+  }, [cart, pizza])
 
   return (
     <PageBackdrop>
@@ -172,19 +176,19 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           >
             <Button
               variant={size === "small" ? "contained" : undefined}
-              onClick={handleClick}
+              onClick={selectSize}
             >
               Small
             </Button>
             <Button
               variant={size === "medium" ? "contained" : undefined}
-              onClick={handleClick}
+              onClick={selectSize}
             >
               Medium
             </Button>
             <Button
               variant={size === "large" ? "contained" : undefined}
-              onClick={handleClick}
+              onClick={selectSize}
             >
               Large
             </Button>

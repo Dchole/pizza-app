@@ -25,7 +25,7 @@ export const useStyles = makeStyles(theme =>
       },
 
       [theme.breakpoints.up("sm")]: {
-        padding: theme.spacing(3)
+        padding: theme.spacing(3, 3, 10)
       }
     },
     aside: {

@@ -1,17 +1,21 @@
+import Image from "next/image"
 import dynamic from "next/dynamic"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import Button from "@material-ui/core/Button"
+import Grid from "@material-ui/core/Grid"
 import Container from "@material-ui/core/Container"
-import Divider from "@material-ui/core/Divider"
+import Typography from "@material-ui/core/Typography"
 import PaymentIcon from "@material-ui/icons/Payment"
+import StoreIcon from "@material-ui/icons/Store"
 import PageBackdrop from "@/components/PageBackdrop"
 import CartItem from "@/components/CartItem"
-import { useCart } from "@/components/CartContext"
+import ButtonLink from "@/components/ButtonLink"
 import useScreenSize from "@/hooks/usScreenSize"
+import { useCart } from "@/components/CartContext"
 
 const AnimatedNumber = dynamic(() => import("react-animated-numbers"))
 
-export const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(theme =>
   createStyles({
     root: {
       height: "100%",
@@ -40,6 +44,19 @@ export const useStyles = makeStyles(theme =>
         display: "flex",
         alignItems: "center"
       }
+    },
+    buttonWrapper: {
+      [theme.breakpoints.up("sm")]: {
+        display: "flex",
+        justifyContent: "flex-end",
+
+        "& .MuiButton-root": {
+          width: "fit-content"
+        }
+      }
+    },
+    linkWrapper: {
+      marginTop: 16
     }
   })
 )
@@ -52,30 +69,61 @@ const Cart = () => {
   return (
     <PageBackdrop>
       <Container maxWidth="md" className={classes.root} disableGutters={mobile}>
-        <div className={classes.grid}>
-          {cartItems.map(item => (
-            <CartItem key={item.id} item={item} />
-          ))}
-        </div>
-        <div className={classes.total}>
-          <p aria-label={`${totalAmount} cedis`}>
-            <span>₵</span>&nbsp;
-            <AnimatedNumber
-              fontStyle={{ fontSize: 40 }}
-              animateToNumber={totalAmount}
-              includeComma
+        {cartItems.length ? (
+          <>
+            <div className={classes.grid}>
+              {cartItems.map(item => (
+                <CartItem key={item.id} item={item} />
+              ))}
+            </div>
+            <div className={classes.total}>
+              <p aria-label={`${totalAmount} cedis`}>
+                <span>₵</span>&nbsp;
+                <AnimatedNumber
+                  fontStyle={{ fontSize: 40 }}
+                  animateToNumber={totalAmount}
+                  includeComma
+                />
+                .00
+              </p>
+            </div>
+            <div className={classes.buttonWrapper}>
+              <Button
+                color="primary"
+                variant="contained"
+                endIcon={<PaymentIcon />}
+                fullWidth
+              >
+                Checkout
+              </Button>
+            </div>
+          </>
+        ) : (
+          <Grid direction="column" alignItems="center" container>
+            <Image
+              src="/empty-cart.svg"
+              alt="empty cart illustration"
+              width={300}
+              height={240}
             />
-            .00
-          </p>
-        </div>
-        <Button
-          color="primary"
-          variant="contained"
-          endIcon={<PaymentIcon />}
-          fullWidth
-        >
-          Checkout
-        </Button>
+            <Typography variant="h3" component="p">
+              Your Cart is Empty
+            </Typography>
+            <Typography color="textSecondary">
+              Add an item from the store
+            </Typography>
+            <div className={classes.linkWrapper}>
+              <ButtonLink
+                href="/store"
+                variant="contained"
+                color="primary"
+                endIcon={<StoreIcon />}
+              >
+                Go to store
+              </ButtonLink>
+            </div>
+          </Grid>
+        )}
       </Container>
     </PageBackdrop>
   )

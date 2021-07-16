@@ -59,7 +59,11 @@ const CartContextProvider: React.FC = ({ children }) => {
   const { user, mutate } = useUser()
 
   const addItem = (pizza: TPizza) => () => {
-    setCart(prevCart => [...prevCart, { id: pizza.id, quantity: 1 }])
+    setCart(prevCart => [
+      ...prevCart,
+      { id: pizza.id, size: Enum_Pizzas_Size["Medium"], quantity: 1 }
+    ])
+
     setCartItems(prevCartItems => [...prevCartItems, { ...pizza, quantity: 1 }])
   }
 
