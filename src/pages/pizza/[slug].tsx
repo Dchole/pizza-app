@@ -61,15 +61,19 @@ export const useStyles = makeStyles(theme =>
       alignItems: "center"
     },
     description: {
-      width: "50%",
-      minWidth: "100%",
+      width: "100%",
+      maxWidth: 450,
       margin: theme.spacing(2, 0)
     },
     imageWrapper: {
       position: "relative",
       width: "100%",
-      height: "60vh",
-      marginBottom: 16
+      height: "40vh",
+      marginBottom: 16,
+
+      [theme.breakpoints.up("sm")]: {
+        height: "60vh"
+      }
     },
     actions: {
       display: "flex",
@@ -118,7 +122,7 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             {pizza.name}
           </Typography>
           <Typography variant="h5" component="p">
-            {pizza.price}
+            <span>₵</span>&nbsp;<span>{pizza.price}</span>
           </Typography>
         </div>
         <Typography color="textSecondary" className={classes.description}>

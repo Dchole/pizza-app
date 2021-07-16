@@ -14,11 +14,14 @@ export const useStyles = makeStyles(theme =>
     paper: {
       padding: theme.spacing(2, 2, 4),
       boxShadow: `0px -2px 3px 0px rgb(0 0 0 / 12%),
-                  0px -1px 1px 0px rgb(0 0 0 / 14%), 
+      0px -1px 1px 0px rgb(0 0 0 / 14%), 
                   0px -1px 1px -1px rgb(0 0 0 / 20%)`,
       position: "relative",
       zIndex: theme.zIndex.appBar,
-      minHeight: "100vh",
+
+      "@media(max-width: 320px)": {
+        padding: theme.spacing(1, 1, 4)
+      },
 
       [theme.breakpoints.up("sm")]: {
         padding: theme.spacing(3)

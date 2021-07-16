@@ -40,7 +40,7 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
           <Typography component="p" variant="h5">
             {item.name}
           </Typography>
-          <Typography color="textSecondary">{item.price}</Typography>
+          <Typography color="textSecondary">₵ {item.price}</Typography>
         </CardContent>
         <div className={classes.controls}>
           <IconButton

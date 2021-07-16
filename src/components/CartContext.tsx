@@ -131,6 +131,13 @@ const CartContextProvider: React.FC = ({ children }) => {
     }
   }, [cart, user, mutate])
 
+  useEffect(() => {
+    if (cart.some(item => item.quantity === 0)) {
+      setCart(prevCart => prevCart.filter(item => item.quantity !== 0))
+      setCartItems(prevCart => prevCart.filter(item => item.quantity !== 0))
+    }
+  }, [cart])
+
   return (
     <CartContext.Provider
       value={{
