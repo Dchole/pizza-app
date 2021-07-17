@@ -20,6 +20,7 @@ import { loader } from "@/utils/imageLoader"
 import { useCart } from "@/components/CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useEffect, useState } from "react"
+import usePayment from "@/hooks/usePayment"
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -129,13 +130,22 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     selectSize,
     isItemInCart
   } = useCart()
-
+  const [price, setPrice] = useState(pizza.price_of_medium)
   const [size, setSize] = useState<Enum_Pizzas_Size>(Enum_Pizzas_Size["Medium"])
+  const handleCheckout = usePayment(price)
 
   useEffect(() => {
     const item = cart.find(({ id }) => id === pizza.id)
     item && setSize(item.size)
   }, [cart, pizza])
+
+  useEffect(() => {
+    const priceAccordingToSize = getItemPrice(
+      cartItems.find(({ id }) => pizza.id === id)
+    )
+
+    setPrice(priceAccordingToSize ?? pizza.price_of_medium)
+  }, [cartItems, pizza, getItemPrice])
 
   return (
     <PageBackdrop>
@@ -157,10 +167,7 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           </Typography>
           <Typography variant="h5" component="p">
             <span>₵</span>&nbsp;
-            <span>
-              {getItemPrice(cartItems.find(({ id }) => pizza.id === id)) ??
-                pizza.price_of_medium}
-            </span>
+            <span>{price}</span>
           </Typography>
         </div>
         <Typography color="textSecondary" className={classes.description}>
@@ -211,7 +218,12 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           >
             {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
           </Button>
-          <Button variant="contained" color="primary" endIcon={<PaymentIcon />}>
+          <Button
+            variant="contained"
+            color="primary"
+            endIcon={<PaymentIcon />}
+            onClick={handleCheckout}
+          >
             Order Now
           </Button>
         </div>

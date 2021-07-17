@@ -11,6 +11,7 @@ import React, {
 } from "react"
 import { fetcher } from "@/utils/fetcher"
 import CartDatabase, { ICartTable } from "@/indexedDB/cart"
+import { useCallback } from "react"
 
 type TPizza = GetPizzasQuery["pizzas"][0]
 type TCart = Pick<ICartTable, "id" | "quantity" | "size">[]
@@ -18,6 +19,7 @@ type TCart = Pick<ICartTable, "id" | "quantity" | "size">[]
 interface ICartContextProps {
   cart: TCart
   totalAmount: number
+  clearCart: () => void
   addItem: (pizza: TPizza) => () => void
   removeItem: (pizza: TPizza) => () => void
   increment: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -107,29 +109,37 @@ const CartContextProvider: React.FC = ({ children }) => {
     setCartItems(updatedList)
   }
 
+  const clearCart = () => {
+    setCart([])
+    setCartItems([])
+  }
+
   const isItemInCart = (id: string) =>
     Boolean(cart.find(item => item.id === id))
 
   const getItemSize = (id: string) => cart.find(item => item.id === id)?.size
-  const getItemPrice = (
-    item: Pick<
-      ICartTable,
-      "size" | "price_of_small" | "price_of_medium" | "price_of_large"
-    >
-  ) => {
-    try {
-      switch (item.size) {
-        case "small":
-          return item.price_of_small
-        case "medium":
-          return item.price_of_medium
-        case "large":
-          return item.price_of_large
+  const getItemPrice = useCallback(
+    (
+      item: Pick<
+        ICartTable,
+        "size" | "price_of_small" | "price_of_medium" | "price_of_large"
+      >
+    ) => {
+      try {
+        switch (item.size) {
+          case "small":
+            return item.price_of_small
+          case "medium":
+            return item.price_of_medium
+          case "large":
+            return item.price_of_large
+        }
+      } catch (error) {
+        return
       }
-    } catch (error) {
-      return
-    }
-  }
+    },
+    []
+  )
 
   useEffect(() => {
     ;(async () => {
@@ -169,7 +179,7 @@ const CartContextProvider: React.FC = ({ children }) => {
 
     const { current: db } = dbRef
     cartItems.length ? db.getCart.bulkPut(cartItems) : db.getCart.clear()
-  }, [cartItems])
+  }, [cartItems, getItemPrice])
 
   useEffect(() => {
     if (cart.length && user?.isLoggedIn) {
@@ -192,6 +202,7 @@ const CartContextProvider: React.FC = ({ children }) => {
       value={{
         cart,
         addItem,
+        clearCart,
         selectSize,
         removeItem,
         increment,

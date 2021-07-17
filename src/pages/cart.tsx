@@ -12,6 +12,7 @@ import CartItem from "@/components/CartItem"
 import ButtonLink from "@/components/ButtonLink"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useCart } from "@/components/CartContext"
+import usePayment from "@/hooks/usePayment"
 
 const AnimatedNumber = dynamic(() => import("react-animated-numbers"))
 
@@ -63,8 +64,9 @@ const useStyles = makeStyles(theme =>
 
 const Cart = () => {
   const classes = useStyles()
-  const { cartItems, totalAmount } = useCart()
   const mobile = useScreenSize()
+  const handleCheckout = usePayment()
+  const { cartItems, totalAmount } = useCart()
 
   return (
     <PageBackdrop>
@@ -92,6 +94,7 @@ const Cart = () => {
                 color="primary"
                 variant="contained"
                 endIcon={<PaymentIcon />}
+                onClick={handleCheckout}
                 fullWidth
               >
                 Checkout
