@@ -9,6 +9,7 @@ import useUser from "@/hooks/useUser"
 import { fetcher } from "@/utils/fetcher"
 import { accountLinks } from "./links"
 import { init } from "@/lib/google-auth"
+import { useCart } from "../CartContext"
 
 interface IAccountPopupProps {
   anchorEl: HTMLButtonElement | null
@@ -20,6 +21,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
   handleClose
 }) => {
   const { user, mutate } = useUser()
+  const { clearCart } = useCart()
 
   const logout = async () => {
     if (user.authMethod === "google") {
@@ -29,6 +31,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
 
     await fetcher("/api/logout")
     mutate()
+    clearCart()
     handleClose()
   }
 
