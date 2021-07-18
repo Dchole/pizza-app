@@ -26,6 +26,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
+        <meta
+          name="google-site-verification"
+          content="GjvVPMGUIbN7Yv9nsUlYxZYxqREXEggGGv-nc8h3-38"
+        />
       </Head>
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
