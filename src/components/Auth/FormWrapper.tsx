@@ -48,7 +48,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
       mutate(currentUser)
       replace("/store")
     } catch (error) {
-      console.log(error.message)
+      console.log(error)
     }
   }
 
