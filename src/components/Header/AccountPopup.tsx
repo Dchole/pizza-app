@@ -10,6 +10,7 @@ import { fetcher } from "@/utils/fetcher"
 import { accountLinks } from "./links"
 import { init } from "@/lib/google-auth"
 import { useCart } from "../CartContext"
+import { useRouter } from "next/router"
 
 interface IAccountPopupProps {
   anchorEl: HTMLButtonElement | null
@@ -20,6 +21,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
   anchorEl,
   handleClose
 }) => {
+  const { replace } = useRouter()
   const { user, mutate } = useUser()
   const { clearCart } = useCart()
 
@@ -33,6 +35,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
     mutate()
     clearCart()
     handleClose()
+    replace("/store")
   }
 
   return (
