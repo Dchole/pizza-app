@@ -29,6 +29,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
 
     await fetcher("/api/logout")
     mutate()
+    handleClose()
   }
 
   return (

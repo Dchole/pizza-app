@@ -2,8 +2,9 @@ import useUser from "@/hooks/useUser"
 import { Enum_Pizzas_Size, GetPizzasQuery, getSdk } from "@/graphql/generated"
 import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
-import React, {
+import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -11,7 +12,6 @@ import React, {
 } from "react"
 import { fetcher } from "@/utils/fetcher"
 import CartDatabase, { ICartTable } from "@/indexedDB/cart"
-import { useCallback } from "react"
 
 type TPizza = GetPizzasQuery["pizzas"][0]
 type TCart = Pick<ICartTable, "id" | "quantity" | "size">[]
@@ -54,8 +54,8 @@ const fetchCart = async (cart: TCart) => {
 const CartContext = createContext({} as ICartContextProps)
 
 const CartContextProvider: React.FC = ({ children }) => {
-  const [cart, setCart] = useState<TCart>([])
   const dbRef = useRef<CartDatabase>()
+  const [cart, setCart] = useState<TCart>([])
   const [totalAmount, setTotalAmount] = useState(0)
   const [cartItems, setCartItems] = useState<ICartTable[]>([])
   const { user, mutate } = useUser()
@@ -186,9 +186,9 @@ const CartContextProvider: React.FC = ({ children }) => {
       fetcher("/api/add-to-cart", {
         method: "POST",
         body: JSON.stringify(cart)
-      }).then(mutate)
+      }).then(() => mutate())
     }
-  }, [cart, user, mutate])
+  }, [cart, user?.isLoggedIn, mutate])
 
   useEffect(() => {
     if (cart.some(item => item.quantity === 0)) {

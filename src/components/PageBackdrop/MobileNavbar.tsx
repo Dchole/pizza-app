@@ -12,6 +12,9 @@ import { useEffect, useState } from "react"
 import { useMobileNavStyles } from "./useMobileNavStyles"
 import useUser from "@/hooks/useUser"
 import { useRouter } from "next/router"
+import dynamic from "next/dynamic"
+
+const AccountPopup = dynamic(() => import("../Header/AccountPopup"))
 
 interface IMobileNavbarProps {
   open: boolean
@@ -27,8 +30,13 @@ const MobileNavbar: React.FC<IMobileNavbarProps> = ({
   const classes = useMobileNavStyles()
   const { user } = useUser()
   const { pathname } = useRouter()
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [navElTransition, setNavElTransition] = useState(false)
   const [closeBtnTransition, setCloseBtnTransition] = useState(false)
+
+  const openPopup = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget)
+  const closePopup = () => setAnchorEl(null)
 
   useEffect(() => {
     let timeout: NodeJS.Timeout
@@ -91,7 +99,11 @@ const MobileNavbar: React.FC<IMobileNavbarProps> = ({
       </Zoom>
       {user?.isLoggedIn && (
         <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
-          <IconButton data-direction="right" aria-label="open account options">
+          <IconButton
+            data-direction="right"
+            aria-label="open account options"
+            onClick={openPopup}
+          >
             <MoreIcon />
           </IconButton>
         </Zoom>
@@ -101,6 +113,7 @@ const MobileNavbar: React.FC<IMobileNavbarProps> = ({
           <CloseIcon />
         </IconButton>
       </Zoom>
+      <AccountPopup anchorEl={anchorEl} handleClose={closePopup} />
     </Toolbar>
   )
 }
