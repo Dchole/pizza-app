@@ -17,7 +17,7 @@ export const useStyles = makeStyles(theme =>
         height: "100vh",
 
         "& h1": {
-          width: "55%",
+          width: "56%",
           color: "initial"
         }
       }
