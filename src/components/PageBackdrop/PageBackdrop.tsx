@@ -27,7 +27,7 @@ const PageBackdrop: React.FC = ({ children }) => {
   const [direction, setDirection] = useState<TDirection>("up")
   const [open, setOpen] = useState(false)
   const [show, setShow] = useState(false)
-  const mobile = useScreenSize()
+  const desktop = useScreenSize()
   const { cart } = useCart()
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -44,14 +44,14 @@ const PageBackdrop: React.FC = ({ children }) => {
 
   return (
     <div className={classes.root}>
-      {mobile ? (
+      {desktop ? (
+        <DesktopNavbar />
+      ) : (
         <MobileNavbar
           open={open}
           handleOpen={handleOpen}
           handleClose={handleClose}
         />
-      ) : (
-        <DesktopNavbar />
       )}
       <Slide direction={direction} in={!open} onEntered={handleHide}>
         <Paper className={classes.paper}>{children}</Paper>

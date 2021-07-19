@@ -50,7 +50,7 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const { filteredPizzas, getAll, filter, reset } = usePizzaContext()
   const [value, setValue] = useState<typeof pizzas[0] | null>(null)
   const [inputValue, setInputValue] = useState("")
-  const mobile = useScreenSize()
+  const desktop = useScreenSize()
 
   useEffect(() => {
     getAll(pizzas)
@@ -76,7 +76,7 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       </Head>
 
       <PageBackdrop>
-        {!mobile && (
+        {desktop && (
           <div className={classes.inputWrapper}>
             <Autocomplete
               id="search-pizza"

@@ -16,7 +16,7 @@ import { useMemo } from "react"
 
 const Hero = () => {
   const classes = useStyles()
-  const mobile = useScreenSize("sm")
+  const desktop = useScreenSize("md")
   const theme = useTheme()
 
   const buttonTheme = useMemo(
@@ -38,10 +38,10 @@ const Hero = () => {
       component="section"
       maxWidth="xl"
       className={classes.root}
-      disableGutters={mobile}
+      disableGutters={!desktop}
     >
       <Image
-        src={!mobile ? cover : mobileCover}
+        src={desktop ? cover : mobileCover}
         alt=""
         layout="fill"
         objectFit="cover"
@@ -50,7 +50,7 @@ const Hero = () => {
         priority
         aria-hidden // Hiding from screen readers because it's just a background Image; no need to announce
       />
-      <Typography variant="h1" align={!mobile ? "left" : "center"}>
+      <Typography variant="h1" align={desktop ? "left" : "center"}>
         Brighten your day with a delicious pizza
       </Typography>
       <ThemeProvider theme={buttonTheme}>
@@ -60,11 +60,11 @@ const Hero = () => {
             variant="contained"
             color="primary"
             endIcon={<BagIcon />}
-            disableElevation={mobile}
+            disableElevation={!desktop}
           >
             Make an order
           </ButtonLink>
-          {!mobile && (
+          {desktop && (
             <ButtonLink href="#contact" variant="outlined" color="primary">
               Contact us
             </ButtonLink>

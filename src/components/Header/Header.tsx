@@ -18,7 +18,7 @@ const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
 const Sidebar = dynamic(() => import("@/components/Sidebar"))
 
 const Header = () => {
-  const mobile = useScreenSize()
+  const desktop = useScreenSize()
   const classes = useStyles()
   const scrollHeight = useRef(0)
   const headerRef = useRef<HTMLElement>(null)
@@ -63,11 +63,11 @@ const Header = () => {
               <Image
                 src="/logo-placeholder.svg"
                 alt="logo"
-                width={mobile ? 35 : 40}
-                height={mobile ? 58 : 65}
+                width={desktop ? 40 : 35}
+                height={desktop ? 65 : 58}
               />
             </div>
-            <nav hidden={mobile}>
+            <nav hidden={!desktop}>
               <ul id="navigation">
                 {navLinks.map(({ label, path }) => (
                   <li key={label}>

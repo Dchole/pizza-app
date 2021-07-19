@@ -9,7 +9,7 @@ export type TAuthView = "login" | "register" | null
 
 const AuthDrawer = () => {
   const classes = useDrawerStyles()
-  const mobile = useScreenSize()
+  const desktop = useScreenSize()
   const { asPath, push, pathname } = useRouter()
   const authView = useMemo(
     () =>
@@ -21,7 +21,7 @@ const AuthDrawer = () => {
 
   return (
     <Drawer
-      open={!mobile && Boolean(authView)}
+      open={desktop && Boolean(authView)}
       anchor="right"
       onClose={() => push(pathname)}
       PaperProps={{ variant: "outlined" }}

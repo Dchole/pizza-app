@@ -64,13 +64,17 @@ const useStyles = makeStyles(theme =>
 
 const Cart = () => {
   const classes = useStyles()
-  const mobile = useScreenSize()
+  const desktop = useScreenSize()
   const handleCheckout = usePayment()
   const { cartItems, totalAmount } = useCart()
 
   return (
     <PageBackdrop>
-      <Container maxWidth="md" className={classes.root} disableGutters={mobile}>
+      <Container
+        maxWidth="md"
+        className={classes.root}
+        disableGutters={!desktop}
+      >
         {cartItems.length ? (
           <>
             <div className={classes.grid}>

@@ -120,7 +120,7 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   pizza
 }) => {
   const classes = useStyles()
-  const mobile = useScreenSize()
+  const desktop = useScreenSize()
   const {
     cart,
     cartItems,
@@ -149,7 +149,7 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   return (
     <PageBackdrop>
-      <Container component="main" maxWidth="md" disableGutters={mobile}>
+      <Container component="main" maxWidth="md" disableGutters={!desktop}>
         <div className={classes.imageWrapper}>
           <Image
             loader={loader}

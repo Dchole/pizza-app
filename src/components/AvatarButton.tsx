@@ -12,7 +12,7 @@ const AvatarButton: React.FC<{ className?: string }> = ({
   className = undefined
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>(null)
-  const mobile = useScreenSize()
+  const desktop = useScreenSize()
   const { user } = useUser()
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) =>
@@ -33,7 +33,7 @@ const AvatarButton: React.FC<{ className?: string }> = ({
         <IconButton
           aria-label="sign up"
           component={Link}
-          href={mobile ? "/register" : "#register"}
+          href={desktop ? "#register" : "/register"}
           role={undefined}
           className={className}
           naked
