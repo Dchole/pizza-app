@@ -25,11 +25,11 @@ const Hero = () => {
         ...theme,
         palette: {
           primary: {
-            main: "#fff"
+            main: desktop ? theme.palette.primary.main : "#fff"
           }
         }
       }),
-    [theme]
+    [theme, desktop]
   )
 
   return (
@@ -40,16 +40,29 @@ const Hero = () => {
       className={classes.root}
       disableGutters={!desktop}
     >
-      <Image
-        src={desktop ? cover : mobileCover}
-        alt=""
-        layout="fill"
-        objectFit="cover"
-        placeholder="blur"
-        className={classes.cover}
-        priority
-        aria-hidden // Hiding from screen readers because it's just a background Image; no need to announce
-      />
+      {desktop ? (
+        <Image
+          src={cover}
+          alt=""
+          layout="fill"
+          objectFit="cover"
+          placeholder="blur"
+          className={classes.cover}
+          priority
+          aria-hidden // Hiding from screen readers because it's just a background Image; no need to announce
+        />
+      ) : (
+        <Image
+          src={mobileCover}
+          alt=""
+          layout="fill"
+          objectFit="cover"
+          placeholder="blur"
+          className={classes.cover}
+          priority
+          aria-hidden // Hiding from screen readers because it's just a background Image; no need to announce
+        />
+      )}
       <Typography variant="h1" align={desktop ? "left" : "center"}>
         Brighten your day with a delicious pizza
       </Typography>
