@@ -128,7 +128,7 @@ const Footer = () => {
       </div>
       <div className={classes.base}>
         <Typography color="textSecondary" align="center">
-          &copy; Copyright by [Company Name], 2021. All Rights reserved
+          &copy; Copyright by Moshood Pizza, 2021. All Rights reserved
         </Typography>
       </div>
       <Fab
