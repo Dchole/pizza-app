@@ -6,14 +6,36 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import OutlinedInput from "@material-ui/core/OutlinedInput"
 import InputAdornment from "@material-ui/core/InputAdornment"
 import Button from "@material-ui/core/Button"
+import Link from "@material-ui/core/Link"
 import Fab from "@material-ui/core/Fab"
 import ArrowUpWardIcon from "@material-ui/icons/ArrowUpward"
 import ButtonLink from "../ButtonLink"
 import { contacts } from "./contacts"
 import { useStyles } from "./useStyles"
+import { fetcher } from "@/utils/fetcher"
+import { useRef } from "react"
 
 const Footer = () => {
   const classes = useStyles()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const handleSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    try {
+      await fetcher("/api/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: inputRef.current.value })
+      })
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      inputRef.current.value = ""
+    }
+  }
 
   return (
     <footer className={classes.root}>
@@ -40,12 +62,29 @@ const Footer = () => {
             Contact Us
           </Typography>
           <List id="contacts" disablePadding dense>
-            {contacts.map(({ contact, icon }, index) => (
-              <ListItem disableGutters key={index}>
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText>{contact}</ListItemText>
-              </ListItem>
-            ))}
+            {contacts
+              .slice(0, contacts.length - 1)
+              .map(({ contact, icon, href }, index) => (
+                <ListItem disableGutters key={index}>
+                  <ListItemIcon>{icon}</ListItemIcon>
+                  <ListItemText>
+                    <Link
+                      href={href}
+                      color="inherit"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {contact}
+                    </Link>
+                  </ListItemText>
+                </ListItem>
+              ))}
+            <ListItem disableGutters>
+              <ListItemIcon>{contacts[contacts.length - 1].icon}</ListItemIcon>
+              <ListItemText>
+                {contacts[contacts.length - 1].contact}
+              </ListItemText>
+            </ListItem>
           </List>
         </div>
         <div className={classes.newsletter}>
@@ -56,24 +95,35 @@ const Footer = () => {
             Get up to date with our services. Get notified with updates to our
             store and services
           </Typography>
-          <OutlinedInput
-            id="subscribe-input"
-            name="subscribe"
-            type="email"
-            placeholder="example@gmail.com"
-            margin="dense"
-            classes={{
-              adornedEnd: classes.adornedEnd,
-              inputMarginDense: classes.inputMarginDense
-            }}
-            endAdornment={
-              <InputAdornment position="end">
-                <Button color="primary" variant="contained" disableElevation>
-                  Subscribe
-                </Button>
-              </InputAdornment>
-            }
-          />
+          <form id="newsletter" onSubmit={handleSubscribe}>
+            <OutlinedInput
+              id="subscribe-input"
+              name="email"
+              type="email"
+              placeholder="example@gmail.com"
+              margin="dense"
+              classes={{
+                adornedEnd: classes.adornedEnd,
+                inputMarginDense: classes.inputMarginDense
+              }}
+              endAdornment={
+                <InputAdornment position="end">
+                  <Button
+                    type="submit"
+                    color="primary"
+                    variant="contained"
+                    disableElevation
+                  >
+                    Subscribe
+                  </Button>
+                </InputAdornment>
+              }
+              inputRef={inputRef}
+              inputProps={{
+                "aria-label": "Subscribe to newsletter"
+              }}
+            />
+          </form>
         </div>
       </div>
       <div className={classes.base}>
