@@ -5,12 +5,10 @@ import dynamic from "next/dynamic"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import IconButton from "@material-ui/core/IconButton"
-import Avatar from "@material-ui/core/Avatar"
 import Slide from "@material-ui/core/Slide"
 import BagIcon from "@material-ui/icons/LocalMall"
 import MenuIcon from "@material-ui/icons/Menu"
 import Link from "@/components/Link"
-import useUser from "@/hooks/useUser"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useStyles } from "./useStyles"
 import { navLinks } from "./links"
@@ -18,7 +16,6 @@ import AvatarButton from "../AvatarButton"
 
 const AuthDrawer = dynamic(() => import("@/components/Auth/AuthDrawer"))
 const Sidebar = dynamic(() => import("@/components/Sidebar"))
-const AccountPopup = dynamic(() => import("./AccountPopup"))
 
 const Header = () => {
   const mobile = useScreenSize()
@@ -27,7 +24,6 @@ const Header = () => {
   const headerRef = useRef<HTMLElement>(null)
   const [show, setShow] = useState(true)
   const [open, setOpen] = useState(false)
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [scrollDown, setScrollDown] = useState(false)
 
   const handleScroll = () => {
@@ -57,7 +53,10 @@ const Header = () => {
       >
         <Toolbar>
           <div className={classes.nav}>
-            <IconButton onClick={handleOpen}>
+            <IconButton
+              onClick={handleOpen}
+              className={scrollDown ? undefined : classes.iconButton}
+            >
               <MenuIcon />
             </IconButton>
             <div className={classes.logo}>

@@ -9,11 +9,16 @@ export const useStyles = makeStyles(theme =>
       justifyContent: "flex-end",
       height: "80vh",
 
+      "& h1": {
+        color: "white"
+      },
+
       [theme.breakpoints.up("md")]: {
         height: "100vh",
 
         "& h1": {
-          width: "55%"
+          width: "55%",
+          color: "initial"
         }
       }
     },

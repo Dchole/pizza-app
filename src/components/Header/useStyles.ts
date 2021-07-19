@@ -39,6 +39,9 @@ export const useStyles = makeStyles(theme =>
         margin: theme.spacing(1, 0)
       }
     },
+    iconButton: {
+      color: "#eee"
+    },
     nav: {
       display: "flex",
       alignItems: "center",
