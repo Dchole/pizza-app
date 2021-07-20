@@ -7,6 +7,7 @@ export default withSession(async (req, res) => {
   const { db } = await connectToDatabase()
   const user = req.session.get<IUser>("user")
   const transactions = db.collection("transactions")
+  const userID = new ObjectID(user._id)
 
   switch (req.method) {
     case "POST": {
@@ -14,9 +15,9 @@ export default withSession(async (req, res) => {
         const {
           ops: [result]
         } = await transactions.insertOne({
-          userID: new ObjectID(user._id),
+          userID,
           ...req.body,
-          createdAt: new Date().toISOString()
+          createdAt: new Date()
         })
 
         res.json(result)
@@ -30,17 +31,13 @@ export default withSession(async (req, res) => {
 
     case "GET": {
       try {
-        const result = await transactions
-          .find({
-            userID: new ObjectID(user._id)
-          })
-          .toArray()
+        const result = await transactions.find({ userID }).toArray()
 
         if (!result) throw new Error()
 
         res.json(
           result.map(transaction => {
-            const { userID, ...rest } = transaction
+            const { userID: id, ...rest } = transaction
             return rest
           })
         )
