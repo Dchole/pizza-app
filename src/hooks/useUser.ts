@@ -10,11 +10,12 @@ export interface IUser {
   imageUrl?: string
   isLoggedIn: boolean
   authMethod: "google" | "local"
-  cart: {
+  cart?: {
     id: string
     size: Enum_Pizzas_Size
     quantity: number
   }[]
+  transactions?: string[]
 }
 
 const useUser = () => {

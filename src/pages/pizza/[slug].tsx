@@ -132,7 +132,7 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   } = useCart()
   const [price, setPrice] = useState(pizza.price_of_medium)
   const [size, setSize] = useState<Enum_Pizzas_Size>(Enum_Pizzas_Size["Medium"])
-  const handleCheckout = usePayment(price)
+  const handleCheckout = usePayment(pizza.name, price)
 
   useEffect(() => {
     const item = cart.find(({ id }) => id === pizza.id)

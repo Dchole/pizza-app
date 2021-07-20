@@ -1,10 +1,11 @@
 import { usePaystackPayment } from "react-paystack"
 import { useCart } from "@/components/CartContext"
 import useUser from "./useUser"
+import { fetcher } from "@/utils/fetcher"
 
-const usePayment = (amount?: number) => {
+const usePayment = (product?: string, amount?: number) => {
   const { user } = useUser()
-  const { totalAmount, clearCart } = useCart()
+  const { cartItems, totalAmount, clearCart } = useCart()
 
   const initializePayment = usePaystackPayment({
     reference: Date.now().toString(),
@@ -17,7 +18,22 @@ const usePayment = (amount?: number) => {
     lastname: user?.lastName
   })
 
-  const handleCheckout = () => initializePayment(clearCart)
+  const handleCheckout = () =>
+    initializePayment(async res => {
+      await fetcher("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          transactionID: res.transaction,
+          products: product ? [product] : cartItems.map(item => item.name),
+          amount: amount ?? totalAmount
+        })
+      })
+
+      clearCart()
+    })
 
   return handleCheckout
 }
