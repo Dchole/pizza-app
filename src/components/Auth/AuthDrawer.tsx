@@ -14,7 +14,7 @@ const AuthDrawer = () => {
   const authView = useMemo(
     () =>
       asPath.endsWith("#login") || asPath.endsWith("#register")
-        ? (asPath.substring(2) as TAuthView)
+        ? (asPath.split("#")[1] as TAuthView)
         : null,
     [asPath]
   )
