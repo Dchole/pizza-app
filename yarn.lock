@@ -6036,6 +6036,11 @@ through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
+time-age@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/time-age/-/time-age-1.0.8.tgz#a112beaaba06c67d445ef1924ec3123f904475de"
+  integrity sha512-3z5XLvYAW+8TajzNtT9GDAInJIkqZJnC2wt8BOmCOJ8MqHZOq/3w1QF8o8KzrRThr/kFHYf6ik1grLQSkUFb5A==
+
 timers-browserify@2.0.12, timers-browserify@^2.0.4:
   version "2.0.12"
   resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.12.tgz#44a45c11fbf407f34f97bccd1577c652361b00ee"

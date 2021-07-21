@@ -109,9 +109,11 @@ const CartContextProvider: React.FC = ({ children }) => {
     setCartItems(updatedList)
   }
 
-  const clearCart = () => {
+  const clearCart = async () => {
     setCart([])
     setCartItems([])
+
+    fetcher("/api/clear-cart")
   }
 
   const isItemInCart = (id: string) =>

@@ -1,3 +1,6 @@
+import timeAge from "time-age"
+import { useMemo } from "react"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
@@ -13,8 +16,15 @@ import TablePagination from "@material-ui/core/TablePagination"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
 import useSWR from "swr"
-import { useMemo } from "react"
-import { formatTime } from "@/utils/format-time"
+
+const useStyles = makeStyles(theme =>
+  createStyles({
+    th: {
+      fontFamily: theme.typography.h1.fontFamily,
+      fontWeight: 600
+    }
+  })
+)
 
 interface ITransaction {
   _id: string
@@ -25,6 +35,8 @@ interface ITransaction {
 }
 
 const History = () => {
+  const classes = useStyles()
+
   const { data, isValidating } = useSWR<ITransaction[]>("/api/transactions")
   const transactions = useMemo(
     () =>
@@ -32,7 +44,7 @@ const History = () => {
         "Transaction ID": transaction.transactionID,
         "Product Name": transaction.products,
         Amount: transaction.amount.toFixed(2),
-        Date: formatTime(transaction.createdAt)
+        Date: timeAge(transaction.createdAt)
       })),
     [data]
   )
@@ -56,6 +68,7 @@ const History = () => {
                     {Object.keys(transactions[0]).map((key, index, arr) => (
                       <TableCell
                         key={key}
+                        className={classes.th}
                         align={index === arr.length - 1 ? "right" : "left"}
                       >
                         {key}
