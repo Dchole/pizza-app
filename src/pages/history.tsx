@@ -62,7 +62,6 @@ const History = () => {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log(event.target.value)
     setRowsPerPage(+event.target.value)
     setPage(0)
   }
@@ -95,25 +94,27 @@ const History = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {transactions.map(transaction => (
-                    <TableRow key={transaction["transaction id"]}>
-                      {Object.values(transaction).map((item, index, arr) => (
-                        <TableCell
-                          size="small"
-                          key={item.toString()}
-                          align={index === arr.length - 1 ? "right" : "left"}
-                        >
-                          {index === 1 ? (
-                            <ProductList products={item as string[]} />
-                          ) : index === 2 ? (
-                            <span>&#8373; {item}</span>
-                          ) : (
-                            item
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+                  {transactions
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map(transaction => (
+                      <TableRow key={transaction["Transaction ID"]}>
+                        {Object.values(transaction).map((item, index, arr) => (
+                          <TableCell
+                            size="small"
+                            key={item.toString()}
+                            align={index === arr.length - 1 ? "right" : "left"}
+                          >
+                            {index === 1 ? (
+                              <ProductList products={item as string[]} />
+                            ) : index === 2 ? (
+                              <span>&#8373; {item}</span>
+                            ) : (
+                              item
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>

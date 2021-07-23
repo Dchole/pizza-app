@@ -40,7 +40,7 @@ const DesktopNavbar = () => {
           <Badge
             max={9}
             color="error"
-            overlap="circle"
+            overlap="circular"
             badgeContent={cart.length}
           >
             <BagIcon />

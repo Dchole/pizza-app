@@ -77,7 +77,7 @@ const PageBackdrop: React.FC = ({ children }) => {
                 <Badge
                   max={9}
                   color="error"
-                  overlap="circle"
+                  overlap="circular"
                   badgeContent={cart.length}
                 >
                   <ShoppingCartIcon />
