@@ -4,9 +4,8 @@ import { connectToDatabase } from "@/lib/mongodb"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { db } = await connectToDatabase()
-
     try {
+      const { db } = await connectToDatabase()
       const salt = await genSalt(10)
       req.body.password = await hash(req.body.password, salt)
 

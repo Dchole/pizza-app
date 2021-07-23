@@ -4,9 +4,9 @@ import { compare } from "bcryptjs"
 
 export default withSession(async (req, res) => {
   if (req.method === "POST") {
-    const { db } = await connectToDatabase()
-
     try {
+      const { db } = await connectToDatabase()
+
       const user = await db
         .collection("users")
         .findOne({ phoneNumber: req.body.phoneNumber })
@@ -29,7 +29,7 @@ export default withSession(async (req, res) => {
 
       const userSession = { isLoggedIn: true, ...rest }
 
-      await req.session.set("user", userSession)
+      req.session.set("user", userSession)
       await req.session.save()
 
       res.json(userSession)

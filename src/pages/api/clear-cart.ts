@@ -4,10 +4,10 @@ import { withSession } from "@/lib/session"
 import { ObjectID } from "mongodb"
 
 export default withSession(async (req, res) => {
-  const { db } = await connectToDatabase()
-
   try {
+    const { db } = await connectToDatabase()
     const userSession = req.session.get<IUser>("user")
+
     if (!userSession) throw new Error("Unauthenticated")
 
     const { value } = await db

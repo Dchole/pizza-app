@@ -1,28 +1,26 @@
-import { IUser } from "@/hooks/useUser"
-import { connectToDatabase } from "@/lib/mongodb"
 import { withSession } from "@/lib/session"
+import { connectToDatabase } from "@/lib/mongodb"
 import { ObjectID } from "mongodb"
+import { IUser } from "@/hooks/useUser"
 
 export default withSession(async (req, res) => {
   if (req.method === "POST") {
     try {
       const { db } = await connectToDatabase()
-      const userSession = req.session.get<IUser>("user")
-
-      if (!userSession) throw new Error("Unauthenticated")
+      const currentUser = req.session.get<IUser>("user")
 
       const { value } = await db
         .collection("users")
         .findOneAndUpdate(
-          { _id: new ObjectID(userSession._id) },
-          { $set: { cart: JSON.parse(req.body) } },
+          { _id: new ObjectID(currentUser?._id) },
+          { $set: req.body },
           { returnDocument: "after" }
         )
 
       req.session.set("user", value)
       await req.session.save()
 
-      res.json(value.cart)
+      res.json(value)
     } catch (error) {
       console.log(error.message)
       res.end("Something went wrong!")

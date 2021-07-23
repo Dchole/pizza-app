@@ -7,7 +7,7 @@ export default withSession(async (req, res) => {
   const { db } = await connectToDatabase()
   const user = req.session.get<IUser>("user")
   const transactions = db.collection("transactions")
-  const userID = new ObjectID(user._id)
+  const userID = new ObjectID(user?._id)
 
   switch (req.method) {
     case "POST": {

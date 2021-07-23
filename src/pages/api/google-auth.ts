@@ -4,9 +4,8 @@ import { connectToDatabase } from "@/lib/mongodb"
 
 export default withSession(async (req: IReq, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { db } = await connectToDatabase()
-
     try {
+      const { db } = await connectToDatabase()
       let user = await db.collection("users").findOne({ email: req.body.email })
 
       if (!user) {

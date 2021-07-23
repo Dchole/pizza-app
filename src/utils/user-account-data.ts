@@ -6,7 +6,18 @@ export const userAccountData = (user: IUser) => {
 
   return Object.entries(account).map(([key, value]) => ({
     key,
-    value: value || "Unknown",
-    caption: key === "location" ? "City/Town" : keyToText(key)
+    value,
+    caption:
+      key === "location"
+        ? "City/Town"
+        : key === "address"
+        ? "Home Address"
+        : keyToText(key),
+    placeholder:
+      key === "location"
+        ? "Ex. Takoradi"
+        : key === "address"
+        ? "Ex. Shama, Beach Road"
+        : undefined
   }))
 }
