@@ -28,8 +28,8 @@ const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
         </Typography>
       </div>
       <Grid wrap="nowrap" className={classes.list} container>
-        {pizzas.map(pizza => (
-          <ProductCard key={pizza.id} pizza={pizza} />
+        {pizzas?.map(pizza => (
+          <ProductCard key={pizza?.id} pizza={pizza} />
         ))}
       </Grid>
       <div className={classes.buttonWrapper}>

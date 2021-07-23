@@ -14,7 +14,7 @@ import { fetcher } from "@/utils/fetcher"
 import { init } from "@/lib/google-auth"
 
 interface IFormWrapperProps {
-  view?: "login" | "register"
+  view?: "login" | "register" | null
 }
 
 const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {

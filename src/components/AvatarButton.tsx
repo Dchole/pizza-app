@@ -11,7 +11,7 @@ const AccountPopup = dynamic(() => import("./Header/AccountPopup"))
 const AvatarButton: React.FC<{ className?: string }> = ({
   className = undefined
 }) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>(null)
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const desktop = useScreenSize()
   const { user } = useUser()
 

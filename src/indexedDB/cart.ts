@@ -1,7 +1,7 @@
-import { GetCartPizzasQuery } from "@/graphql/generated"
+import { CardFragment } from "@/graphql/generated"
 import Dexie from "dexie"
 
-type TPizza = GetCartPizzasQuery["pizzas"][0]
+type TPizza = { __typename?: "Pizzas" } & CardFragment
 export interface ICartTable extends TPizza {
   quantity: number
 }

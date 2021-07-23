@@ -30,7 +30,7 @@ export const accountLinks = [
   },
   {
     label: "Logout",
-    path: undefined,
+    path: "#logout",
     icon: <LogoutIcon />
   }
 ]

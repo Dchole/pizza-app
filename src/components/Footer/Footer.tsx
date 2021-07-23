@@ -28,12 +28,12 @@ const Footer = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email: inputRef.current.value })
+        body: JSON.stringify({ email: inputRef.current?.value })
       })
     } catch (error) {
       console.log(error.message)
     } finally {
-      inputRef.current.value = ""
+      inputRef.current!.value = ""
     }
   }
 

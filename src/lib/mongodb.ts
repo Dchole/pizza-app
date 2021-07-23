@@ -23,6 +23,7 @@ if (!MONGODB_DB) {
 let cached = global.mongo
 
 if (!cached) {
+  // @ts-ignore
   cached = global.mongo = { conn: null, promise: null }
 }
 

@@ -48,13 +48,13 @@ const Filter: React.FC<IFilterProps> = ({ showing, handleClose }) => {
   } = useAutocomplete({
     id: "pizza-autocomplete",
     openOnFocus: true,
-    options: allPizzas,
+    options: allPizzas || [],
     autoSelect: true,
     onClose: () => {
       reset()
       handleClose()
     },
-    getOptionLabel: option => option.name
+    getOptionLabel: option => option?.name || ""
   })
 
   useMemo(() => {
@@ -63,7 +63,7 @@ const Filter: React.FC<IFilterProps> = ({ showing, handleClose }) => {
   }, [value, inputValue, filter])
 
   useEffect(() => {
-    showing && inputRef.current.focus()
+    showing && inputRef.current?.focus()
   }, [showing])
 
   return (
@@ -79,15 +79,15 @@ const Filter: React.FC<IFilterProps> = ({ showing, handleClose }) => {
         fullWidth
         autoCapitalize="words"
       />
-      {groupedOptions.length > 0 && (
+      {groupedOptions.length && (
         <List {...getListboxProps()} classes={{ padding: classes.listPadding }}>
           {groupedOptions.map((option, index) => (
             <ListItem
               {...getOptionProps({ option, index })}
-              key={option.id}
+              key={option?.id}
               className={classes.item}
             >
-              <span className={classes.itemText}>{option.name}</span>
+              <span className={classes.itemText}>{option?.name}</span>
             </ListItem>
           ))}
         </List>

@@ -28,7 +28,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const { pizzas } = await sdk.getPizzas()
 
   return {
-    paths: pizzas.map(({ slug }) => ({
+    // @ts-ignore
+    paths: pizzas!.map(({ slug }) => ({
       params: {
         slug
       }
@@ -47,9 +48,10 @@ export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
   const client = new GraphQLClient(cmsLinks.api)
   const sdk = getSdk(client)
   const {
+    // @ts-ignore
     pizzas: [pizza]
   } = await sdk.getPizzaDetails({
-    filter: { slug: params.slug as string }
+    filter: { slug: params?.slug as string }
   })
 
   return { props: { pizza } }

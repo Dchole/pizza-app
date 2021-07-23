@@ -32,7 +32,7 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
         <CardMedia className={classes.cover}>
           <Image
             loader={loader}
-            src={item.image.formats.small.url}
+            src={item.image?.formats.small.url}
             alt={item.name}
             title={item.name}
             layout="fill"

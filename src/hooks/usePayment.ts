@@ -14,12 +14,12 @@ const usePayment = (product?: string, amount?: number) => {
     currency: "GHS",
     channels: ["mobile_money"],
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC,
-    firstname: user?.firstName,
-    lastname: user?.lastName
+    firstname: user?.accountName.split(" ")[0],
+    lastname: user?.accountName.split(" ")[1]
   })
 
   const handleCheckout = () =>
-    initializePayment(async res => {
+    initializePayment(async (res: any) => {
       await fetcher("/api/transactions", {
         method: "POST",
         headers: {
