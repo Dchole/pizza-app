@@ -24,6 +24,7 @@ export const useDesktopNavStyles = makeStyles(theme =>
     navLinks: {
       display: "flex",
       listStyle: "none",
+      alignItems: "center",
       gap: "2rem",
 
       "& a": {

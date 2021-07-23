@@ -1,9 +1,9 @@
 import { FormikHelpers } from "formik"
+import Router from "next/router"
 import * as Yup from "yup"
 
 export const initialValues = {
-  firstName: "",
-  lastName: "",
+  accountName: "",
   phoneNumber: "",
   password: ""
 }
@@ -11,15 +11,15 @@ export const initialValues = {
 export type TValues = typeof initialValues
 
 export const validationSchema = Yup.object().shape({
-  firstName: Yup.string().required().min(3).label("First Name"),
-  lastName: Yup.string().required().min(3).label("Last Name"),
+  accountName: Yup.string().required().min(3).label("Account Name"),
   phoneNumber: Yup.string().required().label("Phone Number"),
   password: Yup.string().min(8).required().label("Password")
 })
 
 export const handleSubmit = async (
   values: TValues,
-  actions: FormikHelpers<TValues>
+  actions: FormikHelpers<TValues>,
+  mobile: boolean
 ) => {
   try {
     const res = await fetch("/api/register", {
@@ -32,8 +32,7 @@ export const handleSubmit = async (
       throw new Error("")
     }
 
-    const data = await res.json()
-    console.log({ data })
+    Router.push(mobile ? "/login" : "#login")
   } catch (error) {
     console.log(error)
   } finally {

@@ -12,40 +12,32 @@ import {
   initialValues
 } from "./config/register-config"
 import { useFormStyles } from "./styles/useFormStyles"
+import useScreenSize from "@/hooks/usScreenSize"
 
 const Register = () => {
   const classes = useFormStyles()
+  const desktop = useScreenSize()
   const { showPassword, handleToggle } = useToggleVisibility()
 
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={handleSubmit}
+      onSubmit={(values, actions) => handleSubmit(values, actions, !desktop)}
     >
       {({ isSubmitting }) => (
         <Form id="sign-up" name="sign-up">
           <Field
-            id="firstName"
+            id="accountName"
             component={TextField}
-            name="firstName"
+            name="accountName"
             margin="normal"
             variant="outlined"
-            label="First Name"
-            autoComplete="given-name"
+            label="Account Name"
+            placeholder="Ex. John Doe"
+            autoComplete="name"
             autoCapitalize="on"
             autoFocus
-            fullWidth
-          />
-          <Field
-            id="lastName"
-            component={TextField}
-            name="lastName"
-            margin="normal"
-            variant="outlined"
-            label="Last Name"
-            autoComplete="family-name"
-            autoCapitalize="on"
             fullWidth
           />
           <Field

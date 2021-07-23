@@ -14,7 +14,13 @@ export default withSession(async (req: IReq, res: NextApiResponse) => {
           .collection("users")
           .insertOne({ ...req.body, authMethod: "google" })
 
-        user = [user] = ops
+        user = {
+          accountName: "",
+          phoneNumber: "",
+          location: "",
+          address: "",
+          ...ops[0]
+        }
       }
 
       const userSession = { isLoggedIn: true, ...user }

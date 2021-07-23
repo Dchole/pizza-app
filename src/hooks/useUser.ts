@@ -6,6 +6,8 @@ export interface IUser {
   firstName: string
   lastName: string
   phoneNumber?: string
+  location?: string
+  address?: string
   email?: string
   imageUrl?: string
   isLoggedIn: boolean
@@ -19,7 +21,7 @@ export interface IUser {
 }
 
 const useUser = () => {
-  const { data: user, ...rest } = useSWR<Partial<IUser>>("/api/user")
+  const { data: user, ...rest } = useSWR<IUser>("/api/user")
   return { user, ...rest }
 }
 
