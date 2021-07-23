@@ -20,6 +20,7 @@ import { userAccountData } from "@/utils/user-account-data"
 import { slugify } from "@/utils/slugify"
 import { green, red } from "@material-ui/core/colors"
 import { fetcher } from "@/utils/fetcher"
+import useScreenSize from "@/hooks/usScreenSize"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -58,6 +59,7 @@ const theme = createTheme({
 
 const Profile = () => {
   const classes = useStyles()
+  const desktop = useScreenSize()
   const { user, mutate } = useUser()
   const [edit, setEdit] = useState("")
   const [updating, setUpdating] = useState(false)
@@ -95,8 +97,8 @@ const Profile = () => {
   const cancelEdit = () => setEdit("")
 
   return (
-    <PageBackdrop>
-      <Container component="main" maxWidth="sm" className={classes.root}>
+    <main id="account-profile">
+      <Container maxWidth="sm" className={classes.root}>
         <Typography variant="h2">Account Details</Typography>
         {userData?.map(({ key, value, caption, placeholder }) => (
           <section id={slugify(key)} key={key}>
@@ -116,7 +118,8 @@ const Profile = () => {
                   disabled={updating}
                   fullWidth
                   classes={{
-                    adornedEnd: updating ? undefined : classes.adornedEnd
+                    adornedEnd:
+                      updating || desktop ? undefined : classes.adornedEnd
                   }}
                   inputProps={{
                     "aria-labelledby": `${key}-id`,
@@ -163,7 +166,7 @@ const Profile = () => {
           </section>
         ))}
       </Container>
-    </PageBackdrop>
+    </main>
   )
 }
 

@@ -7,7 +7,7 @@ import ProductCard from "@/components/ProductCard"
 import { IPizzaProps } from "@/components/Popular"
 import { GraphQLClient } from "graphql-request"
 import { cmsLinks } from "cms"
-import { getSdk } from "@/graphql/generated"
+import { CardFragment, getSdk, Maybe } from "@/graphql/generated"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { usePizzaContext } from "@/components/PizzaContext"
 import { useEffect, useState } from "react"
@@ -35,6 +35,8 @@ const useStyles = makeStyles(theme =>
   })
 )
 
+type TPizza = Maybe<{ __typename?: "Pizzas" } & CardFragment>
+
 export const getStaticProps: GetStaticProps<IPizzaProps> = async () => {
   const client = new GraphQLClient(cmsLinks.api)
   const sdk = getSdk(client)
@@ -48,7 +50,7 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }) => {
   const classes = useStyles()
   const { filteredPizzas, getAll, filter, reset } = usePizzaContext()
-  const [value, setValue] = useState<typeof pizzas[0] | null>(null)
+  const [value, setValue] = useState<TPizza | null>(null)
   const [inputValue, setInputValue] = useState("")
   const desktop = useScreenSize()
 
@@ -60,7 +62,7 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     setInputValue(newInputValue)
   }
 
-  const handleChange = (_event: any, newValue: typeof pizzas[0] | null) => {
+  const handleChange = (_event: any, newValue: TPizza | null) => {
     setValue(newValue)
     !newValue && reset()
   }
@@ -75,7 +77,7 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <title>Store</title>
       </Head>
 
-      <PageBackdrop>
+      <>
         {desktop && (
           <div className={classes.inputWrapper}>
             <Autocomplete
@@ -84,9 +86,9 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
               inputValue={inputValue}
               onInputChange={handleInputValueChange}
               onChange={handleChange}
-              options={pizzas}
+              options={pizzas || []}
               className={classes.input}
-              getOptionLabel={option => option.name}
+              getOptionLabel={option => option?.name || ""}
               classes={{ input: classes.inputFont, paper: classes.inputFont }}
               noOptionsText="No matching pizza"
               renderInput={({
@@ -111,13 +113,14 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           </div>
         )}
         <main className={classes.main}>
-          {[...(filteredPizzas.length > 0 ? filteredPizzas : pizzas)].map(
-            pizza => (
-              <ProductCard key={pizza?.id} pizza={pizza} />
-            )
-          )}
+          {[
+            ...((Boolean(filteredPizzas?.length) ? filteredPizzas : pizzas) ||
+              [])
+          ].map(pizza => (
+            <ProductCard key={pizza?.id} pizza={pizza} />
+          ))}
         </main>
-      </PageBackdrop>
+      </>
     </>
   )
 }

@@ -32,6 +32,9 @@ export const useStyles = makeStyles(theme =>
       position: "fixed",
       width: "100%"
     },
+    zeroTopPadding: {
+      paddingTop: 0
+    },
     sidenav: {
       top: "50%",
       left: "50%",

@@ -5,11 +5,13 @@ import PizzaContextProvider from "../PizzaContext"
 import { useStyles } from "./useStyles"
 import { useRouter } from "next/router"
 import CartContextProvider from "../CartContext"
+import PageBackdrop from "../PageBackdrop"
 
 const Layout: React.FC = ({ children }) => {
   const classes = useStyles()
   const { pathname } = useRouter()
   const onAuthPage = pathname === "/login" || pathname === "/register"
+  const onContentSite = ["/", "/about", "/hiring"].includes(pathname)
 
   return (
     <PizzaContextProvider>
@@ -24,7 +26,11 @@ const Layout: React.FC = ({ children }) => {
             skip navigation
           </Link>
           {pathname === "/" && <Header />}
-          {children}
+          {onContentSite || onAuthPage ? (
+            children
+          ) : (
+            <PageBackdrop>{children}</PageBackdrop>
+          )}
           {!onAuthPage && <Footer />}
         </div>
       </CartContextProvider>

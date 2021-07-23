@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton"
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import MobileNavbar from "./MobileNavbar"
 import Link from "../Link"
+import ToggleNav from "../ToggleNav"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useStyles } from "./useStyles"
 import { useCart } from "../CartContext"
@@ -29,6 +30,7 @@ const PageBackdrop: React.FC = ({ children }) => {
   const [show, setShow] = useState(false)
   const desktop = useScreenSize()
   const { cart } = useCart()
+  const onAccountPage = ["/profile", "/history"].includes(pathname)
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true)
@@ -54,7 +56,16 @@ const PageBackdrop: React.FC = ({ children }) => {
         />
       )}
       <Slide direction={direction} in={!open} onEntered={handleHide}>
-        <Paper className={classes.paper}>{children}</Paper>
+        <Paper
+          className={
+            onAccountPage
+              ? clsx(classes.paper, classes.zeroTopPadding)
+              : classes.paper
+          }
+        >
+          {onAccountPage && <ToggleNav />}
+          {children}
+        </Paper>
       </Slide>
       {show && direction === "left" && (
         <div className={clsx(classes.aside, classes.sidenav)}>

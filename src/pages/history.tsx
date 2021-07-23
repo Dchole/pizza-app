@@ -10,7 +10,6 @@ import TableRow from "@material-ui/core/TableRow"
 import TableHead from "@material-ui/core/TableHead"
 import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
-import TableFooter from "@material-ui/core/TableFooter"
 import TableContainer from "@material-ui/core/TableContainer"
 import TablePagination from "@material-ui/core/TablePagination"
 import Toolbar from "@material-ui/core/Toolbar"
@@ -44,16 +43,19 @@ const History = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
   const { data, isValidating } = useSWR<ITransaction[]>("/api/transactions")
-  const transactions = useMemo(
-    () =>
-      data?.map(transaction => ({
-        "Transaction ID": transaction.transactionID,
-        "Product Name": transaction.products,
-        Amount: transaction.amount.toFixed(2),
-        Date: timeAge(transaction.createdAt)
-      })),
-    [data]
-  )
+
+  const [fields, transactions] = useMemo(() => {
+    const fields = ["Transaction ID", "Product Name", "Amount", "Date"]
+
+    const transactions = data?.map(transaction => ({
+      "Transaction ID": transaction.transactionID,
+      "Product Name": transaction.products,
+      Amount: transaction.amount.toFixed(2),
+      Date: timeAge(transaction.createdAt)
+    }))
+
+    return [fields, transactions]
+  }, [data])
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage)
@@ -67,11 +69,11 @@ const History = () => {
   }
 
   return (
-    <PageBackdrop>
+    <main id="transaction-history">
       {isValidating && !transactions ? (
         <CircularProgress />
       ) : (
-        <Container component="main" maxWidth="md">
+        <Container maxWidth="md">
           <Paper>
             <Toolbar>
               <Typography variant="h3" component="h1" align="center">
@@ -82,7 +84,7 @@ const History = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    {Object.keys(transactions[0]).map((key, index, arr) => (
+                    {fields.map((key, index, arr) => (
                       <TableCell
                         key={key}
                         className={classes.th}
@@ -95,7 +97,10 @@ const History = () => {
                 </TableHead>
                 <TableBody>
                   {transactions
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    ?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
                     .map(transaction => (
                       <TableRow key={transaction["Transaction ID"]}>
                         {Object.values(transaction).map((item, index, arr) => (
@@ -121,7 +126,7 @@ const History = () => {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={transactions.length}
+              count={Number(transactions?.length)}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -130,7 +135,7 @@ const History = () => {
           </Paper>
         </Container>
       )}
-    </PageBackdrop>
+    </main>
   )
 }
 

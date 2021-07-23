@@ -7,7 +7,6 @@ import Container from "@material-ui/core/Container"
 import Typography from "@material-ui/core/Typography"
 import PaymentIcon from "@material-ui/icons/Payment"
 import StoreIcon from "@material-ui/icons/Store"
-import PageBackdrop from "@/components/PageBackdrop"
 import CartItem from "@/components/CartItem"
 import ButtonLink from "@/components/ButtonLink"
 import useScreenSize from "@/hooks/usScreenSize"
@@ -69,70 +68,64 @@ const Cart = () => {
   const { cartItems, totalAmount } = useCart()
 
   return (
-    <PageBackdrop>
-      <Container
-        maxWidth="md"
-        className={classes.root}
-        disableGutters={!desktop}
-      >
-        {cartItems.length ? (
-          <>
-            <div className={classes.grid}>
-              {cartItems.map(item => (
-                <CartItem key={item.id} item={item} />
-              ))}
-            </div>
-            <div className={classes.total}>
-              <p aria-label={`${totalAmount} cedis`}>
-                <span>₵</span>&nbsp;
-                <AnimatedNumber
-                  fontStyle={{ fontSize: 40 }}
-                  animateToNumber={totalAmount}
-                  includeComma
-                />
-                .00
-              </p>
-            </div>
-            <div className={classes.buttonWrapper}>
-              <Button
-                color="primary"
-                variant="contained"
-                endIcon={<PaymentIcon />}
-                onClick={handleCheckout}
-                fullWidth
-              >
-                Checkout
-              </Button>
-            </div>
-          </>
-        ) : (
-          <Grid direction="column" alignItems="center" container>
-            <Image
-              src="/empty-cart.svg"
-              alt="empty cart illustration"
-              width={300}
-              height={240}
-            />
-            <Typography variant="h3" component="p">
-              Your Cart is Empty
-            </Typography>
-            <Typography color="textSecondary">
-              Add an item from the store
-            </Typography>
-            <div className={classes.linkWrapper}>
-              <ButtonLink
-                href="/store"
-                variant="contained"
-                color="primary"
-                endIcon={<StoreIcon />}
-              >
-                Go to store
-              </ButtonLink>
-            </div>
-          </Grid>
-        )}
-      </Container>
-    </PageBackdrop>
+    <Container maxWidth="md" className={classes.root} disableGutters={!desktop}>
+      {cartItems.length ? (
+        <>
+          <div className={classes.grid}>
+            {cartItems.map(item => (
+              <CartItem key={item.id} item={item} />
+            ))}
+          </div>
+          <div className={classes.total}>
+            <p aria-label={`${totalAmount} cedis`}>
+              <span>₵</span>&nbsp;
+              <AnimatedNumber
+                fontStyle={{ fontSize: 40 }}
+                animateToNumber={totalAmount}
+                includeComma
+              />
+              .00
+            </p>
+          </div>
+          <div className={classes.buttonWrapper}>
+            <Button
+              color="primary"
+              variant="contained"
+              endIcon={<PaymentIcon />}
+              onClick={handleCheckout}
+              fullWidth
+            >
+              Checkout
+            </Button>
+          </div>
+        </>
+      ) : (
+        <Grid direction="column" alignItems="center" container>
+          <Image
+            src="/empty-cart.svg"
+            alt="empty cart illustration"
+            width={300}
+            height={240}
+          />
+          <Typography variant="h3" component="p">
+            Your Cart is Empty
+          </Typography>
+          <Typography color="textSecondary">
+            Add an item from the store
+          </Typography>
+          <div className={classes.linkWrapper}>
+            <ButtonLink
+              href="/store"
+              variant="contained"
+              color="primary"
+              endIcon={<StoreIcon />}
+            >
+              Go to store
+            </ButtonLink>
+          </div>
+        </Grid>
+      )}
+    </Container>
   )
 }
 
