@@ -4,7 +4,6 @@ import { createStyles, makeStyles } from "@material-ui/core/styles"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
-import PageBackdrop from "@/components/PageBackdrop"
 import Table from "@material-ui/core/Table"
 import TableRow from "@material-ui/core/TableRow"
 import TableHead from "@material-ui/core/TableHead"
@@ -16,6 +15,7 @@ import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
 import useSWR from "swr"
 import ProductList from "@/components/ProductList"
+import useScreenSize from "@/hooks/usScreenSize"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -41,6 +41,7 @@ const History = () => {
   const classes = useStyles()
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
+  const desktop = useScreenSize()
 
   const { data, isValidating } = useSWR<ITransaction[]>("/api/transactions")
 
@@ -73,7 +74,7 @@ const History = () => {
       {isValidating && !transactions ? (
         <CircularProgress />
       ) : (
-        <Container maxWidth="md">
+        <Container maxWidth="md" disableGutters={desktop}>
           <Paper>
             <Toolbar>
               <Typography variant="h3" component="h1" align="center">

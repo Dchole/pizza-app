@@ -1,7 +1,7 @@
 import "@fontsource/montserrat/500.css"
 
 import { useRouter } from "next/router"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import clsx from "clsx"
 import dynamic from "next/dynamic"
 import Paper from "@material-ui/core/Paper"
@@ -41,8 +41,11 @@ const PageBackdrop: React.FC = ({ children }) => {
   }
 
   const handleHide = () => setShow(false)
-
   const handleClose = useCallback(() => setOpen(false), [])
+
+  useEffect(() => {
+    handleClose()
+  }, [pathname, handleClose])
 
   return (
     <div className={classes.root}>

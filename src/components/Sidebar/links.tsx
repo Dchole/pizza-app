@@ -3,18 +3,18 @@ import CallIcon from "@material-ui/icons/Call"
 import StoreIcon from "@material-ui/icons/Store"
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import WorkIcon from "@material-ui/icons/Work"
-import AccountIcon from "@material-ui/icons/AccountBox"
+import PersonIcon from "@material-ui/icons/Person"
 import HistoryIcon from "@material-ui/icons/History"
 
 const appLinks = [
   {
-    label: "Account",
-    path: "/account",
-    icon: <AccountIcon />
+    label: "Profile",
+    path: "/profile",
+    icon: <PersonIcon />
   },
   {
-    label: "History",
-    path: "/transactions",
+    label: "Transactions",
+    path: "/history",
     icon: <HistoryIcon />
   },
   {
@@ -44,8 +44,8 @@ const info = [
 
 const jobs = [
   {
-    label: "Career",
-    path: "/career",
+    label: "Hiring",
+    path: "/hiring",
     icon: <WorkIcon />
   }
 ]
