@@ -9,7 +9,9 @@ export default withSession(async (req, res) => {
       const { db } = await connectToDatabase()
       const currentUser = req.session.get<IUser>("user")
 
-      const { value } = await db
+      const {
+        value: { password, ...user }
+      } = await db
         .collection("users")
         .findOneAndUpdate(
           { _id: new ObjectID(currentUser?._id) },
@@ -17,10 +19,10 @@ export default withSession(async (req, res) => {
           { returnDocument: "after" }
         )
 
-      req.session.set("user", value)
+      req.session.set("user", user)
       await req.session.save()
 
-      res.json(value)
+      res.json(user)
     } catch (error) {
       console.log(error.message)
       res.end("Something went wrong!")

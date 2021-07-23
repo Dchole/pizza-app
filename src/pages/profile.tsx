@@ -5,16 +5,17 @@ import {
   makeStyles,
   ThemeProvider
 } from "@material-ui/core/styles"
-import Container from "@material-ui/core/Container"
 import CheckIcon from "@material-ui/icons/Check"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import CloseIcon from "@material-ui/icons/Close"
+import Container from "@material-ui/core/Container"
 import EditIcon from "@material-ui/icons/Edit"
 import IconButton from "@material-ui/core/IconButton"
 import InputAdornment from "@material-ui/core/InputAdornment"
 import OutlinedInput from "@material-ui/core/OutlinedInput"
 import PageBackdrop from "@/components/PageBackdrop"
 import Typography from "@material-ui/core/Typography"
-import useUser from "@/hooks/useUser"
+import useUser, { IUser } from "@/hooks/useUser"
 import { userAccountData } from "@/utils/user-account-data"
 import { slugify } from "@/utils/slugify"
 import { green, red } from "@material-ui/core/colors"
@@ -57,8 +58,9 @@ const theme = createTheme({
 
 const Profile = () => {
   const classes = useStyles()
-  const { user } = useUser()
+  const { user, mutate } = useUser()
   const [edit, setEdit] = useState("")
+  const [updating, setUpdating] = useState(false)
   const userData = useMemo(() => user && userAccountData(user), [user])
 
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,16 +74,21 @@ const Profile = () => {
     )!
 
     try {
-      await fetcher("/api/update-user", {
+      setUpdating(true)
+      const updatedUser = await fetcher<IUser>("/api/update-user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ [edit]: value })
       })
+
+      mutate(updatedUser)
       setEdit("")
     } catch (error) {
       console.log(error.message)
+    } finally {
+      setUpdating(false)
     }
   }
 
@@ -106,26 +113,40 @@ const Profile = () => {
                   id={`${key}-input`}
                   defaultValue={value}
                   placeholder={placeholder}
+                  disabled={updating}
                   fullWidth
-                  classes={{ adornedEnd: classes.adornedEnd }}
-                  inputProps={{ "aria-labelledby": `${key}-id` }}
+                  classes={{
+                    adornedEnd: updating ? undefined : classes.adornedEnd
+                  }}
+                  inputProps={{
+                    "aria-labelledby": `${key}-id`,
+                    "aria-describedby": `${key}-progress`,
+                    "aria-busy": updating,
+                    autoComplete: false
+                  }}
                   endAdornment={
-                    <ThemeProvider
-                      theme={appTheme => ({ ...appTheme, ...theme })}
-                    >
+                    updating ? (
                       <InputAdornment position="end">
-                        <IconButton color="primary" onClick={saveEdit}>
-                          <CheckIcon />
-                        </IconButton>
-                        <IconButton color="secondary" onClick={cancelEdit}>
-                          <CloseIcon />
-                        </IconButton>
+                        <CircularProgress id={`${key}-progress`} size={20} />
                       </InputAdornment>
-                    </ThemeProvider>
+                    ) : (
+                      <ThemeProvider
+                        theme={appTheme => ({ ...appTheme, ...theme })}
+                      >
+                        <InputAdornment position="end">
+                          <IconButton color="primary" onClick={saveEdit}>
+                            <CheckIcon />
+                          </IconButton>
+                          <IconButton color="secondary" onClick={cancelEdit}>
+                            <CloseIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      </ThemeProvider>
+                    )
                   }
                 />
               ) : (
-                <Typography component="h3" variant="h6">
+                <Typography component="p" variant="h6">
                   {value || "Unknown"}
                 </Typography>
               )}

@@ -3,8 +3,7 @@ import useSWR from "swr"
 
 export interface IUser {
   _id: string
-  firstName: string
-  lastName: string
+  accountName: string
   phoneNumber?: string
   location?: string
   address?: string

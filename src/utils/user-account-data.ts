@@ -2,7 +2,12 @@ import { IUser } from "@/hooks/useUser"
 import { keyToText } from "./key-to-text"
 
 export const userAccountData = (user: IUser) => {
-  const { _id, isLoggedIn, authMethod, cart, transactions, ...account } = user
+  const account = {
+    accountName: user.accountName,
+    phoneNumber: user.phoneNumber,
+    location: user.location,
+    address: user.address
+  }
 
   return Object.entries(account).map(([key, value]) => ({
     key,
