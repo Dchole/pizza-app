@@ -7,6 +7,6 @@ export const userAccountData = (user: IUser) => {
   return Object.entries(account).map(([key, value]) => ({
     key,
     value: value || "Unknown",
-    heading: keyToText(key)
+    caption: key === "location" ? "City/Town" : keyToText(key)
   }))
 }

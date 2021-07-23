@@ -17,6 +17,10 @@ const useStyles = makeStyles(theme =>
         alignItems: "center",
         justifyContent: "space-between",
         margin: theme.spacing(3, 0)
+      },
+
+      "& .MuiTypography-h6": {
+        fontFamily: theme.typography.h1.fontFamily
       }
     }
   })
@@ -37,17 +41,19 @@ const Profile = () => {
     <PageBackdrop>
       <Container component="main" maxWidth="sm" className={classes.root}>
         <Typography variant="h2">Account Details</Typography>
-        {userData?.map(({ key, value, heading }) => (
+        {userData?.map(({ key, value, caption }) => (
           <section id={slugify(key)} key={key}>
             <div>
-              <Typography component="h3" variant="h6">
-                {heading}
+              <Typography color="textSecondary" variant="caption">
+                {caption}
               </Typography>
-              <Typography color="textSecondary">{value}</Typography>
+              <Typography component="h3" variant="h6">
+                {value}
+              </Typography>
             </div>
             <IconButton
               data-key={key}
-              aria-label={`edit ${heading}`}
+              aria-label={`edit ${caption}`}
               onClick={handleEdit}
             >
               <EditIcon />
