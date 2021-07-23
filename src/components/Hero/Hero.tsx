@@ -1,9 +1,5 @@
 import Image from "next/image"
-import {
-  createMuiTheme,
-  ThemeProvider,
-  useTheme
-} from "@material-ui/core/styles"
+import { createTheme, ThemeProvider, useTheme } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import Typography from "@material-ui/core/Typography"
 import BagIcon from "@material-ui/icons/LocalMall"
@@ -21,7 +17,7 @@ const Hero = () => {
 
   const buttonTheme = useMemo(
     () =>
-      createMuiTheme({
+      createTheme({
         ...theme,
         palette: {
           primary: {

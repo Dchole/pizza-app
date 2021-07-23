@@ -1,5 +1,5 @@
 import PersonIcon from "@material-ui/icons/Person"
-import AccountIcon from "@material-ui/icons/AccountBox"
+import ReceiptIcon from "@material-ui/icons/Receipt"
 import LogoutIcon from "@material-ui/icons/ExitToApp"
 
 export const navLinks = [
@@ -24,9 +24,9 @@ export const accountLinks = [
     icon: <PersonIcon />
   },
   {
-    label: "Account Setting",
-    path: "/account",
-    icon: <AccountIcon />
+    label: "Transactions",
+    path: "/history",
+    icon: <ReceiptIcon />
   },
   {
     label: "Logout",
