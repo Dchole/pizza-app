@@ -6,7 +6,6 @@ import Typography from "@material-ui/core/Typography"
 import PaymentIcon from "@material-ui/icons/Payment"
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
-import PageBackdrop from "@/components/PageBackdrop"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import {
   Enum_Pizzas_Size,
@@ -15,7 +14,7 @@ import {
 } from "@/graphql/generated"
 import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
+import { GetStaticPaths, GetStaticProps } from "next"
 import { loader } from "@/utils/imageLoader"
 import { useCart } from "@/components/CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
@@ -28,10 +27,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const { pizzas } = await sdk.getPizzas()
 
   return {
-    // @ts-ignore
-    paths: pizzas!.map(({ slug }) => ({
+    paths: pizzas!.map(pizza => ({
       params: {
-        slug
+        slug: String(pizza?.slug)
       }
     })),
     fallback: false
@@ -39,7 +37,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 interface IPizzaDetails {
-  pizza: GetPizzaDetailsQuery["pizzas"][0]
+  pizza: NonNullable<NonNullable<GetPizzaDetailsQuery["pizzas"]>[0]>
 }
 
 export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
@@ -47,12 +45,13 @@ export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
 }) => {
   const client = new GraphQLClient(cmsLinks.api)
   const sdk = getSdk(client)
-  const {
-    // @ts-ignore
-    pizzas: [pizza]
-  } = await sdk.getPizzaDetails({
+  const { pizzas } = await sdk.getPizzaDetails({
     filter: { slug: params?.slug as string }
   })
+
+  if (!pizzas) throw new Error("Response shouldn't be undefined or null")
+
+  const [pizza] = pizzas
 
   return { props: { pizza } }
 }
@@ -118,9 +117,7 @@ const useStyles = makeStyles(theme =>
   })
 )
 
-const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
-  pizza
-}) => {
+const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
   const classes = useStyles()
   const desktop = useScreenSize()
   const {
@@ -150,87 +147,83 @@ const Pizza: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   }, [cartItems, pizza, getItemPrice])
 
   return (
-    <PageBackdrop>
-      <Container component="main" maxWidth="md" disableGutters={!desktop}>
-        <div className={classes.imageWrapper}>
-          <Image
-            loader={loader}
-            src={
-              pizza.image.formats.large?.url || pizza.image.formats.medium.url
-            }
-            alt={pizza.name}
-            layout="fill"
-            objectFit="cover"
-          />
-        </div>
-        <div className={classes.headerText}>
-          <Typography variant="h3" component="h1">
-            {pizza.name}
-          </Typography>
-          <Typography variant="h5" component="p">
-            <span>₵</span>&nbsp;
-            <span>{price}</span>
-          </Typography>
-        </div>
-        <Typography color="textSecondary" className={classes.description}>
-          {pizza.description}
+    <Container component="main" maxWidth="md" disableGutters={!desktop}>
+      <div className={classes.imageWrapper}>
+        <Image
+          loader={loader}
+          src={
+            pizza.image?.formats.large?.url || pizza.image?.formats.medium.url
+          }
+          alt={pizza.name}
+          layout="fill"
+          objectFit="cover"
+        />
+      </div>
+      <div className={classes.headerText}>
+        <Typography variant="h3" component="h1">
+          {pizza.name}
         </Typography>
-        {cartItems.some(({ id }) => id === pizza.id) && (
-          <ButtonGroup
-            color="secondary"
-            aria-label="choose pizza size"
-            className={classes.sizes}
-            disableElevation
-            data-id={pizza.id}
-          >
-            <Button
-              variant={size === "small" ? "contained" : undefined}
-              onClick={selectSize}
-            >
-              Small
-            </Button>
-            <Button
-              variant={size === "medium" ? "contained" : undefined}
-              onClick={selectSize}
-            >
-              Medium
-            </Button>
-            <Button
-              variant={size === "large" ? "contained" : undefined}
-              onClick={selectSize}
-            >
-              Large
-            </Button>
-          </ButtonGroup>
-        )}
-        <div className={classes.actions}>
+        <Typography variant="h5" component="p">
+          <span>₵</span>&nbsp;
+          <span>{price}</span>
+        </Typography>
+      </div>
+      <Typography color="textSecondary" className={classes.description}>
+        {pizza.description}
+      </Typography>
+      {cartItems.some(({ id }) => id === pizza.id) && (
+        <ButtonGroup
+          color="secondary"
+          aria-label="choose pizza size"
+          className={classes.sizes}
+          disableElevation
+          data-id={pizza.id}
+        >
           <Button
-            variant="outlined"
-            color="primary"
-            endIcon={
-              isItemInCart(pizza.id) ? (
-                <RemoveShoppingCartIcon />
-              ) : (
-                <AddShoppingCartIcon />
-              )
-            }
-            onClick={
-              isItemInCart(pizza.id) ? removeItem(pizza) : addItem(pizza)
-            }
+            variant={size === "small" ? "contained" : undefined}
+            onClick={selectSize}
           >
-            {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
+            Small
           </Button>
           <Button
-            variant="contained"
-            color="primary"
-            endIcon={<PaymentIcon />}
-            onClick={handleCheckout}
+            variant={size === "medium" ? "contained" : undefined}
+            onClick={selectSize}
           >
-            Order Now
+            Medium
           </Button>
-        </div>
-      </Container>
-    </PageBackdrop>
+          <Button
+            variant={size === "large" ? "contained" : undefined}
+            onClick={selectSize}
+          >
+            Large
+          </Button>
+        </ButtonGroup>
+      )}
+      <div className={classes.actions}>
+        <Button
+          variant="outlined"
+          color="primary"
+          endIcon={
+            isItemInCart(pizza.id) ? (
+              <RemoveShoppingCartIcon />
+            ) : (
+              <AddShoppingCartIcon />
+            )
+          }
+          onClick={isItemInCart(pizza.id) ? removeItem(pizza) : addItem(pizza)}
+        >
+          {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          endIcon={<PaymentIcon />}
+          onClick={handleCheckout}
+        >
+          Order Now
+        </Button>
+      </div>
+    </Container>
   )
 }
 

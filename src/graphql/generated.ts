@@ -211,11 +211,11 @@ export type PizzaInput = {
   name: Scalars['String'];
   description: Scalars['String'];
   image?: Maybe<Scalars['ID']>;
-  slug?: Maybe<Scalars['String']>;
+  slug: Scalars['String'];
   size?: Maybe<Enum_Pizzas_Size>;
   price_of_small: Scalars['Float'];
-  price_of_medium?: Maybe<Scalars['Float']>;
-  price_of_large?: Maybe<Scalars['Float']>;
+  price_of_medium: Scalars['Float'];
+  price_of_large: Scalars['Float'];
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -230,11 +230,11 @@ export type Pizzas = {
   name: Scalars['String'];
   description: Scalars['String'];
   image?: Maybe<UploadFile>;
-  slug?: Maybe<Scalars['String']>;
-  size?: Maybe<Enum_Pizzas_Size>;
+  slug: Scalars['String'];
+  size: Enum_Pizzas_Size;
   price_of_small: Scalars['Float'];
-  price_of_medium?: Maybe<Scalars['Float']>;
-  price_of_large?: Maybe<Scalars['Float']>;
+  price_of_medium: Scalars['Float'];
+  price_of_large: Scalars['Float'];
   published_at?: Maybe<Scalars['DateTime']>;
 };
 

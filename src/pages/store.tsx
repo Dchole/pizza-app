@@ -6,7 +6,7 @@ import ProductCard from "@/components/ProductCard"
 import { IPizzaProps } from "@/components/Popular"
 import { GraphQLClient } from "graphql-request"
 import { cmsLinks } from "cms"
-import { CardFragment, getSdk, Maybe } from "@/graphql/generated"
+import { CardFragment, GetPizzasQuery, getSdk } from "@/graphql/generated"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { usePizzaContext } from "@/components/PizzaContext"
 import { useEffect, useState } from "react"
@@ -34,9 +34,7 @@ const useStyles = makeStyles(theme =>
   })
 )
 
-type TPizza = Maybe<{ __typename?: "Pizzas" } & CardFragment>
-
-export const getStaticProps: GetStaticProps<IPizzaProps> = async () => {
+export const getStaticProps: GetStaticProps<GetPizzasQuery> = async () => {
   const client = new GraphQLClient(cmsLinks.api)
   const sdk = getSdk(client)
   const { pizzas } = await sdk.getPizzas()
@@ -44,9 +42,13 @@ export const getStaticProps: GetStaticProps<IPizzaProps> = async () => {
   return { props: { pizzas } }
 }
 
-const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
-  pizzas
-}) => {
+type TPizza = NonNullable<GetPizzasQuery["pizzas"]>[0]
+
+interface IStoreProps {
+  pizzas: NonNullable<TPizza>[]
+}
+
+const Store: React.FC<IStoreProps> = ({ pizzas }) => {
   const classes = useStyles()
   const { filteredPizzas, getAll, filter, reset } = usePizzaContext()
   const [value, setValue] = useState<TPizza | null>(null)
@@ -85,9 +87,9 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
               inputValue={inputValue}
               onInputChange={handleInputValueChange}
               onChange={handleChange}
-              options={pizzas || []}
+              options={pizzas}
               className={classes.input}
-              getOptionLabel={option => option?.name || ""}
+              getOptionLabel={option => option.name}
               classes={{ input: classes.inputFont, paper: classes.inputFont }}
               noOptionsText="No matching pizza"
               renderInput={({
@@ -112,11 +114,8 @@ const Store: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           </div>
         )}
         <main className={classes.main}>
-          {[
-            ...((Boolean(filteredPizzas?.length) ? filteredPizzas : pizzas) ||
-              [])
-          ].map(pizza => (
-            <ProductCard key={pizza?.id} pizza={pizza} />
+          {(filteredPizzas.length ? filteredPizzas : pizzas).map(pizza => (
+            <ProductCard key={pizza.id} pizza={pizza} />
           ))}
         </main>
       </>

@@ -1,30 +1,24 @@
 import { useState, createContext, useContext, useCallback } from "react"
 import { GetPizzasQuery } from "@/graphql/generated"
 
+export type TPizzas = NonNullable<NonNullable<GetPizzasQuery["pizzas"]>[0]>[]
+
 interface IPizzaContextProps extends GetPizzasQuery {
-  allPizzas: GetPizzasQuery["pizzas"]
-  filteredPizzas: GetPizzasQuery["pizzas"]
-  getAll: (pizzas: GetPizzasQuery["pizzas"]) => void
-  filter: (pizzas: GetPizzasQuery["pizzas"]) => void
+  allPizzas: TPizzas
+  filteredPizzas: TPizzas
+  getAll: (pizzas: TPizzas) => void
+  filter: (pizzas: TPizzas) => void
   reset: () => void
 }
 
 const PizzaContext = createContext({} as IPizzaContextProps)
 
 const PizzaContextProvider: React.FC = ({ children }) => {
-  const [allPizzas, setAllPizzas] = useState<GetPizzasQuery["pizzas"]>([])
-  const [filteredPizzas, setFilteredPizzas] = useState<
-    GetPizzasQuery["pizzas"]
-  >([])
+  const [allPizzas, setAllPizzas] = useState<TPizzas>([])
+  const [filteredPizzas, setFilteredPizzas] = useState<TPizzas>([])
 
-  const getAll = useCallback(
-    (pizzas: GetPizzasQuery["pizzas"]) => setAllPizzas(pizzas),
-    []
-  )
-  const filter = useCallback(
-    (pizzas: GetPizzasQuery["pizzas"]) => setFilteredPizzas(pizzas),
-    []
-  )
+  const getAll = useCallback((pizzas: TPizzas) => setAllPizzas(pizzas), [])
+  const filter = useCallback((pizzas: TPizzas) => setFilteredPizzas(pizzas), [])
 
   const reset = useCallback(() => setFilteredPizzas([]), [])
 

@@ -5,13 +5,13 @@ import IconButton from "@material-ui/core/IconButton"
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
 import Link from "../Link"
-import { Maybe, CardFragment } from "@/graphql/generated"
+import { GetPizzasQuery } from "@/graphql/generated"
 import { loader } from "@/utils/imageLoader"
 import { useCart } from "../CartContext"
 import { useStyles } from "./useStyles"
 
 export interface IProductProps {
-  pizza: Maybe<{ __typename?: "Pizzas" } & CardFragment>
+  pizza: NonNullable<NonNullable<GetPizzasQuery["pizzas"]>[0]>
 }
 
 const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
@@ -22,7 +22,7 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
     <div className={classes.root}>
       <ButtonBase
         component={Link}
-        href={`/pizza/${pizza?.slug}`}
+        href={`/pizza/${pizza.slug}`}
         className={classes.buttonBase}
         TouchRippleProps={{
           classes: {
@@ -36,15 +36,15 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
       >
         <Image
           loader={loader}
-          src={pizza?.image?.formats.small.url}
-          alt={pizza?.name}
+          src={pizza.image?.formats.small.url}
+          alt={pizza.name}
           objectFit="cover"
           width={300}
           height={240}
         />
         <div className="details">
           <Typography variant="h5" component="strong" align="center">
-            {pizza?.name}
+            {pizza.name}
           </Typography>
           <Typography
             variant="h6"
@@ -52,17 +52,15 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
             align="center"
             color="textSecondary"
           >
-            ₵ {pizza?.price_of_medium}
+            ₵ {pizza.price_of_medium}
           </Typography>
         </div>
       </ButtonBase>
       <IconButton
-        aria-label={`add ${pizza?.name} to shopping cart`}
-        onClick={
-          isItemInCart(pizza?.id || "") ? removeItem(pizza) : addItem(pizza)
-        }
+        aria-label={`add ${pizza.name} to shopping cart`}
+        onClick={isItemInCart(pizza.id) ? removeItem(pizza) : addItem(pizza)}
       >
-        {isItemInCart(pizza?.id || "") ? (
+        {isItemInCart(pizza.id) ? (
           <RemoveShoppingCartIcon />
         ) : (
           <AddShoppingCartIcon />

@@ -11,7 +11,7 @@ import { useStyles } from "./useStyles"
 import ButtonLink from "../ButtonLink"
 
 export interface IPizzaProps {
-  pizzas: GetPizzasQuery["pizzas"]
+  pizzas: NonNullable<NonNullable<GetPizzasQuery["pizzas"]>[0]>[]
 }
 
 const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
@@ -28,8 +28,8 @@ const Popular: React.FC<IPizzaProps> = ({ pizzas }) => {
         </Typography>
       </div>
       <Grid wrap="nowrap" className={classes.list} container>
-        {pizzas?.map(pizza => (
-          <ProductCard key={pizza?.id} pizza={pizza} />
+        {pizzas.map(pizza => (
+          <ProductCard key={pizza.id} pizza={pizza} />
         ))}
       </Grid>
       <div className={classes.buttonWrapper}>

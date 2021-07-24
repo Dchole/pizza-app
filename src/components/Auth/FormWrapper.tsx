@@ -81,7 +81,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
         <Divider />
       </div>
       {onLoginPage ? <Login /> : <Register />}
-      <Grid alignItems="center" justify="space-between" container>
+      <Grid alignItems="center" justifyContent="space-between" container>
         <Typography component="span">
           {onLoginPage ? (
             <>
