@@ -45,20 +45,20 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
         onLoad={() => gapi.load("client", init)}
       ></Script>
       <Menu open={Boolean(anchorEl)} anchorEl={anchorEl} onClose={handleClose}>
-        <MenuList>
-          {accountLinks.map(({ icon, path, label }, index) => (
-            // if `path` is defined, the item is link, otherwise it's a button
-            <MenuItem key={index} divider={index === 1}>
-              <Link
-                href={path}
-                onClick={label === "Logout" ? logout : handleClose}
-              >
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText>{label}</ListItemText>
-              </Link>
-            </MenuItem>
-          ))}
-        </MenuList>
+        {accountLinks.map(({ icon, path, label }, index) => (
+          // if `path` is defined, the item is link, otherwise it's a button
+          <MenuItem
+            key={index}
+            component={Link}
+            href={path}
+            onClick={label === "Logout" ? logout : handleClose}
+            divider={index === 1}
+            button
+          >
+            <ListItemIcon>{icon}</ListItemIcon>
+            <ListItemText>{label}</ListItemText>
+          </MenuItem>
+        ))}
       </Menu>
     </>
   )
