@@ -4,7 +4,7 @@ import StoreIcon from "@material-ui/icons/Store"
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import WorkIcon from "@material-ui/icons/Work"
 import PersonIcon from "@material-ui/icons/Person"
-import HistoryIcon from "@material-ui/icons/History"
+import ReceiptIcon from "@material-ui/icons/Receipt"
 
 const appLinks = [
   {
@@ -15,7 +15,7 @@ const appLinks = [
   {
     label: "Transactions",
     path: "/history",
-    icon: <HistoryIcon />
+    icon: <ReceiptIcon />
   },
   {
     label: "Cart",
