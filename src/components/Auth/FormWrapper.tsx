@@ -31,8 +31,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
       const basicProfile = data.getBasicProfile()
 
       const user = {
-        firstName: basicProfile.getName(),
-        lastName: basicProfile.getName(),
+        accountName: basicProfile.getName(),
         email: basicProfile.getEmail(),
         imageUrl: basicProfile.getImageUrl()
       }

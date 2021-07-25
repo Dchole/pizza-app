@@ -27,7 +27,7 @@ const AvatarButton: React.FC<{ className?: string }> = ({
           className={className}
           onClick={handleClick}
         >
-          <Avatar />
+          <Avatar src={user?.imageUrl} imgProps={{ loading: "lazy" }} />
         </IconButton>
       ) : (
         <IconButton
