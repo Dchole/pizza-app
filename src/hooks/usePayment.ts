@@ -14,8 +14,8 @@ const usePayment = (product?: string, amount?: number) => {
     currency: "GHS",
     channels: ["mobile_money"],
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC,
-    firstname: user?.accountName.split(" ")[0],
-    lastname: user?.accountName.split(" ")[1]
+    firstname: user?.accountName?.split(" ")[0],
+    lastname: user?.accountName?.split(" ")[1]
   })
 
   const handleCheckout = () =>
