@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import Typography from "@material-ui/core/Typography"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
@@ -14,10 +15,12 @@ import { contacts } from "./contacts"
 import { useStyles } from "./useStyles"
 import { fetcher } from "@/utils/fetcher"
 import { useRef } from "react"
+import useScreenSize from "@/hooks/usScreenSize"
 
 const Footer = () => {
   const classes = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
+  const desktop = useScreenSize("lg")
 
   const handleSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -40,11 +43,15 @@ const Footer = () => {
   return (
     <footer className={classes.root}>
       <div>
-        <div className={classes.hiring}>
-          <Typography variant="h4" component="h3">
+        <div className={clsx(classes.centerAlign, classes.hiring)}>
+          <Typography
+            variant="h4"
+            component="h3"
+            align={desktop ? "left" : "center"}
+          >
             We&apos;re hiring
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" align={desktop ? "left" : "center"}>
             We are looking for delivery men to expand our network. Learn more or
             apply now
           </Typography>
@@ -57,8 +64,12 @@ const Footer = () => {
             Apply now
           </ButtonLink>
         </div>
-        <div className={classes.contacts}>
-          <Typography variant="h4" component="h3">
+        <div className={clsx(classes.centerAlign, classes.contacts)}>
+          <Typography
+            variant="h4"
+            component="h3"
+            align={desktop ? "left" : "center"}
+          >
             Contact Us
           </Typography>
           <List id="contacts" disablePadding dense>
@@ -68,12 +79,7 @@ const Footer = () => {
                 <ListItem disableGutters key={index}>
                   <ListItemIcon>{icon}</ListItemIcon>
                   <ListItemText>
-                    <Link
-                      href={href}
-                      color="inherit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <Link href={href} color="inherit">
                       {contact}
                     </Link>
                   </ListItemText>
@@ -87,11 +93,15 @@ const Footer = () => {
             </ListItem>
           </List>
         </div>
-        <div className={classes.newsletter}>
-          <Typography variant="h4" component="h3">
+        <div className={clsx(classes.centerAlign, classes.newsletter)}>
+          <Typography
+            variant="h4"
+            component="h3"
+            align={desktop ? "left" : "center"}
+          >
             Subscribe to our Newsletter
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" align={desktop ? "left" : "center"}>
             Get up to date with our services. Get notified with updates to our
             store and services
           </Typography>
@@ -122,6 +132,7 @@ const Footer = () => {
               inputProps={{
                 "aria-label": "Subscribe to newsletter"
               }}
+              fullWidth
             />
           </form>
         </div>

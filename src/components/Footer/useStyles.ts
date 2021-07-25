@@ -10,7 +10,6 @@ export const useStyles = makeStyles(theme =>
       "& > div": {
         padding: 8,
         display: "flex",
-        flexDirection: "column-reverse",
         flexWrap: "wrap",
         gap: 48
       },
@@ -26,6 +25,10 @@ export const useStyles = makeStyles(theme =>
       }
     },
     hiring: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      margin: "auto",
       maxWidth: 270,
 
       [theme.breakpoints.up("md")]: {
@@ -39,6 +42,10 @@ export const useStyles = makeStyles(theme =>
     },
     contacts: {
       maxWidth: "max-content",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      margin: "auto",
 
       "& h3": {
         marginBottom: 12
@@ -58,6 +65,16 @@ export const useStyles = makeStyles(theme =>
       "& p": {
         maxWidth: 300,
         padding: theme.spacing(2, 0)
+      }
+    },
+    centerAlign: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      margin: "auto",
+
+      [theme.breakpoints.up("md")]: {
+        margin: "initial"
       }
     },
     adornedEnd: {
