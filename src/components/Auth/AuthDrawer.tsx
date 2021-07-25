@@ -23,7 +23,7 @@ const AuthDrawer = () => {
     <Drawer
       open={desktop && Boolean(authView)}
       anchor="right"
-      onClose={() => push(pathname)}
+      onClose={() => push(window.location.pathname)}
       PaperProps={{ variant: "outlined" }}
       ModalProps={{ BackdropProps: { className: classes.backdrop } }}
       classes={{ paper: classes.paper }}
