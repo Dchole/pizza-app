@@ -74,7 +74,7 @@ const History = () => {
       {isValidating && !transactions ? (
         <CircularProgress />
       ) : (
-        <Container maxWidth="md" disableGutters={desktop}>
+        <Container maxWidth="md" disableGutters={!desktop}>
           <Paper>
             <Toolbar>
               <Typography variant="h3" component="h1" align="center">
