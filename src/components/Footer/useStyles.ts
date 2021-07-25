@@ -73,7 +73,8 @@ export const useStyles = makeStyles(theme =>
       alignItems: "center",
       margin: "auto",
 
-      [theme.breakpoints.up("md")]: {
+      [theme.breakpoints.up("lg")]: {
+        display: "block",
         margin: "initial"
       }
     },
