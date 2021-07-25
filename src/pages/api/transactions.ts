@@ -31,7 +31,9 @@ export default withSession(async (req, res) => {
 
     case "GET": {
       try {
-        const result = await transactions.find({ userID }).toArray()
+        const result = await transactions
+          .find({ userID }, { sort: { createdAt: -1 } })
+          .toArray()
 
         if (!result) throw new Error()
 
