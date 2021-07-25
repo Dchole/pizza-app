@@ -1,0 +1,6 @@
+query getReviews {
+  reviews {
+    customer_name
+    review
+  }
+}

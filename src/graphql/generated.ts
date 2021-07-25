@@ -74,13 +74,16 @@ export type InputId = {
 
 
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Pizzas | PizzasConnection | PizzasAggregator | PizzasAggregatorSum | PizzasAggregatorAvg | PizzasAggregatorMin | PizzasAggregatorMax | PizzasGroupBy | PizzasConnectionId | PizzasConnection_Id | PizzasConnectionCreatedAt | PizzasConnectionUpdatedAt | PizzasConnectionName | PizzasConnectionDescription | PizzasConnectionImage | PizzasConnectionSlug | PizzasConnectionSize | PizzasConnectionPrice_Of_Small | PizzasConnectionPrice_Of_Medium | PizzasConnectionPrice_Of_Large | PizzasConnectionPublished_At | CreatePizzaPayload | UpdatePizzaPayload | DeletePizzaPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnection_Id | UploadFileConnectionCreatedAt | UploadFileConnectionUpdatedAt | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | DeleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnection_Id | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnection_Id | UsersPermissionsUserConnectionCreatedAt | UsersPermissionsUserConnectionUpdatedAt | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | CreateUserPayload | UpdateUserPayload | DeleteUserPayload;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Pizzas | PizzasConnection | PizzasAggregator | PizzasAggregatorSum | PizzasAggregatorAvg | PizzasAggregatorMin | PizzasAggregatorMax | PizzasGroupBy | PizzasConnectionId | PizzasConnection_Id | PizzasConnectionCreatedAt | PizzasConnectionUpdatedAt | PizzasConnectionName | PizzasConnectionDescription | PizzasConnectionImage | PizzasConnectionSlug | PizzasConnectionSize | PizzasConnectionPrice_Of_Small | PizzasConnectionPrice_Of_Medium | PizzasConnectionPrice_Of_Large | PizzasConnectionPublished_At | CreatePizzaPayload | UpdatePizzaPayload | DeletePizzaPayload | Reviews | ReviewsConnection | ReviewsAggregator | ReviewsGroupBy | ReviewsConnectionId | ReviewsConnection_Id | ReviewsConnectionCreatedAt | ReviewsConnectionUpdatedAt | ReviewsConnectionCustomer_Name | ReviewsConnectionReview | ReviewsConnectionPublished_At | CreateReviewPayload | UpdateReviewPayload | DeleteReviewPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnection_Id | UploadFileConnectionCreatedAt | UploadFileConnectionUpdatedAt | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | DeleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnection_Id | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnection_Id | UsersPermissionsUserConnectionCreatedAt | UsersPermissionsUserConnectionUpdatedAt | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | CreateUserPayload | UpdateUserPayload | DeleteUserPayload;
 
 export type Mutation = {
   __typename?: 'Mutation';
   createPizza?: Maybe<CreatePizzaPayload>;
   updatePizza?: Maybe<UpdatePizzaPayload>;
   deletePizza?: Maybe<DeletePizzaPayload>;
+  createReview?: Maybe<CreateReviewPayload>;
+  updateReview?: Maybe<UpdateReviewPayload>;
+  deleteReview?: Maybe<DeleteReviewPayload>;
   /** Delete one file */
   deleteFile?: Maybe<DeleteFilePayload>;
   /** Create a new role */
@@ -118,6 +121,21 @@ export type MutationUpdatePizzaArgs = {
 
 export type MutationDeletePizzaArgs = {
   input?: Maybe<DeletePizzaInput>;
+};
+
+
+export type MutationCreateReviewArgs = {
+  input?: Maybe<CreateReviewInput>;
+};
+
+
+export type MutationUpdateReviewArgs = {
+  input?: Maybe<UpdateReviewInput>;
+};
+
+
+export type MutationDeleteReviewArgs = {
+  input?: Maybe<DeleteReviewInput>;
 };
 
 
@@ -388,6 +406,9 @@ export type Query = {
   pizza?: Maybe<Pizzas>;
   pizzas?: Maybe<Array<Maybe<Pizzas>>>;
   pizzasConnection?: Maybe<PizzasConnection>;
+  review?: Maybe<Reviews>;
+  reviews?: Maybe<Array<Maybe<Reviews>>>;
+  reviewsConnection?: Maybe<ReviewsConnection>;
   files?: Maybe<Array<Maybe<UploadFile>>>;
   filesConnection?: Maybe<UploadFileConnection>;
   role?: Maybe<UsersPermissionsRole>;
@@ -417,6 +438,29 @@ export type QueryPizzasArgs = {
 
 
 export type QueryPizzasConnectionArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+};
+
+
+export type QueryReviewArgs = {
+  id: Scalars['ID'];
+  publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryReviewsArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+  publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryReviewsConnectionArgs = {
   sort?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
   start?: Maybe<Scalars['Int']>;
@@ -484,6 +528,91 @@ export type QueryUsersConnectionArgs = {
   limit?: Maybe<Scalars['Int']>;
   start?: Maybe<Scalars['Int']>;
   where?: Maybe<Scalars['JSON']>;
+};
+
+export type ReviewInput = {
+  customer_name: Scalars['String'];
+  review: Scalars['String'];
+  published_at?: Maybe<Scalars['DateTime']>;
+  created_by?: Maybe<Scalars['ID']>;
+  updated_by?: Maybe<Scalars['ID']>;
+};
+
+export type Reviews = {
+  __typename?: 'Reviews';
+  id: Scalars['ID'];
+  _id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  customer_name: Scalars['String'];
+  review: Scalars['String'];
+  published_at?: Maybe<Scalars['DateTime']>;
+};
+
+export type ReviewsAggregator = {
+  __typename?: 'ReviewsAggregator';
+  count?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type ReviewsConnection = {
+  __typename?: 'ReviewsConnection';
+  values?: Maybe<Array<Maybe<Reviews>>>;
+  groupBy?: Maybe<ReviewsGroupBy>;
+  aggregate?: Maybe<ReviewsAggregator>;
+};
+
+export type ReviewsConnectionCreatedAt = {
+  __typename?: 'ReviewsConnectionCreatedAt';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<ReviewsConnection>;
+};
+
+export type ReviewsConnectionCustomer_Name = {
+  __typename?: 'ReviewsConnectionCustomer_name';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<ReviewsConnection>;
+};
+
+export type ReviewsConnectionId = {
+  __typename?: 'ReviewsConnectionId';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<ReviewsConnection>;
+};
+
+export type ReviewsConnectionPublished_At = {
+  __typename?: 'ReviewsConnectionPublished_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<ReviewsConnection>;
+};
+
+export type ReviewsConnectionReview = {
+  __typename?: 'ReviewsConnectionReview';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<ReviewsConnection>;
+};
+
+export type ReviewsConnectionUpdatedAt = {
+  __typename?: 'ReviewsConnectionUpdatedAt';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<ReviewsConnection>;
+};
+
+export type ReviewsConnection_Id = {
+  __typename?: 'ReviewsConnection_id';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<ReviewsConnection>;
+};
+
+export type ReviewsGroupBy = {
+  __typename?: 'ReviewsGroupBy';
+  id?: Maybe<Array<Maybe<ReviewsConnectionId>>>;
+  _id?: Maybe<Array<Maybe<ReviewsConnection_Id>>>;
+  createdAt?: Maybe<Array<Maybe<ReviewsConnectionCreatedAt>>>;
+  updatedAt?: Maybe<Array<Maybe<ReviewsConnectionUpdatedAt>>>;
+  customer_name?: Maybe<Array<Maybe<ReviewsConnectionCustomer_Name>>>;
+  review?: Maybe<Array<Maybe<ReviewsConnectionReview>>>;
+  published_at?: Maybe<Array<Maybe<ReviewsConnectionPublished_At>>>;
 };
 
 export type RoleInput = {
@@ -960,6 +1089,15 @@ export type CreatePizzaPayload = {
   pizza?: Maybe<Pizzas>;
 };
 
+export type CreateReviewInput = {
+  data?: Maybe<ReviewInput>;
+};
+
+export type CreateReviewPayload = {
+  __typename?: 'createReviewPayload';
+  review?: Maybe<Reviews>;
+};
+
 export type CreateRoleInput = {
   data?: Maybe<RoleInput>;
 };
@@ -994,6 +1132,15 @@ export type DeletePizzaInput = {
 export type DeletePizzaPayload = {
   __typename?: 'deletePizzaPayload';
   pizza?: Maybe<Pizzas>;
+};
+
+export type DeleteReviewInput = {
+  where?: Maybe<InputId>;
+};
+
+export type DeleteReviewPayload = {
+  __typename?: 'deleteReviewPayload';
+  review?: Maybe<Reviews>;
 };
 
 export type DeleteRoleInput = {
@@ -1048,6 +1195,14 @@ export type EditPizzaInput = {
   updated_by?: Maybe<Scalars['ID']>;
 };
 
+export type EditReviewInput = {
+  customer_name?: Maybe<Scalars['String']>;
+  review?: Maybe<Scalars['String']>;
+  published_at?: Maybe<Scalars['DateTime']>;
+  created_by?: Maybe<Scalars['ID']>;
+  updated_by?: Maybe<Scalars['ID']>;
+};
+
 export type EditRoleInput = {
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -1080,6 +1235,16 @@ export type UpdatePizzaInput = {
 export type UpdatePizzaPayload = {
   __typename?: 'updatePizzaPayload';
   pizza?: Maybe<Pizzas>;
+};
+
+export type UpdateReviewInput = {
+  where?: Maybe<InputId>;
+  data?: Maybe<EditReviewInput>;
+};
+
+export type UpdateReviewPayload = {
+  __typename?: 'updateReviewPayload';
+  review?: Maybe<Reviews>;
 };
 
 export type UpdateRoleInput = {
@@ -1151,6 +1316,17 @@ export type GetPopularPizzasQuery = (
   )>>> }
 );
 
+export type GetReviewsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetReviewsQuery = (
+  { __typename?: 'Query' }
+  & { reviews?: Maybe<Array<Maybe<(
+    { __typename?: 'Reviews' }
+    & Pick<Reviews, 'customer_name' | 'review'>
+  )>>> }
+);
+
 export type CardFragment = (
   { __typename?: 'Pizzas' }
   & Pick<Pizzas, 'id' | 'name' | 'slug' | 'price_of_small' | 'price_of_medium' | 'price_of_large' | 'size'>
@@ -1203,6 +1379,14 @@ export const GetPopularPizzasDocument = gql`
   }
 }
     ${CardFragmentDoc}`;
+export const GetReviewsDocument = gql`
+    query getReviews {
+  reviews {
+    customer_name
+    review
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 
@@ -1222,6 +1406,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getPopularPizzas(variables?: GetPopularPizzasQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPopularPizzasQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPopularPizzasQuery>(GetPopularPizzasDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPopularPizzas');
+    },
+    getReviews(variables?: GetReviewsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetReviewsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetReviewsQuery>(GetReviewsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getReviews');
     }
   };
 }

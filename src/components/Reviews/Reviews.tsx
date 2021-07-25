@@ -3,9 +3,34 @@ import IconButton from "@material-ui/core/IconButton"
 import ArrowBackIcon from "@material-ui/icons/ArrowBack"
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 import { useStyles } from "./useStyles"
+import { GetReviewsQuery } from "@/graphql/generated"
+import { useState } from "react"
 
-const Reviews = () => {
+interface IReviewsProps {
+  reviews: NonNullable<NonNullable<GetReviewsQuery["reviews"]>[0]>[]
+}
+
+const offScreen = {
+  transform: "translateX(100vw)",
+  opacity: 0
+}
+const enteredScreen = {
+  transform: "translateX(-50%)",
+  opacity: 1
+}
+const exitedScreen = {
+  transform: "translateX(-100vw)",
+  opacity: 0
+}
+
+const Reviews: React.FC<IReviewsProps> = ({ reviews }) => {
   const classes = useStyles()
+  const [currentReview, setCurrentReview] = useState(0)
+
+  const handleNextReview = () =>
+    currentReview < reviews.length - 1 && setCurrentReview(currentReview + 1)
+  const handlePrevReview = () =>
+    currentReview && setCurrentReview(currentReview - 1)
 
   return (
     <section id="reviews" className={classes.root}>
@@ -13,23 +38,41 @@ const Reviews = () => {
         Customers say
       </Typography>
       <div>
-        <Typography align="center" color="textSecondary">
-          <em>
-            &ldquo;Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum
-            quos doloribus, id sed in voluptatibus unde, eligendi dolorum
-            aperiam aut minus accusamus assumenda! Dignissimos sint odio unde
-            ipsum ipsam. Rem.&rdquo;
-          </em>
-        </Typography>
-        <Typography align="right">
-          &mdash;&nbsp;
-          <span>John Doe</span>
-        </Typography>
+        <div className={classes.reviews}>
+          {reviews.map(({ customer_name, review }, index) => (
+            <div
+              key={review}
+              style={
+                index === currentReview
+                  ? enteredScreen
+                  : index < currentReview
+                  ? exitedScreen
+                  : offScreen
+              }
+            >
+              <Typography align="center" color="textSecondary">
+                <em>&ldquo;{review}&rdquo;</em>
+              </Typography>
+              <Typography align="right">
+                &mdash;&nbsp;
+                <span>{customer_name}</span>
+              </Typography>
+            </div>
+          ))}
+        </div>
         <div>
-          <IconButton aria-label="previous review">
+          <IconButton
+            aria-label="previous review"
+            onClick={handlePrevReview}
+            disabled={!currentReview}
+          >
             <ArrowBackIcon />
           </IconButton>
-          <IconButton aria-label="next review">
+          <IconButton
+            aria-label="next review"
+            onClick={handleNextReview}
+            disabled={currentReview >= reviews.length - 1}
+          >
             <ArrowForwardIcon />
           </IconButton>
         </div>
