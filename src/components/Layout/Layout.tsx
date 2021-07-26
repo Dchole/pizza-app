@@ -10,7 +10,12 @@ import PageBackdrop from "../PageBackdrop"
 const Layout: React.FC = ({ children }) => {
   const classes = useStyles()
   const { pathname } = useRouter()
-  const onAuthPage = pathname === "/login" || pathname === "/register"
+  const onAuthPage = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/.well-known/change-password"
+  ]
   const onContentSite = ["/", "/about", "/hiring"].includes(pathname)
 
   return (
