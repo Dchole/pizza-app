@@ -2,6 +2,7 @@ declare namespace NodeJS {
   interface ProcessEnv {
     MONGODB_DB: string
     MONGODB_URI: string
+    JWT_SECRET: string
     NEXMO_API_KEY: string
     NEXMO_API_SECRET: string
     NEXMO_APPLICATION_ID: string

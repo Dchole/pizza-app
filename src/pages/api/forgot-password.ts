@@ -43,6 +43,7 @@ const handler = withSession(async (req, res) => {
           } else {
             if (responseData.messages[0]["status"] === "0") {
               req.session.set("code", code)
+              req.session.set("phoneNumber", phoneNumber)
               await req.session.save()
 
               return res.json({ message: "Message sent successfully" })
