@@ -38,6 +38,8 @@ const handler = withSession(async (req, res) => {
         { $set: { password: hashedPassword } }
       )
 
+      req.session.destroy()
+
       res.json(result)
     } catch (error) {
       console.log(error.message)
