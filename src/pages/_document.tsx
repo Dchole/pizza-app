@@ -3,6 +3,22 @@ import Document, { Html, Head, Main, NextScript } from "next/document"
 import { ServerStyleSheets } from "@material-ui/core/styles"
 import theme from "@/lib/theme"
 
+// You can find a benchmark of the available CSS minifiers under
+// https://github.com/GoalSmashers/css-minification-benchmark
+// We have found that clean-css is faster than cssnano but the output is larger.
+// Waiting for https://github.com/cssinjs/jss/issues/279
+// 4% slower but 12% smaller output than doing it in a single step.
+//
+// It's using .browserslistrc
+let cleanCSS
+if (process.env.NODE_ENV === "production") {
+  /* eslint-disable global-require */
+  const CleanCSS = require("clean-css")
+  /* eslint-enable global-require */
+
+  cleanCSS = new CleanCSS()
+}
+
 export default class MyDocument extends Document {
   render() {
     return (
@@ -56,9 +72,24 @@ MyDocument.getInitialProps = async ctx => {
 
   const initialProps = await Document.getInitialProps(ctx)
 
+  let css = sheets.toString()
+  // It might be undefined, e.g. after an error.
+  if (css && process.env.NODE_ENV === "production") {
+    css = cleanCSS.minify(css).styles
+  }
+
   return {
     ...initialProps,
-    // Styles fragment is rendered after the app and page rendering finish.
-    styles: [...Children.toArray(initialProps.styles), sheets.getStyleElement()]
+    // canonical: pathnameToLanguage(ctx.req.url).canonical,
+    userLanguage: ctx.query.userLanguage || "en",
+    styles: [
+      ...Children.toArray(initialProps.styles),
+      <style
+        id="jss-server-side"
+        key="jss-server-side"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: css }}
+      />
+    ]
   }
 }

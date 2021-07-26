@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml",
+    "test": "jest"
   },
   "dependencies": {
     "@fontsource/montserrat": "^4.4.5",
@@ -15,7 +16,11 @@
     "@material-ui/core": "^4.12.2",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
+    "@next/bundle-analyzer": "^11.0.1",
+    "@vonage/server-sdk": "^2.10.10",
+    "autoprefixer": "^10.3.1",
     "bcryptjs": "^2.4.3",
+    "clean-css": "^5.1.3",
     "dexie": "^3.0.3",
     "formik": "^2.2.9",
     "formik-material-ui": "^3.0.1",
@@ -25,8 +30,10 @@
     "graphql": "^15.5.1",
     "graphql-request": "^3.4.0",
     "mongodb": "^3.6.9",
+    "nexmo": "^2.9.1",
     "next": "11.0.1",
     "next-iron-session": "^4.2.0",
+    "postcss": "^8.3.6",
     "react": "17.0.2",
     "react-animated-numbers": "^0.5.1",
     "react-dom": "17.0.2",
@@ -44,9 +51,13 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/gapi.auth2": "^0.0.54",
     "@types/gapi.client": "^1.0.4",
+    "@types/jest": "^26.0.24",
     "@types/mongodb": "^3.6.19",
     "eslint": "7.29.0",
     "eslint-config-next": "11.0.1",
-    "typescript": "^4.3.4"
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4",
+    "typescript": "^4.3.4",
+    "webpack-cli": "^4.7.2"
   }
 }
