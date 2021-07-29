@@ -11,9 +11,15 @@ import CartItem from "@/components/CartItem"
 import ButtonLink from "@/components/ButtonLink"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useCart } from "@/components/CartContext"
-import usePayment from "@/hooks/usePayment"
+import { useState } from "react"
 
 const AnimatedNumber = dynamic(() => import("react-animated-numbers"))
+const PaymentMethodDialog = dynamic(
+  () => import("@/components/PaymentMethod/Dialog")
+)
+const PaymentMethodSheet = dynamic(
+  () => import("@/components/PaymentMethod/Sheet")
+)
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -64,8 +70,15 @@ const useStyles = makeStyles(theme =>
 const Cart = () => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const handleCheckout = usePayment()
+  const [openDialog, setOpenDialog] = useState(false)
+  const [openSheet, setOpenSheet] = useState(false)
   const { cartItems, totalAmount } = useCart()
+
+  const handleOpen = () => (desktop ? setOpenDialog(true) : setOpenSheet(true))
+  const handleClose = () => {
+    setOpenDialog(false)
+    setOpenSheet(false)
+  }
 
   return (
     <Container maxWidth="md" className={classes.root} disableGutters={!desktop}>
@@ -92,7 +105,7 @@ const Cart = () => {
               color="primary"
               variant="contained"
               endIcon={<PaymentIcon />}
-              onClick={handleCheckout}
+              onClick={handleOpen}
               fullWidth
             >
               Checkout
@@ -125,6 +138,8 @@ const Cart = () => {
           </div>
         </Grid>
       )}
+      <PaymentMethodDialog open={openDialog} handleClose={handleClose} />
+      <PaymentMethodSheet open={openSheet} handleClose={handleClose} />
     </Container>
   )
 }

@@ -14,8 +14,8 @@ const Layout: React.FC = ({ children }) => {
     "/login",
     "/register",
     "/forgot-password",
-    "/.well-known/change-password"
-  ]
+    "/change-password"
+  ].includes(pathname)
   const onContentSite = ["/", "/about", "/hiring"].includes(pathname)
 
   return (
