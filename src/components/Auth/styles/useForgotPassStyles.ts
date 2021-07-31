@@ -1,6 +1,6 @@
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 
-export const useForgotPassStyles = makeStyles(theme =>
+export const useConfirmationStyles = makeStyles(theme =>
   createStyles({
     paper: {
       marginTop: 0,

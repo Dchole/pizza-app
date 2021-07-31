@@ -1,69 +1,51 @@
-import Script from "next/script"
-import { useRouter } from "next/router"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import Divider from "@material-ui/core/Divider"
-import Grid from "@material-ui/core/Grid"
-import useUser, { IUser } from "@/hooks/useUser"
 import GoogleIcon from "./GoogleIcon"
-import Link from "../Link"
-import Login from "./Login"
-import Register from "./Register"
 import { useWrapperStyles } from "./styles/useWrapperStyles"
-import { fetcher } from "@/utils/fetcher"
-import { init } from "@/lib/google-auth"
+import { useEffect, useRef } from "react"
+import firebase from "@/lib/firebase"
+import SignIn from "./SignUp"
+import useScreenSize from "@/hooks/usScreenSize"
 
 interface IFormWrapperProps {
   view?: "login" | "register" | null
 }
 
 const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
-  const { pathname, replace } = useRouter()
-  const { mutate } = useUser()
+  const appVerifier = useRef<firebase.auth.RecaptchaVerifier>(null)
   const classes = useWrapperStyles()
-  const onLoginPage = pathname === "/login" || view === "login"
-  const onAuthPage = pathname === "/login" || pathname === "/register"
+  const desktop = useScreenSize()
 
   const loginWithGoogle = async () => {
     try {
-      const GoogleAuth = gapi.auth2.getAuthInstance()
-      const data = await GoogleAuth.signIn({ fetch_basic_profile: true })
-      const basicProfile = data.getBasicProfile()
-
-      const user = {
-        accountName: basicProfile.getName(),
-        email: basicProfile.getEmail(),
-        imageUrl: basicProfile.getImageUrl()
-      }
-
-      const currentUser = await fetcher<IUser>("/api/google-auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(user)
-      })
-
-      mutate(currentUser)
-      replace("/store")
     } catch (error) {
       console.log(error)
     }
   }
 
+  useEffect(() => {
+    appVerifier.current = new firebase.auth.RecaptchaVerifier(
+      "sign-in-button",
+      {
+        size: "invisible",
+        callback: response => {
+          // reCAPTCHA solved, allow signInWithPhoneNumber.
+          console.log(response)
+        }
+      }
+    )
+  }, [])
+
   return (
     <>
-      <Script
-        src="https://apis.google.com/js/api.js"
-        onLoad={() => gapi.load("client", init)}
-      ></Script>
       <Typography
-        variant={onAuthPage ? "h3" : "h4"}
-        component={onAuthPage ? "h1" : "h2"}
+        variant={desktop ? "h4" : "h3"}
+        component={desktop ? "h2" : "h1"}
         align="center"
         gutterBottom
       >
-        {onLoginPage ? "Login to Your Account" : "Create a New Account"}
+        Sign into your account
       </Typography>
       <div className={classes.button}>
         <Button
@@ -71,7 +53,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
           startIcon={<GoogleIcon />}
           onClick={loginWithGoogle}
         >
-          {onLoginPage ? "Sign in " : "Sign Up "} with google
+          Sign in with google
         </Button>
       </div>
       <div className={classes.divider}>
@@ -79,24 +61,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
         <span>OR</span>
         <Divider />
       </div>
-      {onLoginPage ? <Login /> : <Register />}
-      <Grid alignItems="center" justifyContent="space-between" container>
-        <Typography component="span">
-          {onLoginPage ? (
-            <>
-              Don&apos;t have an account?&nbsp;
-              <Link href={onAuthPage ? "/register" : "#register"}>
-                Create an account
-              </Link>
-            </>
-          ) : (
-            <>
-              Already have an account?&nbsp;
-              <Link href={onAuthPage ? "/login" : "#login"}>Login</Link>
-            </>
-          )}
-        </Typography>
-      </Grid>
+      <SignIn appVerifier={appVerifier.current} />
     </>
   )
 }

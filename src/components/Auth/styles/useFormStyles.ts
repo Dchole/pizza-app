@@ -15,6 +15,15 @@ export const useFormStyles = makeStyles(theme =>
     link: {
       display: "flex",
       justifyContent: "flex-end"
+    },
+    input: {
+      "& .MuiOutlinedInput-adornedEnd": {
+        paddingRight: 0
+      },
+
+      "& .MuiButtonBase-root": {
+        height: 56
+      }
     }
   })
 )

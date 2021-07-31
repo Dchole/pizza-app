@@ -4,7 +4,7 @@ import IconButton from "@material-ui/core/IconButton"
 import Avatar from "@material-ui/core/Avatar"
 import Link from "./Link"
 import useScreenSize from "@/hooks/usScreenSize"
-import useUser from "@/hooks/useUser"
+import { useUser } from "./UserContext"
 
 const AccountPopup = dynamic(() => import("./Header/AccountPopup"))
 
@@ -21,13 +21,17 @@ const AvatarButton: React.FC<{ className?: string }> = ({
 
   return (
     <>
-      {user?.isLoggedIn ? (
+      {user ? (
         <IconButton
           aria-label="open menu"
           className={className}
           onClick={handleClick}
         >
-          <Avatar src={user?.imageUrl} imgProps={{ loading: "lazy" }} />
+          <Avatar
+            src={user?.photoURL}
+            alt={user?.displayName}
+            imgProps={{ loading: "lazy" }}
+          />
         </IconButton>
       ) : (
         <IconButton
