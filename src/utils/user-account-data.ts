@@ -1,9 +1,9 @@
-import { IUser } from "@/hooks/useUser"
+import { TUser } from "@/components/UserContext"
 import { keyToText } from "./key-to-text"
 
-export const userAccountData = (user: IUser) => {
+export const userAccountData = (user: TUser) => {
   const account = {
-    accountName: user.accountName,
+    displayName: user.displayName,
     phoneNumber: user.phoneNumber,
     location: user.location,
     address: user.address

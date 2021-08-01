@@ -1,7 +1,19 @@
 import { useState, useEffect, createContext, useContext } from "react"
+import { Enum_Pizzas_Size } from "@/graphql/generated"
 import firebase from "@/lib/firebase"
 
-type TUser = Partial<firebase.User> | null
+interface IUserData extends firebase.User {
+  location: string
+  address: string
+  cart: {
+    id: string
+    size: Enum_Pizzas_Size
+    quantity: number
+  }[]
+  transactions: string[]
+}
+
+export type TUser = Partial<IUserData> | null
 
 interface IContextProps {
   user: TUser

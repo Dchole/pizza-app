@@ -51,7 +51,7 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
     } catch (error) {
       console.log(error)
     }
-  }, [])
+  }, [onLoginView])
 
   return (
     <>

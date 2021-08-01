@@ -29,7 +29,7 @@ export const handleSubmit = async (
     setSubmitting(true)
 
     const { user } = await confirmationResult.confirm(code)
-    await firebase.firestore().doc(`users/${user?.uid}`).set({ displayName })
+    await user.updateProfile({ displayName })
 
     Router.replace("/store")
   } catch (error) {

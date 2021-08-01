@@ -14,12 +14,12 @@ import IconButton from "@material-ui/core/IconButton"
 import InputAdornment from "@material-ui/core/InputAdornment"
 import OutlinedInput from "@material-ui/core/OutlinedInput"
 import Typography from "@material-ui/core/Typography"
-import useUser, { IUser } from "@/hooks/useUser"
 import { userAccountData } from "@/utils/user-account-data"
 import { slugify } from "@/utils/slugify"
 import { green, red } from "@material-ui/core/colors"
 import { fetcher } from "@/utils/fetcher"
 import useScreenSize from "@/hooks/usScreenSize"
+import { useUser } from "@/components/UserContext"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -59,7 +59,7 @@ const theme = createTheme({
 const Profile = () => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const { user, mutate } = useUser()
+  const { user } = useUser()
   const [edit, setEdit] = useState("")
   const [updating, setUpdating] = useState(false)
   const userData = useMemo(() => user && userAccountData(user), [user])
@@ -76,15 +76,6 @@ const Profile = () => {
 
     try {
       setUpdating(true)
-      const updatedUser = await fetcher<IUser>("/api/update-user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ [edit]: value })
-      })
-
-      mutate(updatedUser)
       setEdit("")
     } catch (error) {
       console.log(error.message)
