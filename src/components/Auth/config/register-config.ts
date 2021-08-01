@@ -25,13 +25,15 @@ export const handleSubmit = async (
   { setSubmitting }: FormikHelpers<TValues>,
   confirmationResult: firebase.auth.ConfirmationResult
 ) => {
+  const { pathname, replace } = Router
+
   try {
     setSubmitting(true)
 
     const { user } = await confirmationResult.confirm(code)
     await user.updateProfile({ displayName })
 
-    Router.replace("/store")
+    replace(pathname === "/" ? "/store" : window.location.pathname)
   } catch (error) {
     console.log(error)
   } finally {

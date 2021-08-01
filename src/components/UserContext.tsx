@@ -66,7 +66,8 @@ export default function UserContextComp({ children }) {
     }
   }, [])
 
-  const updateUser = (user: firebase.User) => setUser(user)
+  const updateUser = (user: firebase.User) =>
+    setUser(prevUser => ({ ...prevUser, ...user }))
 
   return (
     <UserContext.Provider value={{ user, token, updateUser, loadingUser }}>

@@ -17,7 +17,7 @@ import Typography from "@material-ui/core/Typography"
 import { userAccountData } from "@/utils/user-account-data"
 import { slugify } from "@/utils/slugify"
 import { green, red } from "@material-ui/core/colors"
-import { fetcher } from "@/utils/fetcher"
+import firebase from "@/lib/firebase"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useUser } from "@/components/UserContext"
 
@@ -59,7 +59,7 @@ const theme = createTheme({
 const Profile = () => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const { user } = useUser()
+  const { user, updateUser } = useUser()
   const [edit, setEdit] = useState("")
   const [updating, setUpdating] = useState(false)
   const userData = useMemo(() => user && userAccountData(user), [user])
@@ -76,6 +76,13 @@ const Profile = () => {
 
     try {
       setUpdating(true)
+      await firebase
+        .firestore()
+        .doc(`users/${user?.uid}`)
+        .set({ [edit]: value })
+
+      updateUser({ [edit]: value })
+
       setEdit("")
     } catch (error) {
       console.log(error.message)

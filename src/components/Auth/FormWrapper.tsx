@@ -1,29 +1,40 @@
-import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import Divider from "@material-ui/core/Divider"
+import Grid from "@material-ui/core/Grid"
+import Typography from "@material-ui/core/Typography"
 import GoogleIcon from "./GoogleIcon"
 import { useWrapperStyles } from "./styles/useWrapperStyles"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import firebase from "@/lib/firebase"
 import useScreenSize from "@/hooks/usScreenSize"
 import RegisterForm from "./RegisterForm"
 import LoginForm from "./LoginForm"
+import Link from "../Link"
 import { useRouter } from "next/router"
+import useDevice from "@/hooks/useDevice"
 
-interface IFormWrapperProps {
+interface IProps {
   view?: "login" | "register" | null
 }
 
-const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
-  const { pathname } = useRouter()
+const FormWrapper: React.FC<IProps> = ({ view }) => {
+  const { pathname, replace } = useRouter()
   const classes = useWrapperStyles()
   const desktop = useScreenSize()
+  const device = useDevice()
   const onLoginView = view === "login" || pathname === "/login"
   const [appVerifier, setAppVerifier] =
     useState<firebase.auth.RecaptchaVerifier | null>(null)
 
   const loginWithGoogle = async () => {
     try {
+      const provider = new firebase.auth.GoogleAuthProvider()
+
+      device === "desktop"
+        ? await firebase.auth().signInWithPopup(provider)
+        : await firebase.auth().signInWithRedirect(provider)
+
+      replace(pathname === "/" ? "/store" : window.location.pathname)
     } catch (error) {
       console.log(error)
     }
@@ -82,6 +93,23 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
       ) : (
         <RegisterForm appVerifier={appVerifier} />
       )}
+      <Grid alignItems="center" justifyContent="space-between" container>
+        <Typography component="span">
+          {onLoginView ? (
+            <>
+              Don&apos;t have an account?&nbsp;
+              <Link href={desktop ? "#register" : "/register"}>
+                Create an account
+              </Link>
+            </>
+          ) : (
+            <>
+              Already have an account?&nbsp;
+              <Link href={desktop ? "#login" : "/login"}>Login</Link>
+            </>
+          )}
+        </Typography>
+      </Grid>
     </>
   )
 }

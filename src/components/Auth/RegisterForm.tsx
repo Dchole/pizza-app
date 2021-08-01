@@ -10,38 +10,24 @@ import {
   validationSchema
 } from "./config/register-config"
 import { useFormStyles } from "./styles/useFormStyles"
-import firebase from "@/lib/firebase"
 import { useState } from "react"
 import { formatMobile } from "@/utils/format-mobile"
+import firebase from "@/lib/firebase"
+import useAuth from "@/hooks/useAuth"
 import Toast from "../Toast"
 
 const RegisterForm: React.FC<{ appVerifier: firebase.auth.RecaptchaVerifier }> =
   ({ appVerifier }) => {
     const classes = useFormStyles()
-    const [step, setStep] = useState(0)
-    const [error, setError] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [confirmationResult, setConfirmationResult] =
-      useState<firebase.auth.ConfirmationResult>(null)
-
-    const handleNextStep = async (phoneNumber: string) => {
-      try {
-        setLoading(true)
-
-        const result = await firebase
-          .auth()
-          .signInWithPhoneNumber("+" + formatMobile(phoneNumber), appVerifier)
-
-        setConfirmationResult(result)
-        !step && setStep(step + 1)
-      } catch (error) {
-        setError(error.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    const clearError = () => setError("")
+    const {
+      step,
+      error,
+      loading,
+      confirmationResult,
+      handleNextStep,
+      handleResend,
+      clearError
+    } = useAuth(appVerifier)
 
     return (
       <>
@@ -116,7 +102,12 @@ const RegisterForm: React.FC<{ appVerifier: firebase.auth.RecaptchaVerifier }> =
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Button color="secondary">Resend Code</Button>
+                        <Button
+                          color="secondary"
+                          onClick={() => handleResend(values.phoneNumber)}
+                        >
+                          Resend Code
+                        </Button>
                       </InputAdornment>
                     )
                   }}

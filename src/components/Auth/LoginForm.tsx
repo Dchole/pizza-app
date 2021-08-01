@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic"
 import { Formik, Form, Field } from "formik"
 import { TextField } from "formik-material-ui"
 import Button from "@material-ui/core/Button"
@@ -11,37 +12,22 @@ import {
 } from "./config/login-config"
 import { useFormStyles } from "./styles/useFormStyles"
 import firebase from "@/lib/firebase"
-import { useState } from "react"
-import { formatMobile } from "@/utils/format-mobile"
+import useAuth from "@/hooks/useAuth"
 import Toast from "../Toast"
 
 const LoginForm: React.FC<{ appVerifier: firebase.auth.RecaptchaVerifier }> = ({
   appVerifier
 }) => {
   const classes = useFormStyles()
-  const [step, setStep] = useState(0)
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [confirmationResult, setConfirmationResult] =
-    useState<firebase.auth.ConfirmationResult>(null)
-
-  const handleNextStep = async (phoneNumber: string) => {
-    try {
-      setLoading(true)
-      const result = await firebase
-        .auth()
-        .signInWithPhoneNumber("+" + formatMobile(phoneNumber), appVerifier)
-
-      setConfirmationResult(result)
-      !step && setStep(step + 1)
-    } catch (error) {
-      setError(error.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const clearError = () => setError("")
+  const {
+    step,
+    error,
+    loading,
+    clearError,
+    handleResend,
+    handleNextStep,
+    confirmationResult
+  } = useAuth(appVerifier)
 
   return (
     <>
@@ -102,7 +88,12 @@ const LoginForm: React.FC<{ appVerifier: firebase.auth.RecaptchaVerifier }> = ({
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <Button color="secondary">Resend Code</Button>
+                      <Button
+                        color="secondary"
+                        onClick={() => handleResend(values.phoneNumber)}
+                      >
+                        Resend Code
+                      </Button>
                     </InputAdornment>
                   )
                 }}
