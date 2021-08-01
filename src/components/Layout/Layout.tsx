@@ -6,6 +6,7 @@ import { useStyles } from "./useStyles"
 import { useRouter } from "next/router"
 import CartContextProvider from "../CartContext"
 import PageBackdrop from "../PageBackdrop"
+import UserContextComp from "../UserContext"
 
 const Layout: React.FC = ({ children }) => {
   const classes = useStyles()
@@ -19,27 +20,29 @@ const Layout: React.FC = ({ children }) => {
   const onContentSite = ["/", "/about", "/hiring"].includes(pathname)
 
   return (
-    <PizzaContextProvider>
-      <CartContextProvider>
-        <div id="top">
-          <Link
-            id="skip-navigation"
-            href="#main-content"
-            className={classes.link}
-            variant="srOnly"
-          >
-            skip navigation
-          </Link>
-          {pathname === "/" && <Header />}
-          {onContentSite || onAuthPage ? (
-            children
-          ) : (
-            <PageBackdrop>{children}</PageBackdrop>
-          )}
-          {!onAuthPage && <Footer />}
-        </div>
-      </CartContextProvider>
-    </PizzaContextProvider>
+    <UserContextComp>
+      <PizzaContextProvider>
+        <CartContextProvider>
+          <div id="top">
+            <Link
+              id="skip-navigation"
+              href="#main-content"
+              className={classes.link}
+              variant="srOnly"
+            >
+              skip navigation
+            </Link>
+            {pathname === "/" && <Header />}
+            {onContentSite || onAuthPage ? (
+              children
+            ) : (
+              <PageBackdrop>{children}</PageBackdrop>
+            )}
+            {!onAuthPage && <Footer />}
+          </div>
+        </CartContextProvider>
+      </PizzaContextProvider>
+    </UserContextComp>
   )
 }
 

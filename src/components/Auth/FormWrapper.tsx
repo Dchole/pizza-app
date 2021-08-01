@@ -3,19 +3,24 @@ import Button from "@material-ui/core/Button"
 import Divider from "@material-ui/core/Divider"
 import GoogleIcon from "./GoogleIcon"
 import { useWrapperStyles } from "./styles/useWrapperStyles"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import firebase from "@/lib/firebase"
-import SignIn from "./SignUp"
 import useScreenSize from "@/hooks/usScreenSize"
+import RegisterForm from "./RegisterForm"
+import LoginForm from "./LoginForm"
+import { useRouter } from "next/router"
 
 interface IFormWrapperProps {
   view?: "login" | "register" | null
 }
 
 const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
-  const appVerifier = useRef<firebase.auth.RecaptchaVerifier>(null)
+  const { pathname } = useRouter()
   const classes = useWrapperStyles()
   const desktop = useScreenSize()
+  const onLoginView = view === "login" || pathname === "/login"
+  const [appVerifier, setAppVerifier] =
+    useState<firebase.auth.RecaptchaVerifier | null>(null)
 
   const loginWithGoogle = async () => {
     try {
@@ -25,16 +30,27 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
   }
 
   useEffect(() => {
-    appVerifier.current = new firebase.auth.RecaptchaVerifier(
-      "sign-in-button",
-      {
-        size: "invisible",
-        callback: response => {
-          // reCAPTCHA solved, allow signInWithPhoneNumber.
-          console.log(response)
+    try {
+      const recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+        onLoginView ? "sign-in-button" : "sign-up-button",
+        {
+          size: "invisible",
+          callback: response => {
+            // reCAPTCHA solved, allow signInWithPhoneNumber.
+            console.log(response)
+          },
+          "expired-callback": () => {
+            // Response expired. Ask user to solve reCAPTCHA again.
+            // ...
+            console.log("Recaptcha Expired")
+          }
         }
-      }
-    )
+      )
+
+      setAppVerifier(recaptchaVerifier)
+    } catch (error) {
+      console.log(error)
+    }
   }, [])
 
   return (
@@ -61,7 +77,11 @@ const FormWrapper: React.FC<IFormWrapperProps> = ({ view }) => {
         <span>OR</span>
         <Divider />
       </div>
-      <SignIn appVerifier={appVerifier.current} />
+      {onLoginView ? (
+        <LoginForm appVerifier={appVerifier} />
+      ) : (
+        <RegisterForm appVerifier={appVerifier} />
+      )}
     </>
   )
 }

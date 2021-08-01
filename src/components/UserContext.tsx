@@ -1,6 +1,5 @@
 import { useState, useEffect, createContext, useContext } from "react"
 import firebase from "@/lib/firebase"
-import { useRef } from "react"
 
 type TUser = Partial<firebase.User> | null
 
@@ -24,11 +23,13 @@ export default function UserContextComp({ children }) {
       try {
         if (user) {
           // User is signed in.
-          const { uid, displayName, email, photoURL } = user
-          console.log(user)
+          const { uid, displayName, phoneNumber, photoURL } = user
           // You could also look for the user doc in your Firestore (if you have one):
           // const userDoc = await firebase.firestore().doc(`users/${uid}`).get()
-          setUser({ uid, displayName, email, photoURL })
+          setUser({ uid, displayName, phoneNumber, photoURL })
+
+          const res = await firebase.firestore().doc(`users/${uid}`).get()
+          res.exists && setUser(prevUser => ({ ...prevUser, ...res.data() }))
         } else setUser(null)
       } catch (error) {
         // Most probably a connection error. Handle appropriately.
@@ -39,7 +40,7 @@ export default function UserContextComp({ children }) {
 
     const tokenUnsubscriber = firebase.auth().onIdTokenChanged(async res => {
       try {
-        const token = await res.getIdToken()
+        const token = await res?.getIdToken()
         setToken(token)
       } catch (error) {
         console.log(error)
