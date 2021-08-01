@@ -2,14 +2,19 @@ import { useState, useEffect, createContext, useContext } from "react"
 import { Enum_Pizzas_Size } from "@/graphql/generated"
 import firebase from "@/lib/firebase"
 
+export interface ICartItem {
+  pizza_id: string
+  quantity: {
+    small: number
+    medium: number
+    large: number
+  }
+}
+
 interface IUserData extends firebase.User {
   location: string
   address: string
-  cart: {
-    id: string
-    size: Enum_Pizzas_Size
-    quantity: number
-  }[]
+  cart: ICartItem[]
   transactions: string[]
 }
 
@@ -40,8 +45,14 @@ export default function UserContextComp({ children }) {
           // const userDoc = await firebase.firestore().doc(`users/${uid}`).get()
           setUser({ uid, displayName, phoneNumber, photoURL })
 
-          const res = await firebase.firestore().doc(`users/${uid}`).get()
-          res.exists && setUser(prevUser => ({ ...prevUser, ...res.data() }))
+          firebase
+            .firestore()
+            .doc(`users/${uid}`)
+            .onSnapshot(
+              doc =>
+                doc.exists &&
+                setUser(prevUser => ({ ...prevUser, ...doc.data() }))
+            )
         } else setUser(null)
       } catch (error) {
         // Most probably a connection error. Handle appropriately.
