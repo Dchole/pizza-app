@@ -120,15 +120,8 @@ const useStyles = makeStyles(theme =>
 const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const {
-    cart,
-    cartItems,
-    getItemPrice,
-    addItem,
-    removeItem,
-    selectSize,
-    isItemInCart
-  } = useCart()
+  const { cart, getItemPrice, addItem, removeItem, selectSize, isItemInCart } =
+    useCart()
   const [price, setPrice] = useState(pizza.price_of_medium)
   const [size, setSize] = useState<Enum_Pizzas_Size>(Enum_Pizzas_Size["Medium"])
   const handleCheckout = usePayment(pizza.name, price)
@@ -140,11 +133,11 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
 
   useEffect(() => {
     const priceAccordingToSize = getItemPrice(
-      cartItems.find(({ id }) => pizza.id === id)
+      cart.find(({ id }) => pizza.id === id)
     )
 
     setPrice(priceAccordingToSize ?? pizza.price_of_medium)
-  }, [cartItems, pizza, getItemPrice])
+  }, [cart, pizza, getItemPrice])
 
   return (
     <Container component="main" maxWidth="md" disableGutters={!desktop}>
@@ -171,7 +164,7 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
       <Typography color="textSecondary" className={classes.description}>
         {pizza.description}
       </Typography>
-      {cartItems.some(({ id }) => id === pizza.id) && (
+      {cart.some(({ id }) => id === pizza.id) && (
         <ButtonGroup
           color="secondary"
           aria-label="choose pizza size"
@@ -210,7 +203,11 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
               <AddShoppingCartIcon />
             )
           }
-          onClick={isItemInCart(pizza.id) ? removeItem(pizza) : addItem(pizza)}
+          onClick={() =>
+            isItemInCart(pizza.id)
+              ? removeItem(pizza.id)
+              : addItem(pizza.id, pizza.size)
+          }
         >
           {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
         </Button>

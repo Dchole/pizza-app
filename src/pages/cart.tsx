@@ -13,7 +13,7 @@ import useScreenSize from "@/hooks/usScreenSize"
 import { useCart } from "@/components/CartContext"
 import { useState } from "react"
 
-const AnimatedNumber = dynamic(() => import("react-animated-numbers"))
+const CountUp = dynamic(() => import("react-countup"))
 const PaymentMethodDialog = dynamic(
   () => import("@/components/PaymentMethod/Dialog")
 )
@@ -27,28 +27,13 @@ const useStyles = makeStyles(theme =>
       height: "100%",
       width: "100%"
     },
-    grid: {
-      display: "grid",
-      gap: 16,
-      marginBottom: 12,
-
-      // iPhone 5
-      "@media(max-width: 320px)": {
-        gap: 8
-      },
-
-      [theme.breakpoints.up("sm")]: {
-        gridTemplateColumns: "1fr 1fr",
-        gap: 24
-      }
-    },
     total: {
       display: "flex",
       justifyContent: "flex-end",
 
       "& p": {
         display: "flex",
-        alignItems: "center"
+        alignItems: "flex-end"
       }
     },
     buttonWrapper: {
@@ -57,7 +42,11 @@ const useStyles = makeStyles(theme =>
         justifyContent: "flex-end",
 
         "& .MuiButton-root": {
-          width: "fit-content"
+          width: "fit-content",
+
+          "& span": {
+            gap: 8
+          }
         }
       }
     },
@@ -72,7 +61,7 @@ const Cart = () => {
   const desktop = useScreenSize()
   const [openDialog, setOpenDialog] = useState(false)
   const [openSheet, setOpenSheet] = useState(false)
-  const { cartItems, totalAmount } = useCart()
+  const { cart, totalAmount } = useCart()
 
   const handleOpen = () => (desktop ? setOpenDialog(true) : setOpenSheet(true))
   const handleClose = () => {
@@ -82,33 +71,30 @@ const Cart = () => {
 
   return (
     <Container maxWidth="md" className={classes.root} disableGutters={!desktop}>
-      {cartItems.length ? (
+      {cart.length ? (
         <>
-          <div className={classes.grid}>
-            {cartItems.map(item => (
+          <>
+            {cart.map(item => (
               <CartItem key={item.id} item={item} />
             ))}
-          </div>
-          <div className={classes.total}>
-            <p aria-label={`${totalAmount} cedis`}>
-              <span>₵</span>&nbsp;
-              <AnimatedNumber
-                fontStyle={{ fontSize: 40 }}
-                animateToNumber={totalAmount}
-                includeComma
-              />
-              .00
-            </p>
-          </div>
+          </>
+          <div className={classes.total}></div>
           <div className={classes.buttonWrapper}>
             <Button
               color="primary"
               variant="contained"
-              endIcon={<PaymentIcon />}
               onClick={handleOpen}
               fullWidth
             >
-              Checkout
+              <span>Checkout</span>
+              <Typography
+                variant="body2"
+                component="span"
+                aria-label={`${totalAmount} cedis`}
+              >
+                (<small>₵</small>&nbsp;
+                <CountUp end={totalAmount} />)
+              </Typography>
             </Button>
           </div>
         </>

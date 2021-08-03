@@ -1,16 +1,14 @@
-import {
-  Enum_Pizzas_Size,
-  GetCartPizzasQuery,
-  getSdk
-} from "@/graphql/generated"
+import { Enum_Pizzas_Size, GetPizzasQuery, getSdk } from "@/graphql/generated"
 import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
 import { useEffect } from "react"
 import { createContext, useContext, useState } from "react"
 import { ICartItem, useUser } from "./UserContext"
 import firebase from "@/lib/firebase"
+import { useCallback } from "react"
 
-type TCartItemDetails = ICartItem & GetCartPizzasQuery["pizzas"][0]
+export type TCartItemDetails = NonNullable<GetPizzasQuery["pizzas"]>[0] &
+  ICartItem
 
 interface ICartContextProps {
   cart: TCartItemDetails[]
@@ -26,6 +24,9 @@ interface ICartContextProps {
     quantity: number
   ) => void
   clearCart: () => Promise<void>
+  getItemPrice: (pizza_id: string) => number
+  getItemQuantity: (pizza_id: string) => number
+  isItemInCart: (pizza_id: string) => boolean
 }
 
 const CartContext = createContext({} as ICartContextProps)
@@ -36,67 +37,98 @@ const CartContextProvider: React.FC = ({ children }) => {
   const [totalQuantity, setTotalQuantity] = useState(0)
   const [totalAmount, setTotalAmount] = useState(0)
 
-  useEffect(() => {
-    ;(async () => {
-      const client = new GraphQLClient(cmsLinks.api)
-      const sdk = getSdk(client)
-      const { pizzas } = await sdk.getCartPizzas({
-        filter: { id_in: user.cart.map(({ pizza_id }) => pizza_id) }
-      })
+  const getItemPrice = useCallback(
+    (pizza_id: string) => {
+      const item = cart.find(item => pizza_id === item.pizza_id)
 
-      const result = pizzas?.map(pizza => ({
-        ...user.cart.find(({ pizza_id }) => pizza_id === pizza?.id),
-        ...pizza
-      }))
-
-      setCart(result)
-    })()
-  }, [user.cart])
-
-  useEffect(() => {
-    const totalAmount = cart.reduce((prev, curr) => {
-      return (
-        prev +
-        (curr.price_of_small * curr.quantity.small +
-          curr.price_of_medium * curr.quantity.medium +
-          curr.price_of_large * curr.quantity.large)
+      return Object.entries(item?.quantity).reduce(
+        (acc, [size, quantity]) => acc + item[`price_of_${size}`] * quantity,
+        0
       )
-    }, 0)
+    },
+    [cart]
+  )
 
-    const totalQuantity = cart.reduce((prev, curr) => {
-      return (
-        prev + curr.quantity.small + curr.quantity.medium + curr.quantity.large
-      )
-    }, 0)
+  const getItemQuantity = (pizza_id: string) => {
+    const item = cart.find(item => pizza_id === item.pizza_id)
 
-    setTotalAmount(totalAmount)
-    setTotalQuantity(totalQuantity)
-  }, [cart])
+    return Object.values(item?.quantity).reduce(
+      (acc, quantity) => acc + quantity,
+      0
+    )
+  }
+
+  useEffect(() => {
+    if (user?.cart?.length) {
+      ;(async () => {
+        const client = new GraphQLClient(cmsLinks.api)
+        const sdk = getSdk(client)
+        const { pizzas } = await sdk.getCartPizzas({
+          filter: { id_in: user.cart?.map(({ pizza_id }) => pizza_id) }
+        })
+
+        const result = pizzas?.map(pizza => ({
+          ...user.cart?.find(({ pizza_id }) => pizza_id === pizza?.id),
+          ...pizza
+        }))
+
+        result && setCart(result)
+      })()
+    }
+  }, [user?.cart])
+
+  useEffect(() => {
+    if (cart.length) {
+      const totalAmount = cart.reduce((prev, curr) => {
+        return prev + getItemPrice(curr.pizza_id)
+      }, 0)
+
+      const totalQuantity = cart.reduce((prev, curr) => {
+        return (
+          prev +
+          curr.quantity.small +
+          curr.quantity.medium +
+          curr.quantity.large
+        )
+      }, 0)
+
+      console.log(totalAmount)
+
+      setTotalAmount(totalAmount)
+      setTotalQuantity(totalQuantity)
+    }
+  }, [cart, getItemPrice])
 
   const addItem = (pizza_id: string, size: Enum_Pizzas_Size) => {
+    console.log(pizza_id)
     firebase
       .firestore()
-      .doc(`users/${user.uid}`)
-      .collection("cart")
-      .add({ pizza_id, sizes: { [size]: 1 } })
+      .doc(`users/${user?.uid}/cart/${pizza_id}`)
+      .set({ quantity: { [size]: 1 } })
   }
 
   const removeItem = (pizza_id: string) => {
-    firebase.firestore().doc(`users/${user.uid}/cart/${pizza_id}`).delete()
+    firebase
+      .firestore()
+      .collection("cart")
+      .doc(`users/${user?.uid}/cart/${pizza_id}`)
+      .delete()
   }
 
   const incrementItem = (pizza_id: string, size: Enum_Pizzas_Size) => {
     firebase
       .firestore()
-      .doc(`users/${user.uid}/cart/${pizza_id}`)
-      .set({ sizes: { [size]: firebase.firestore.FieldValue.increment(1) } })
+      .doc(`users/${user?.uid}/cart/${pizza_id}`)
+      .set({ quantity: { [size]: firebase.firestore.FieldValue.increment(1) } })
   }
 
   const decrementItem = (pizza_id: string, size: Enum_Pizzas_Size) => {
     firebase
       .firestore()
-      .doc(`users/${user.uid}/cart/${pizza_id}`)
-      .set({ sizes: { [size]: firebase.firestore.FieldValue.increment(-1) } })
+      .doc(`users/${user?.uid}/cart/${pizza_id}`)
+      .set({
+        quantity: { [size]: firebase.firestore.FieldValue.increment(-1) }
+      })
   }
 
   const setQuantity = (
@@ -106,19 +138,22 @@ const CartContextProvider: React.FC = ({ children }) => {
   ) => {
     firebase
       .firestore()
-      .doc(`users/${user.uid}/cart/${pizza_id}`)
-      .set({ sizes: { [size]: quantity } })
+      .doc(`users/${user?.uid}/cart/${pizza_id}`)
+      .set({ quantity: { [size]: quantity } })
   }
 
   const clearCart = async () => {
     const cart = await firebase
       .firestore()
-      .collection(`users/${user.uid}/cart`)
+      .collection(`users/${user?.uid}/cart`)
       .get()
     const batch = firebase.firestore().batch()
 
     cart.forEach(doc => doc.exists && batch.delete(doc.ref))
   }
+
+  const isItemInCart = (pizza_id: string) =>
+    !!cart.find(({ id }) => pizza_id === id)
 
   return (
     <CartContext.Provider
@@ -127,6 +162,9 @@ const CartContextProvider: React.FC = ({ children }) => {
         addItem,
         removeItem,
         totalAmount,
+        isItemInCart,
+        getItemPrice,
+        getItemQuantity,
         totalQuantity,
         incrementItem,
         decrementItem,

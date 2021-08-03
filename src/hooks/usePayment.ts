@@ -5,7 +5,7 @@ import { fetcher } from "@/utils/fetcher"
 
 const usePayment = (product?: string, amount?: number) => {
   const { user } = useUser()
-  const { cartItems, totalAmount, clearCart } = useCart()
+  const { cart, totalAmount, clearCart } = useCart()
 
   const initializePayment = usePaystackPayment({
     reference: Date.now().toString(),
@@ -27,7 +27,7 @@ const usePayment = (product?: string, amount?: number) => {
         },
         body: JSON.stringify({
           transactionID: res.transaction,
-          products: product ? [product] : cartItems.map(item => item.name),
+          products: product ? [product] : cart.map(item => item.name),
           amount: amount ?? totalAmount
         })
       })

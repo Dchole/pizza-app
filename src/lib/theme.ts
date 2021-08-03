@@ -25,7 +25,7 @@ let theme = createTheme({
       main: "#E56C38"
     },
     secondary: {
-      main: "#2F80ED"
+      main: "#38B1E5"
     }
   },
   shape: {

@@ -43,16 +43,39 @@ export default function UserContextComp({ children }) {
           const { uid, displayName, phoneNumber, photoURL } = user
           // You could also look for the user doc in your Firestore (if you have one):
           // const userDoc = await firebase.firestore().doc(`users/${uid}`).get()
-          setUser({ uid, displayName, phoneNumber, photoURL })
+          setUser({
+            uid,
+            displayName,
+            phoneNumber,
+            photoURL,
+            providerId: user.providerData[0].providerId
+          })
 
           firebase
             .firestore()
             .doc(`users/${uid}`)
-            .onSnapshot(
-              doc =>
+            .onSnapshot(doc => {
+              return (
                 doc.exists &&
                 setUser(prevUser => ({ ...prevUser, ...doc.data() }))
-            )
+              )
+            })
+
+          firebase
+            .firestore()
+            .collection(`users/${uid}/cart`)
+            .onSnapshot(doc => {
+              const cartItems = doc.docs.map(item => {
+                const cart = {
+                  pizza_id: item.id,
+                  ...item.data()
+                } as ICartItem
+
+                return cart
+              })
+
+              setUser(prevUser => ({ ...prevUser, cart: cartItems }))
+            })
         } else setUser(null)
       } catch (error) {
         // Most probably a connection error. Handle appropriately.
