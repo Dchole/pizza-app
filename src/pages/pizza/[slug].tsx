@@ -120,8 +120,7 @@ const useStyles = makeStyles(theme =>
 const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const { cart, getItemPrice, addItem, removeItem, selectSize, isItemInCart } =
-    useCart()
+  const { cart, getItemPrice, addItem, removeItem, isItemInCart } = useCart()
   const [price, setPrice] = useState(pizza.price_of_medium)
   const [size, setSize] = useState<Enum_Pizzas_Size>(Enum_Pizzas_Size["Medium"])
   const handleCheckout = usePayment(pizza.name, price)
@@ -132,9 +131,7 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
   }, [cart, pizza])
 
   useEffect(() => {
-    const priceAccordingToSize = getItemPrice(
-      cart.find(({ id }) => pizza.id === id)
-    )
+    const priceAccordingToSize = getItemPrice(pizza.id)
 
     setPrice(priceAccordingToSize ?? pizza.price_of_medium)
   }, [cart, pizza, getItemPrice])
@@ -172,22 +169,13 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
           disableElevation
           data-id={pizza.id}
         >
-          <Button
-            variant={size === "small" ? "contained" : undefined}
-            onClick={selectSize}
-          >
+          <Button variant={size === "small" ? "contained" : undefined}>
             Small
           </Button>
-          <Button
-            variant={size === "medium" ? "contained" : undefined}
-            onClick={selectSize}
-          >
+          <Button variant={size === "medium" ? "contained" : undefined}>
             Medium
           </Button>
-          <Button
-            variant={size === "large" ? "contained" : undefined}
-            onClick={selectSize}
-          >
+          <Button variant={size === "large" ? "contained" : undefined}>
             Large
           </Button>
         </ButtonGroup>
