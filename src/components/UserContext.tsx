@@ -35,6 +35,9 @@ export default function UserContextComp({ children }) {
   const [loadingUser, setLoadingUser] = useState(true) // Helpful, to update the UI accordingly.
 
   useEffect(() => {
+    let userSnapshotUnSubscriber: () => void
+    let cartSnapshotUnSubscriber: () => void
+
     // Listen authenticated user
     const userUnsubscriber = firebase.auth().onAuthStateChanged(async user => {
       try {
@@ -51,7 +54,7 @@ export default function UserContextComp({ children }) {
             providerId: user.providerData[0].providerId
           })
 
-          firebase
+          userSnapshotUnSubscriber = firebase
             .firestore()
             .doc(`users/${uid}`)
             .onSnapshot(doc => {
@@ -61,7 +64,7 @@ export default function UserContextComp({ children }) {
               )
             })
 
-          firebase
+          cartSnapshotUnSubscriber = firebase
             .firestore()
             .collection(`users/${uid}/cart`)
             .onSnapshot(doc => {
@@ -97,6 +100,8 @@ export default function UserContextComp({ children }) {
     return () => {
       userUnsubscriber()
       tokenUnsubscriber()
+      userSnapshotUnSubscriber?.()
+      cartSnapshotUnSubscriber?.()
     }
   }, [])
 

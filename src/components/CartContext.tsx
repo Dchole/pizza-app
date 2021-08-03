@@ -92,8 +92,6 @@ const CartContextProvider: React.FC = ({ children }) => {
         )
       }, 0)
 
-      console.log(totalAmount)
-
       setTotalAmount(totalAmount)
       setTotalQuantity(totalQuantity)
     }
@@ -108,11 +106,7 @@ const CartContextProvider: React.FC = ({ children }) => {
   }
 
   const removeItem = (pizza_id: string) => {
-    firebase
-      .firestore()
-      .collection("cart")
-      .doc(`users/${user?.uid}/cart/${pizza_id}`)
-      .delete()
+    firebase.firestore().doc(`users/${user?.uid}/cart/${pizza_id}`).delete()
   }
 
   const incrementItem = (pizza_id: string, size: Enum_Pizzas_Size) => {

@@ -13,14 +13,12 @@ import Typography from "@material-ui/core/Typography"
 import OutlinedInput from "@material-ui/core/OutlinedInput"
 import IconButton from "@material-ui/core/IconButton"
 import AddIcon from "@material-ui/icons/Add"
-import RemoveIcon from "@material-ui/icons/Remove"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
 import PaymentIcon from "@material-ui/icons/Payment"
 import Link from "../Link"
 import { loader } from "@/utils/imageLoader"
 import { useStyles } from "./useStyles"
 import { useCart, TCartItemDetails } from "../CartContext"
-import { useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
 
 const PaymentMethodDialog = dynamic(
@@ -37,23 +35,15 @@ interface ICartItemProps {
 const CartItem: React.FC<ICartItemProps> = ({ item }) => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const { getItemPrice, getItemQuantity } = useCart()
-
-  const handleSelect = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { size } = event.currentTarget.dataset
-    setSelectedSize(size)
-
-    event.stopPropagation()
-  }
-
-  const removeSelected = () => {
-    setSelectedSize(null)
-  }
+  const { removeItem, getItemPrice, getItemQuantity } = useCart()
 
   return (
-    <Card variant="outlined" className={classes.root} onClick={removeSelected}>
-      <CardActionArea component={Link} href={`/cart/${item.slug}`}>
+    <Card variant="outlined" className={classes.root}>
+      <CardActionArea
+        component={Link}
+        href={`/cart/${item.slug}`}
+        className={classes.actionArea}
+      >
         <CardMedia className={classes.cover}>
           <Image
             loader={loader}
@@ -68,7 +58,12 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
       </CardActionArea>
       <CardContent className={classes.content}>
         <div className={classes.title}>
-          <Typography component="p" variant="h3">
+          <Typography
+            color="textPrimary"
+            component={Link}
+            variant="h3"
+            href={`/cart/${item.slug}`}
+          >
             {item.name}
           </Typography>
           {desktop ? (
@@ -101,7 +96,11 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
         </div>
         {desktop && (
           <div className={classes.actions}>
-            <Button color="primary" endIcon={<RemoveShoppingCartIcon />}>
+            <Button
+              color="primary"
+              endIcon={<RemoveShoppingCartIcon />}
+              onClick={() => removeItem(item.id)}
+            >
               Remove from cart
             </Button>
             <Button
@@ -120,6 +119,7 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
             size="small"
             color="primary"
             endIcon={<RemoveShoppingCartIcon />}
+            onClick={() => removeItem(item.id)}
           >
             Remove from cart
           </Button>

@@ -5,7 +5,6 @@ import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
 import Container from "@material-ui/core/Container"
 import Typography from "@material-ui/core/Typography"
-import PaymentIcon from "@material-ui/icons/Payment"
 import StoreIcon from "@material-ui/icons/Store"
 import CartItem from "@/components/CartItem"
 import ButtonLink from "@/components/ButtonLink"
@@ -13,7 +12,6 @@ import useScreenSize from "@/hooks/usScreenSize"
 import { useCart } from "@/components/CartContext"
 import { useState } from "react"
 
-const CountUp = dynamic(() => import("react-countup"))
 const PaymentMethodDialog = dynamic(
   () => import("@/components/PaymentMethod/Dialog")
 )
@@ -25,7 +23,8 @@ const useStyles = makeStyles(theme =>
   createStyles({
     root: {
       height: "100%",
-      width: "100%"
+      width: "100%",
+      marginBottom: 42
     },
     total: {
       display: "flex",
@@ -37,17 +36,38 @@ const useStyles = makeStyles(theme =>
       }
     },
     buttonWrapper: {
+      position: "fixed",
+      bottom: 16,
+      padding: theme.spacing(0, 1),
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "100%",
+
+      "& .MuiButton-root": {
+        "& span": {
+          gap: 8
+        }
+      },
+
       [theme.breakpoints.up("sm")]: {
         display: "flex",
         justifyContent: "flex-end",
+        bottom: "16%",
+        right: "5%",
+        left: "initial",
+        transform: "initial",
 
         "& .MuiButton-root": {
-          width: "fit-content",
-
-          "& span": {
-            gap: 8
-          }
+          width: "fit-content"
         }
+      },
+
+      [theme.breakpoints.up("lg")]: {
+        right: "15%"
+      },
+
+      [theme.breakpoints.up("xl")]: {
+        right: "25%"
       }
     },
     linkWrapper: {
@@ -93,7 +113,7 @@ const Cart = () => {
                 aria-label={`${totalAmount} cedis`}
               >
                 (<small>₵</small>&nbsp;
-                <CountUp end={totalAmount} />)
+                <span id="total-amount">{totalAmount}</span>)
               </Typography>
             </Button>
           </div>

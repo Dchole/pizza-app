@@ -3,6 +3,7 @@ import { createStyles, makeStyles } from "@material-ui/core/styles"
 export const useStyles = makeStyles(theme =>
   createStyles({
     root: {
+      marginBottom: 8,
       width: "min(100%, 600px)",
 
       [theme.breakpoints.up("sm")]: {
@@ -32,6 +33,16 @@ export const useStyles = makeStyles(theme =>
       "& .MuiTypography-h3": {
         fontWeight: 600,
 
+        "&:hover, &:focus": {
+          textDecoration: "none",
+          color: theme.palette.text.secondary
+        },
+
+        "&:active": {
+          textDecoration: "none",
+          color: theme.palette.primary.dark
+        },
+
         [theme.breakpoints.up("sm")]: {
           fontSize: theme.typography.h4.fontSize
         }
@@ -50,6 +61,11 @@ export const useStyles = makeStyles(theme =>
         color: theme.palette.grey[700],
         position: "relative",
         top: 2
+      }
+    },
+    actionArea: {
+      [theme.breakpoints.up("sm")]: {
+        width: "fit-content"
       }
     },
     cover: {
