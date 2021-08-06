@@ -41,10 +41,13 @@ const CartContextProvider: React.FC = ({ children }) => {
     (pizza_id: string) => {
       const item = cart.find(item => pizza_id === item.pizza_id)
 
-      return Object.entries(item?.quantity).reduce(
-        (acc, [size, quantity]) => acc + item[`price_of_${size}`] * quantity,
-        0
-      )
+      return item
+        ? Object.entries(item.quantity).reduce(
+            (acc, [size, quantity]) =>
+              acc + item[`price_of_${size}`] * quantity,
+            0
+          )
+        : 0
     },
     [cart]
   )
@@ -52,10 +55,12 @@ const CartContextProvider: React.FC = ({ children }) => {
   const getItemQuantity = (pizza_id: string) => {
     const item = cart.find(item => pizza_id === item.pizza_id)
 
-    return Object.values(item?.quantity).reduce(
-      (acc, quantity) => acc + quantity,
-      0
-    )
+    return item
+      ? Object.values(item.quantity).reduce(
+          (acc, quantity) => acc + quantity,
+          0
+        )
+      : 0
   }
 
   useEffect(() => {
@@ -98,7 +103,6 @@ const CartContextProvider: React.FC = ({ children }) => {
   }, [cart, getItemPrice])
 
   const addItem = (pizza_id: string, size: Enum_Pizzas_Size) => {
-    console.log(pizza_id)
     firebase
       .firestore()
       .doc(`users/${user?.uid}/cart/${pizza_id}`)

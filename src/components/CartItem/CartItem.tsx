@@ -76,7 +76,7 @@ const CartItem: React.FC<ICartItemProps> = ({ item, handleSelect }) => {
       onMouseDown={handleRippleStart}
       className={classes.root}
     >
-      <TouchRipple ref={rippleRef} />
+      {desktop && <TouchRipple ref={rippleRef} />}
       <CardActionArea
         component={desktop ? undefined : Link}
         href={desktop ? undefined : `/cart/${item.slug}`}

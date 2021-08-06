@@ -4,6 +4,7 @@ import { createStyles, makeStyles } from "@material-ui/core/styles"
 import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
 import Container from "@material-ui/core/Container"
+import Divider from "@material-ui/core/Divider"
 import Typography from "@material-ui/core/Typography"
 import StoreIcon from "@material-ui/icons/Store"
 import CartItem from "@/components/CartItem"
@@ -24,41 +25,29 @@ const PaymentMethodSheet = dynamic(
 const useStyles = makeStyles(theme =>
   createStyles({
     root: {
-      height: "100%",
       width: "100%",
-      marginBottom: 42,
-      display: "grid",
-      gap: 24,
-      gridTemplateColumns: "auto 1fr",
-
+      height: "100%",
+      marginBottom: 26
+    },
+    grid: {
       [theme.breakpoints.up("sm")]: {
-        marginTop: 56
+        gap: 24,
+        display: "grid",
+        gridTemplateColumns: "auto 1fr"
       }
     },
-    buttonBar: {
-      width: "80%",
-      top: 90,
-      left: "50%",
-      transform: "translateX(-50%)",
-      position: "fixed",
-      display: "flex",
-      justifyContent: "flex-end",
-
-      "& .MuiButton-root": {
-        width: 300,
-
-        "& span": {
-          gap: 8
-        }
-      }
+    divider: {
+      width: "min(100%, 600px)",
+      margin: theme.spacing(3, "auto")
     },
     buttonWrapper: {
-      position: "fixed",
       bottom: 16,
-      padding: theme.spacing(0, 1),
       left: "50%",
+      position: "fixed",
+      padding: theme.spacing(0, 1),
       transform: "translateX(-50%)",
       width: "100%",
+      gap: 16,
 
       "& .MuiButton-root": {
         "& span": {
@@ -72,10 +61,11 @@ const useStyles = makeStyles(theme =>
         bottom: "16%",
         right: "5%",
         left: "initial",
+        position: "inherit",
         transform: "initial",
 
         "& .MuiButton-root": {
-          width: "fit-content"
+          width: 300
         }
       },
 
@@ -95,9 +85,8 @@ const useStyles = makeStyles(theme =>
 
 const Cart = () => {
   const classes = useStyles()
-  const tablet = useScreenSize()
   const desktop = useScreenSize("lg")
-  const { cart, totalAmount } = useCart()
+  const { cart, clearCart, totalAmount } = useCart()
   const [openSheet, setOpenSheet] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
   const [selectedItem, setSelectedItem] = useState({} as TCartItemDetails)
@@ -127,30 +116,53 @@ const Cart = () => {
       >
         {cart.length ? (
           <>
-            <Typography variant="srOnly" component="h1">
-              Cart items
-            </Typography>
-            <div>
-              {cart.map(item => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  handleSelect={handleSelect}
-                />
-              ))}
+            <div className={classes.grid}>
+              <Typography variant="srOnly" component="h1">
+                Cart items
+              </Typography>
+              <div>
+                {cart.map(item => (
+                  <CartItem
+                    key={item.id}
+                    item={item}
+                    handleSelect={handleSelect}
+                  />
+                ))}
+              </div>
+              <SelectedCartItem
+                item={selectedItem}
+                handleDeselect={handleCloseSelect}
+              />
             </div>
-            <SelectedCartItem
-              item={selectedItem}
-              handleDeselect={handleCloseSelect}
-            />
+            <Divider variant="middle" className={classes.divider} />
+            {!desktop && (
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={clearCart}
+                fullWidth
+              >
+                <span>Clear Cart</span>
+              </Button>
+            )}
             <div className={classes.buttonWrapper}>
+              {desktop && (
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  onClick={clearCart}
+                  fullWidth
+                >
+                  <span>Clear Cart</span>
+                </Button>
+              )}
               <Button
                 color="primary"
                 variant="contained"
                 onClick={handleOpen}
                 fullWidth
               >
-                <span>Checkout</span>
+                <span>Buy all</span>
                 <Typography
                   variant="body2"
                   component="span"

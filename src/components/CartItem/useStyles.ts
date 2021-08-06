@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from "@material-ui/core/styles"
+import { createStyles, lighten, makeStyles } from "@material-ui/core/styles"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
@@ -8,8 +8,16 @@ export const useStyles = makeStyles(theme =>
 
       [theme.breakpoints.up("sm")]: {
         display: "flex",
+        cursor: "pointer",
         position: "relative",
-        outlineColor: theme.palette.primary.main
+        outlineColor: theme.palette.primary.main,
+        transition: theme.transitions.create(
+          ["background-color", "border-color"],
+          {
+            duration: theme.transitions.duration.shortest,
+            easing: theme.transitions.easing.easeOut
+          }
+        )
       }
     },
     content: {
