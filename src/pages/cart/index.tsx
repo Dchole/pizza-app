@@ -11,7 +11,9 @@ import ButtonLink from "@/components/ButtonLink"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useCart } from "@/components/CartContext"
 import { useState } from "react"
+import { TCartItemDetails } from "@/components/CartContext"
 
+const SelectedCartItem = dynamic(() => import("@/components/SelectedCartItem"))
 const PaymentMethodDialog = dynamic(
   () => import("@/components/PaymentMethod/Dialog")
 )
@@ -24,15 +26,30 @@ const useStyles = makeStyles(theme =>
     root: {
       height: "100%",
       width: "100%",
-      marginBottom: 42
+      marginBottom: 42,
+      display: "grid",
+      gap: 24,
+      gridTemplateColumns: "auto 1fr",
+
+      [theme.breakpoints.up("sm")]: {
+        marginTop: 56
+      }
     },
-    total: {
+    buttonBar: {
+      width: "80%",
+      top: 90,
+      left: "50%",
+      transform: "translateX(-50%)",
+      position: "fixed",
       display: "flex",
       justifyContent: "flex-end",
 
-      "& p": {
-        display: "flex",
-        alignItems: "flex-end"
+      "& .MuiButton-root": {
+        width: 300,
+
+        "& span": {
+          gap: 8
+        }
       }
     },
     buttonWrapper: {
@@ -78,10 +95,12 @@ const useStyles = makeStyles(theme =>
 
 const Cart = () => {
   const classes = useStyles()
-  const desktop = useScreenSize()
-  const [openDialog, setOpenDialog] = useState(false)
-  const [openSheet, setOpenSheet] = useState(false)
+  const tablet = useScreenSize()
+  const desktop = useScreenSize("lg")
   const { cart, totalAmount } = useCart()
+  const [openSheet, setOpenSheet] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [selectedItem, setSelectedItem] = useState({} as TCartItemDetails)
 
   const handleOpen = () => (desktop ? setOpenDialog(true) : setOpenSheet(true))
   const handleClose = () => {
@@ -89,64 +108,90 @@ const Cart = () => {
     setOpenSheet(false)
   }
 
+  const handleSelect = (id: string) => {
+    const item = cart.find(item => item.id === id)
+    item && setSelectedItem(item)
+  }
+
+  const handleCloseSelect = () => {
+    setSelectedItem({} as TCartItemDetails)
+  }
+
   return (
-    <Container maxWidth="md" className={classes.root} disableGutters={!desktop}>
-      {cart.length ? (
-        <>
+    <>
+      <Container
+        maxWidth="md"
+        component="main"
+        className={classes.root}
+        disableGutters={!desktop}
+      >
+        {cart.length ? (
           <>
-            {cart.map(item => (
-              <CartItem key={item.id} item={item} />
-            ))}
-          </>
-          <div className={classes.total}></div>
-          <div className={classes.buttonWrapper}>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleOpen}
-              fullWidth
-            >
-              <span>Checkout</span>
-              <Typography
-                variant="body2"
-                component="span"
-                aria-label={`${totalAmount} cedis`}
+            <Typography variant="srOnly" component="h1">
+              Cart items
+            </Typography>
+            <div>
+              {cart.map(item => (
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  handleSelect={handleSelect}
+                />
+              ))}
+            </div>
+            <SelectedCartItem
+              item={selectedItem}
+              handleDeselect={handleCloseSelect}
+            />
+            <div className={classes.buttonWrapper}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleOpen}
+                fullWidth
               >
-                (<small>₵</small>&nbsp;
-                <span id="total-amount">{totalAmount}</span>)
-              </Typography>
-            </Button>
-          </div>
-        </>
-      ) : (
-        <Grid direction="column" alignItems="center" container>
-          <Image
-            src="/empty-cart.svg"
-            alt="empty cart illustration"
-            width={300}
-            height={240}
-          />
-          <Typography variant="h3" component="p">
-            Your Cart is Empty
-          </Typography>
-          <Typography color="textSecondary">
-            Add an item from the store
-          </Typography>
-          <div className={classes.linkWrapper}>
-            <ButtonLink
-              href="/store"
-              variant="contained"
-              color="primary"
-              endIcon={<StoreIcon />}
-            >
-              Go to store
-            </ButtonLink>
-          </div>
-        </Grid>
-      )}
+                <span>Checkout</span>
+                <Typography
+                  variant="body2"
+                  component="span"
+                  aria-label={`${totalAmount} cedis`}
+                >
+                  (<small>₵</small>&nbsp;
+                  <span id="total-amount">{totalAmount}</span>)
+                </Typography>
+              </Button>
+            </div>
+          </>
+        ) : (
+          <Grid direction="column" alignItems="center" container>
+            <Image
+              src="/empty-cart.svg"
+              alt="empty cart illustration"
+              width={300}
+              height={240}
+            />
+            <Typography variant="h3" component="h1">
+              Your Cart is Empty
+            </Typography>
+            <Typography color="textSecondary">
+              Add an item from the store
+            </Typography>
+            <div className={classes.linkWrapper}>
+              <ButtonLink
+                href="/store"
+                variant="contained"
+                color="primary"
+                endIcon={<StoreIcon />}
+              >
+                Go to store
+              </ButtonLink>
+            </div>
+          </Grid>
+        )}
+      </Container>
       <PaymentMethodDialog open={openDialog} handleClose={handleClose} />
       <PaymentMethodSheet open={openSheet} handleClose={handleClose} />
-    </Container>
+    </>
   )
 }
 

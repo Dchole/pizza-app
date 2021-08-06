@@ -6,7 +6,6 @@ import Typography from "@material-ui/core/Typography"
 import PaymentIcon from "@material-ui/icons/Payment"
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
-import { createStyles, makeStyles } from "@material-ui/core/styles"
 import {
   Enum_Pizzas_Size,
   GetPizzaDetailsQuery,
@@ -20,6 +19,7 @@ import { useCart } from "@/components/CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useEffect, useState } from "react"
 import usePayment from "@/hooks/usePayment"
+import { useDetailPageStyles } from "styles/use-detail-page-styles"
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -56,69 +56,8 @@ export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
   return { props: { pizza } }
 }
 
-const useStyles = makeStyles(theme =>
-  createStyles({
-    root: {
-      "& h1": {
-        margin: theme.spacing(1, 0, 2)
-      }
-    },
-    headerText: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center"
-    },
-    description: {
-      width: "100%",
-      maxWidth: 450,
-      margin: theme.spacing(2, 0)
-    },
-    imageWrapper: {
-      position: "relative",
-      width: "100%",
-      height: "40vh",
-      marginBottom: 16,
-
-      [theme.breakpoints.up("sm")]: {
-        height: "60vh"
-      }
-    },
-    actions: {
-      display: "flex",
-      gap: 16,
-      justifyContent: "flex-end",
-      flexWrap: "wrap",
-
-      "& .MuiButton-root": {
-        width: "100%"
-      },
-
-      "@media(max-width: 320px)": {
-        gap: 8
-      },
-
-      [theme.breakpoints.up("sm")]: {
-        flexWrap: "nowrap",
-
-        "& .MuiButton-root": {
-          width: "initial"
-        }
-      }
-    },
-    sizes: {
-      display: "flex",
-      margin: theme.spacing(2, "auto"),
-      justifyContent: "center",
-
-      [theme.breakpoints.up("sm")]: {
-        margin: theme.spacing(5, "auto")
-      }
-    }
-  })
-)
-
 const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
-  const classes = useStyles()
+  const classes = useDetailPageStyles()
   const desktop = useScreenSize()
   const { cart, getItemPrice, addItem, removeItem, isItemInCart } = useCart()
   const [price, setPrice] = useState(pizza.price_of_medium)

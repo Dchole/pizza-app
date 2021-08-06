@@ -3,6 +3,7 @@ import dynamic from "next/dynamic"
 import { capitalize } from "lodash"
 import Avatar from "@material-ui/core/Avatar"
 import Button from "@material-ui/core/Button"
+import ButtonBase from "@material-ui/core/ButtonBase"
 import Chip from "@material-ui/core/Chip"
 import Card from "@material-ui/core/Card"
 import CardMedia from "@material-ui/core/CardMedia"
@@ -10,9 +11,6 @@ import CardContent from "@material-ui/core/CardContent"
 import CardActions from "@material-ui/core/CardActions"
 import CardActionArea from "@material-ui/core/CardActionArea"
 import Typography from "@material-ui/core/Typography"
-import OutlinedInput from "@material-ui/core/OutlinedInput"
-import IconButton from "@material-ui/core/IconButton"
-import AddIcon from "@material-ui/icons/Add"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
 import PaymentIcon from "@material-ui/icons/Payment"
 import Link from "../Link"
@@ -20,6 +18,8 @@ import { loader } from "@/utils/imageLoader"
 import { useStyles } from "./useStyles"
 import { useCart, TCartItemDetails } from "../CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
+import TouchRipple from "@material-ui/core/ButtonBase/TouchRipple"
+import { useRef } from "react"
 
 const PaymentMethodDialog = dynamic(
   () => import("@/components/PaymentMethod/Dialog")
@@ -30,19 +30,59 @@ const PaymentMethodSheet = dynamic(
 
 interface ICartItemProps {
   item: TCartItemDetails
+  handleSelect: (id: string) => void
 }
 
-const CartItem: React.FC<ICartItemProps> = ({ item }) => {
+interface IRef {
+  start: (event: React.MouseEvent<HTMLDivElement>) => void
+  stop: (event: React.MouseEvent<HTMLDivElement>) => void
+}
+
+const CartItem: React.FC<ICartItemProps> = ({ item, handleSelect }) => {
+  const rippleRef = useRef<IRef>(null)
   const classes = useStyles()
   const desktop = useScreenSize()
   const { removeItem, getItemPrice, getItemQuantity } = useCart()
 
+  const handleRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
+    removeItem(item.id)
+    event.stopPropagation()
+  }
+
+  const handleBuy = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+  }
+
+  const handleRippleStop = (event: React.MouseEvent<HTMLDivElement>) => {
+    rippleRef.current.stop(event)
+  }
+
+  const handleRippleStart = (event: React.MouseEvent<HTMLDivElement>) => {
+    rippleRef.current.start(event)
+  }
+
+  const handleCardClick = () => {
+    handleSelect(item.id)
+  }
+
   return (
-    <Card variant="outlined" className={classes.root}>
+    <Card
+      tabIndex={0}
+      // @ts-ignore
+      onClick={desktop ? handleCardClick : undefined}
+      variant="outlined"
+      role="button"
+      onMouseUp={handleRippleStop}
+      onMouseDown={handleRippleStart}
+      className={classes.root}
+    >
+      <TouchRipple ref={rippleRef} />
       <CardActionArea
-        component={Link}
-        href={`/cart/${item.slug}`}
+        component={desktop ? undefined : Link}
+        href={desktop ? undefined : `/cart/${item.slug}`}
         className={classes.actionArea}
+        tabIndex={desktop ? -1 : undefined}
+        disableRipple={desktop}
       >
         <CardMedia className={classes.cover}>
           <Image
@@ -60,9 +100,9 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
         <div className={classes.title}>
           <Typography
             color="textPrimary"
-            component={Link}
+            component={desktop ? "p" : Link}
             variant="h3"
-            href={`/cart/${item.slug}`}
+            href={desktop ? undefined : `/cart/${item.slug}`}
           >
             {item.name}
           </Typography>
@@ -98,15 +138,18 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
           <div className={classes.actions}>
             <Button
               color="primary"
+              data-id={item.id}
               endIcon={<RemoveShoppingCartIcon />}
-              onClick={() => removeItem(item.id)}
+              onClick={handleRemove}
             >
               Remove from cart
             </Button>
             <Button
               color="primary"
+              data-id={item.id}
               variant="outlined"
               endIcon={<PaymentIcon />}
+              onClick={handleBuy}
             >
               buy now
             </Button>
@@ -118,16 +161,19 @@ const CartItem: React.FC<ICartItemProps> = ({ item }) => {
           <Button
             size="small"
             color="primary"
+            data-id={item.id}
             endIcon={<RemoveShoppingCartIcon />}
-            onClick={() => removeItem(item.id)}
+            onClick={handleRemove}
           >
             Remove from cart
           </Button>
           <Button
             size="small"
             color="primary"
+            data-id={item.id}
             variant="outlined"
             endIcon={<PaymentIcon />}
+            onClick={handleBuy}
           >
             buy now
           </Button>

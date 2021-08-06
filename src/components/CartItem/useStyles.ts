@@ -7,7 +7,9 @@ export const useStyles = makeStyles(theme =>
       width: "min(100%, 600px)",
 
       [theme.breakpoints.up("sm")]: {
-        display: "flex"
+        display: "flex",
+        position: "relative",
+        outlineColor: theme.palette.primary.main
       }
     },
     content: {
@@ -32,11 +34,6 @@ export const useStyles = makeStyles(theme =>
 
       "& .MuiTypography-h3": {
         fontWeight: 600,
-
-        "&:hover, &:focus": {
-          textDecoration: "none",
-          color: theme.palette.text.secondary
-        },
 
         "&:active": {
           textDecoration: "none",
