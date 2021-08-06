@@ -59,7 +59,7 @@ const CartDetail: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   console.log(pizza)
   const classes = useDetailPageStyles()
   const desktop = useScreenSize()
-  const { cart, getItemPrice, addItem, removeItem, isItemInCart } = useCart()
+  const { getItemPrice, addItem, removeItem, isItemInCart } = useCart()
 
   return (
     <>
@@ -75,7 +75,8 @@ const CartDetail: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
               pizza.image?.formats.large?.url || pizza.image?.formats.medium.url
             }
             alt={pizza.name}
-            layout="fill"
+            width={200}
+            height={200}
             objectFit="cover"
           />
         </div>
