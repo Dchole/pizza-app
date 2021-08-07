@@ -1,7 +1,7 @@
 import Chip from "@material-ui/core/Chip"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 
-export const useStyles = makeStyles(theme =>
+export const useStyles = makeStyles(
   createStyles({
     root: {
       display: "flex",

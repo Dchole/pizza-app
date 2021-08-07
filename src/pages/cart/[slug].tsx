@@ -78,7 +78,7 @@ const CartDetail: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }) => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const { cart, getItemPrice, getItemQuantity } = useCart()
+  const { cart, getItemPrice } = useCart()
   const item = useMemo(() => cart.find(i => i.id === pizza.id), [pizza, cart])
 
   return (

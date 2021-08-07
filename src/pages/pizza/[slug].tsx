@@ -1,25 +1,84 @@
 import Image from "next/image"
 import Button from "@material-ui/core/Button"
-import ButtonGroup from "@material-ui/core/ButtonGroup"
 import Container from "@material-ui/core/Container"
+import MenuItem from "@material-ui/core/MenuItem"
 import Typography from "@material-ui/core/Typography"
+import Select from "@material-ui/core/Select"
 import PaymentIcon from "@material-ui/icons/Payment"
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
-import {
-  Enum_Pizzas_Size,
-  GetPizzaDetailsQuery,
-  getSdk
-} from "@/graphql/generated"
+import { capitalize } from "lodash"
+import { GetPizzaDetailsQuery, getSdk } from "@/graphql/generated"
 import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
 import { GetStaticPaths, GetStaticProps } from "next"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { loader } from "@/utils/imageLoader"
 import { useCart } from "@/components/CartContext"
+import { useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
-import { useEffect, useState } from "react"
-import usePayment from "@/hooks/usePayment"
-import { useDetailPageStyles } from "styles/use-detail-page-styles"
+
+const useStyles = makeStyles(theme =>
+  createStyles({
+    root: {
+      gap: 24,
+      display: "flex",
+      flexWrap: "wrap",
+      alignItems: "center",
+
+      [theme.breakpoints.up("sm")]: {
+        gap: 48,
+        flexWrap: "nowrap"
+      }
+    },
+    description: {
+      width: "100%",
+      maxWidth: 450,
+      margin: theme.spacing(2, 0)
+    },
+    select: {
+      margin: theme.spacing(2, 0),
+
+      "& h2": {
+        marginBottom: 8
+      }
+    },
+    inputWrapper: {
+      display: "flex",
+      justifyContent: "center",
+
+      [theme.breakpoints.up("sm")]: {
+        justifyContent: "flex-start"
+      }
+    },
+    input: {
+      width: 183,
+
+      [theme.breakpoints.up("lg")]: {
+        width: 206
+      }
+    },
+    actions: {
+      display: "flex",
+      gap: 16,
+      justifyContent: "space-between",
+
+      "& .MuiButton-root": {
+        width: "fit"
+      },
+
+      "@media(max-width: 320px)": {
+        gap: 8
+      },
+
+      [theme.breakpoints.up("sm")]: {
+        "& .MuiButton-root": {
+          width: "initial"
+        }
+      }
+    }
+  })
+)
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -35,7 +94,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: false
   }
 }
-
 interface IPizzaDetails {
   pizza: NonNullable<NonNullable<GetPizzaDetailsQuery["pizzas"]>[0]>
 }
@@ -57,95 +115,110 @@ export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
 }
 
 const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
-  const classes = useDetailPageStyles()
+  const classes = useStyles()
   const desktop = useScreenSize()
-  const { cart, getItemPrice, addItem, removeItem, isItemInCart } = useCart()
-  const [price, setPrice] = useState(pizza.price_of_medium)
-  const [size, setSize] = useState<Enum_Pizzas_Size>(Enum_Pizzas_Size["Medium"])
-  const handleCheckout = usePayment(pizza.name, price)
+  const [size, setSize] = useState("medium")
+  const { addItem, removeItem, isItemInCart } = useCart()
 
-  useEffect(() => {
-    const item = cart.find(({ id }) => id === pizza.id)
-    item && setSize(item.size)
-  }, [cart, pizza])
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSize(event.target.value as string)
+  }
 
-  useEffect(() => {
-    const priceAccordingToSize = getItemPrice(pizza.id)
-
-    setPrice(priceAccordingToSize ?? pizza.price_of_medium)
-  }, [cart, pizza, getItemPrice])
+  const handleAddItem = () =>
+    isItemInCart(pizza.id)
+      ? removeItem(pizza.id)
+      : addItem(pizza.id, pizza.size)
 
   return (
-    <Container component="main" maxWidth="md" disableGutters={!desktop}>
-      <div className={classes.imageWrapper}>
-        <Image
-          loader={loader}
-          src={
-            pizza.image?.formats.large?.url || pizza.image?.formats.medium.url
-          }
-          alt={pizza.name}
-          layout="fill"
-          objectFit="cover"
-        />
-      </div>
-      <div className={classes.headerText}>
-        <Typography variant="h3" component="h1">
+    <Container
+      component="main"
+      maxWidth="md"
+      className={classes.root}
+      disableGutters={!desktop}
+    >
+      <Image
+        loader={loader}
+        src={pizza.image?.formats.medium.url}
+        alt={pizza.name}
+        width={300}
+        height={300}
+        objectFit="cover"
+      />
+      <div>
+        <Typography
+          variant="h3"
+          component="h1"
+          align={desktop ? "left" : "center"}
+        >
           {pizza.name}
         </Typography>
-        <Typography variant="h5" component="p">
-          <span>₵</span>&nbsp;
-          <span>{price}</span>
+        <Typography
+          color="textSecondary"
+          className={classes.description}
+          align={desktop ? "left" : "center"}
+        >
+          {pizza.description}
         </Typography>
-      </div>
-      <Typography color="textSecondary" className={classes.description}>
-        {pizza.description}
-      </Typography>
-      {cart.some(({ id }) => id === pizza.id) && (
-        <ButtonGroup
-          color="secondary"
-          aria-label="choose pizza size"
-          className={classes.sizes}
-          disableElevation
-          data-id={pizza.id}
-        >
-          <Button variant={size === "small" ? "contained" : undefined}>
-            Small
+        <div className={classes.select}>
+          <Typography
+            variant="h5"
+            component="h2"
+            align={desktop ? "left" : "center"}
+          >
+            <span id="select-title">Choose Size</span> &mdash;{" "}
+            <Typography
+              color="textSecondary"
+              variant="h5"
+              component="span"
+              aria-label={`${pizza[`price_of_${size}`]} cedis`}
+            >
+              <small>₵</small>
+              {pizza[`price_of_${size}`]}
+            </Typography>
+          </Typography>
+          <div className={classes.inputWrapper}>
+            <Select
+              id="select-pizza-size"
+              value={size}
+              margin="dense"
+              variant="outlined"
+              onChange={handleChange}
+              className={classes.input}
+              inputProps={{ "aria-labelledby": "select-title" }}
+            >
+              {["small", "medium", "large"].map(size => (
+                <MenuItem key={size} value={size}>
+                  {capitalize(size)}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
+        </div>
+        <div className={classes.actions}>
+          <Button
+            variant="outlined"
+            color="primary"
+            size={desktop ? undefined : "small"}
+            endIcon={
+              isItemInCart(pizza.id) ? (
+                <RemoveShoppingCartIcon />
+              ) : (
+                <AddShoppingCartIcon />
+              )
+            }
+            onClick={handleAddItem}
+          >
+            {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
           </Button>
-          <Button variant={size === "medium" ? "contained" : undefined}>
-            Medium
+          <Button
+            size={desktop ? undefined : "small"}
+            variant="contained"
+            color="primary"
+            endIcon={<PaymentIcon />}
+          >
+            Order Now
           </Button>
-          <Button variant={size === "large" ? "contained" : undefined}>
-            Large
-          </Button>
-        </ButtonGroup>
-      )}
-      <div className={classes.actions}>
-        <Button
-          variant="outlined"
-          color="primary"
-          endIcon={
-            isItemInCart(pizza.id) ? (
-              <RemoveShoppingCartIcon />
-            ) : (
-              <AddShoppingCartIcon />
-            )
-          }
-          onClick={() =>
-            isItemInCart(pizza.id)
-              ? removeItem(pizza.id)
-              : addItem(pizza.id, pizza.size)
-          }
-        >
-          {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          endIcon={<PaymentIcon />}
-          onClick={handleCheckout}
-        >
-          Order Now
-        </Button>
+        </div>
       </div>
     </Container>
   )

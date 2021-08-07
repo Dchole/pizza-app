@@ -1,5 +1,4 @@
 import { useState, useEffect, createContext, useContext } from "react"
-import { Enum_Pizzas_Size } from "@/graphql/generated"
 import firebase from "@/lib/firebase"
 
 export interface ICartItem {
