@@ -80,7 +80,12 @@ export default function UserContextComp({ children }) {
               setUser(prevUser => ({ ...prevUser, cart: cartItems }))
             })
         } else {
-          firebase.auth().signInAnonymously()
+          firebase
+            .auth()
+            .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+            .then(() => {
+              return firebase.auth().signInAnonymously()
+            })
         }
       } catch (error) {
         console.log(error)
