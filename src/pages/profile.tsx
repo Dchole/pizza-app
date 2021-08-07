@@ -59,7 +59,7 @@ const theme = createTheme({
 const Profile = () => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const { user, updateUser } = useUser()
+  const { user } = useUser()
   const [edit, setEdit] = useState("")
   const [updating, setUpdating] = useState(false)
   const userData = useMemo(() => user && userAccountData(user), [user])
@@ -80,8 +80,6 @@ const Profile = () => {
         .firestore()
         .doc(`users/${user?.uid}`)
         .set({ [edit]: value })
-
-      updateUser({ [edit]: value })
 
       setEdit("")
     } catch (error) {

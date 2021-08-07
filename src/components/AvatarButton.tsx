@@ -21,7 +21,7 @@ const AvatarButton: React.FC<{ className?: string }> = ({
 
   return (
     <>
-      {user ? (
+      {user && !user.isAnonymous ? (
         <IconButton
           aria-label="open menu"
           className={className}

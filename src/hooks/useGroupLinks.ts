@@ -1,6 +1,6 @@
 import { sidebarLinks } from "@/components/Sidebar/links"
+import { useUser } from "@/components/UserContext"
 import { useRef } from "react"
-import useUser from "./useUser"
 
 export type TLink = typeof sidebarLinks
 
@@ -9,7 +9,7 @@ const useGroupLinks = () => {
   const { user } = useUser()
 
   linksGroups.current = sidebarLinks.map((links, index) => {
-    if (index === 0 && !user?.isLoggedIn) {
+    if (index === 0 && (!user || user.isAnonymous)) {
       return links.filter((_, index) => index > 1)
     }
 

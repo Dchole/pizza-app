@@ -26,6 +26,9 @@ let theme = createTheme({
     },
     secondary: {
       main: "#2F80ED"
+    },
+    background: {
+      default: "#fff"
     }
   },
   shape: {

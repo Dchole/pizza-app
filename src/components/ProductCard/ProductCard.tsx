@@ -58,7 +58,11 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
       </ButtonBase>
       <IconButton
         aria-label={`add ${pizza.name} to shopping cart`}
-        onClick={isItemInCart(pizza.id) ? removeItem(pizza) : addItem(pizza)}
+        onClick={() =>
+          isItemInCart(pizza.id)
+            ? removeItem(pizza.id)
+            : addItem(pizza.id, pizza.size)
+        }
       >
         {isItemInCart(pizza.id) ? (
           <RemoveShoppingCartIcon />

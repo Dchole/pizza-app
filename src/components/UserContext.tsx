@@ -2,14 +2,19 @@ import { useState, useEffect, createContext, useContext } from "react"
 import { Enum_Pizzas_Size } from "@/graphql/generated"
 import firebase from "@/lib/firebase"
 
+export interface ICartItem {
+  pizza_id: string
+  quantity: {
+    small: number
+    medium: number
+    large: number
+  }
+}
+
 interface IUserData extends firebase.User {
   location: string
   address: string
-  cart: {
-    id: string
-    size: Enum_Pizzas_Size
-    quantity: number
-  }[]
+  cart: ICartItem[]
   transactions: string[]
 }
 
@@ -30,20 +35,55 @@ export default function UserContextComp({ children }) {
   const [loadingUser, setLoadingUser] = useState(true) // Helpful, to update the UI accordingly.
 
   useEffect(() => {
+    let userSnapshotUnSubscriber: () => void
+    let cartSnapshotUnSubscriber: () => void
+
     // Listen authenticated user
     const userUnsubscriber = firebase.auth().onAuthStateChanged(async user => {
       try {
         if (user) {
           // User is signed in.
-          const { uid, displayName, phoneNumber, photoURL } = user
+          const { uid, displayName, phoneNumber, photoURL, isAnonymous } = user
           // You could also look for the user doc in your Firestore (if you have one):
           // const userDoc = await firebase.firestore().doc(`users/${uid}`).get()
-          setUser({ uid, displayName, phoneNumber, photoURL })
+          setUser({
+            uid,
+            displayName,
+            phoneNumber,
+            photoURL,
+            isAnonymous
+          })
 
-          const res = await firebase.firestore().doc(`users/${uid}`).get()
-          res.exists && setUser(prevUser => ({ ...prevUser, ...res.data() }))
-        } else setUser(null)
+          userSnapshotUnSubscriber = firebase
+            .firestore()
+            .doc(`users/${uid}`)
+            .onSnapshot(doc => {
+              return (
+                doc.exists &&
+                setUser(prevUser => ({ ...prevUser, ...doc.data() }))
+              )
+            })
+
+          cartSnapshotUnSubscriber = firebase
+            .firestore()
+            .collection(`users/${uid}/cart`)
+            .onSnapshot(doc => {
+              const cartItems = doc.docs.map(item => {
+                const cart = {
+                  pizza_id: item.id,
+                  ...item.data()
+                } as ICartItem
+
+                return cart
+              })
+
+              setUser(prevUser => ({ ...prevUser, cart: cartItems }))
+            })
+        } else {
+          firebase.auth().signInAnonymously()
+        }
       } catch (error) {
+        console.log(error)
         // Most probably a connection error. Handle appropriately.
       } finally {
         setLoadingUser(false)
@@ -63,6 +103,8 @@ export default function UserContextComp({ children }) {
     return () => {
       userUnsubscriber()
       tokenUnsubscriber()
+      userSnapshotUnSubscriber?.()
+      cartSnapshotUnSubscriber?.()
     }
   }, [])
 

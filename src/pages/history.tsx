@@ -1,7 +1,7 @@
+import clsx from "clsx"
 import timeAge from "time-age"
-import { useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
-import CircularProgress from "@material-ui/core/CircularProgress"
 import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
 import Table from "@material-ui/core/Table"
@@ -13,12 +13,17 @@ import TableContainer from "@material-ui/core/TableContainer"
 import TablePagination from "@material-ui/core/TablePagination"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
-import useSWR from "swr"
 import ProductList from "@/components/ProductList"
 import useScreenSize from "@/hooks/usScreenSize"
+import PageLoader from "@/components/PageLoader"
+import firebase from "@/lib/firebase"
+import { useUser } from "@/components/UserContext"
 
 const useStyles = makeStyles(theme =>
   createStyles({
+    wordWrap: {
+      whiteSpace: "nowrap"
+    },
     th: {
       fontFamily: theme.typography.h1.fontFamily,
       fontWeight: 600
@@ -30,33 +35,48 @@ const useStyles = makeStyles(theme =>
 )
 
 interface ITransaction {
-  _id: string
-  transactionID: string
-  products: string[]
-  amount: number
-  createdAt: string
+  "Transaction ID": string
+  "Product Name": string
+  Amount: number
+  Date: string
 }
 
 const History = () => {
   const classes = useStyles()
+  const desktop = useScreenSize()
+  const { user } = useUser()
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const desktop = useScreenSize()
+  const [loading, setLoading] = useState(true)
+  const [transactions, setTransactions] = useState<ITransaction[] | null>(null)
 
-  const { data, isValidating } = useSWR<ITransaction[]>("/api/transactions")
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await firebase
+          .firestore()
+          .collection(`users/${user?.uid}/transactions`)
+          .get()
 
-  const [fields, transactions] = useMemo(() => {
-    const fields = ["Transaction ID", "Product Name", "Amount", "Date"]
+        const transactions = res.docs.map(transaction => {
+          const data = transaction.data()
 
-    const transactions = data?.map(transaction => ({
-      "Transaction ID": transaction.transactionID,
-      "Product Name": transaction.products,
-      Amount: transaction.amount.toFixed(2),
-      Date: timeAge(transaction.createdAt)
-    }))
+          return {
+            "Transaction ID": data.transactionID,
+            "Product Name": data.products,
+            Amount: data.amount.toFixed(2),
+            Date: timeAge(data.createdAt)
+          }
+        })
 
-    return [fields, transactions]
-  }, [data])
+        setTransactions(transactions)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [user?.uid])
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage)
@@ -71,13 +91,17 @@ const History = () => {
 
   return (
     <main id="transaction-history">
-      {isValidating && !transactions ? (
-        <CircularProgress />
+      {loading ? (
+        <PageLoader />
+      ) : !transactions?.length ? (
+        <Typography variant="h3" component="h1">
+          No transactions yet
+        </Typography>
       ) : (
         <Container maxWidth="md" disableGutters={!desktop}>
           <Paper>
             <Toolbar>
-              <Typography variant="h3" component="h1" align="center">
+              <Typography variant="h4" component="h1" align="center">
                 Transaction history
               </Typography>
             </Toolbar>
@@ -85,10 +109,10 @@ const History = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    {fields.map((key, index, arr) => (
+                    {Object.keys(transactions[0]).map((key, index, arr) => (
                       <TableCell
                         key={key}
-                        className={classes.th}
+                        className={clsx(classes.wordWrap, classes.th)}
                         align={index === arr.length - 1 ? "right" : "left"}
                       >
                         {key}
@@ -108,6 +132,7 @@ const History = () => {
                           <TableCell
                             size="small"
                             key={item.toString()}
+                            className={classes.wordWrap}
                             align={index === arr.length - 1 ? "right" : "left"}
                           >
                             {index === 1 ? (

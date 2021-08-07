@@ -38,7 +38,7 @@ const Layout: React.FC = ({ children }) => {
             ) : (
               <PageBackdrop>{children}</PageBackdrop>
             )}
-            {!onAuthPage && <Footer />}
+            {onContentSite && <Footer />}
           </div>
         </CartContextProvider>
       </PizzaContextProvider>

@@ -6,7 +6,6 @@ import Typography from "@material-ui/core/Typography"
 import PaymentIcon from "@material-ui/icons/Payment"
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
-import { createStyles, makeStyles } from "@material-ui/core/styles"
 import {
   Enum_Pizzas_Size,
   GetPizzaDetailsQuery,
@@ -20,6 +19,7 @@ import { useCart } from "@/components/CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useEffect, useState } from "react"
 import usePayment from "@/hooks/usePayment"
+import { useDetailPageStyles } from "styles/use-detail-page-styles"
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -56,79 +56,10 @@ export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
   return { props: { pizza } }
 }
 
-const useStyles = makeStyles(theme =>
-  createStyles({
-    root: {
-      "& h1": {
-        margin: theme.spacing(1, 0, 2)
-      }
-    },
-    headerText: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center"
-    },
-    description: {
-      width: "100%",
-      maxWidth: 450,
-      margin: theme.spacing(2, 0)
-    },
-    imageWrapper: {
-      position: "relative",
-      width: "100%",
-      height: "40vh",
-      marginBottom: 16,
-
-      [theme.breakpoints.up("sm")]: {
-        height: "60vh"
-      }
-    },
-    actions: {
-      display: "flex",
-      gap: 16,
-      justifyContent: "flex-end",
-      flexWrap: "wrap",
-
-      "& .MuiButton-root": {
-        width: "100%"
-      },
-
-      "@media(max-width: 320px)": {
-        gap: 8
-      },
-
-      [theme.breakpoints.up("sm")]: {
-        flexWrap: "nowrap",
-
-        "& .MuiButton-root": {
-          width: "initial"
-        }
-      }
-    },
-    sizes: {
-      display: "flex",
-      margin: theme.spacing(2, "auto"),
-      justifyContent: "center",
-
-      [theme.breakpoints.up("sm")]: {
-        margin: theme.spacing(5, "auto")
-      }
-    }
-  })
-)
-
 const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
-  const classes = useStyles()
+  const classes = useDetailPageStyles()
   const desktop = useScreenSize()
-  const {
-    cart,
-    cartItems,
-    getItemPrice,
-    addItem,
-    removeItem,
-    selectSize,
-    isItemInCart
-  } = useCart()
+  const { cart, getItemPrice, addItem, removeItem, isItemInCart } = useCart()
   const [price, setPrice] = useState(pizza.price_of_medium)
   const [size, setSize] = useState<Enum_Pizzas_Size>(Enum_Pizzas_Size["Medium"])
   const handleCheckout = usePayment(pizza.name, price)
@@ -139,12 +70,10 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
   }, [cart, pizza])
 
   useEffect(() => {
-    const priceAccordingToSize = getItemPrice(
-      cartItems.find(({ id }) => pizza.id === id)
-    )
+    const priceAccordingToSize = getItemPrice(pizza.id)
 
     setPrice(priceAccordingToSize ?? pizza.price_of_medium)
-  }, [cartItems, pizza, getItemPrice])
+  }, [cart, pizza, getItemPrice])
 
   return (
     <Container component="main" maxWidth="md" disableGutters={!desktop}>
@@ -171,7 +100,7 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
       <Typography color="textSecondary" className={classes.description}>
         {pizza.description}
       </Typography>
-      {cartItems.some(({ id }) => id === pizza.id) && (
+      {cart.some(({ id }) => id === pizza.id) && (
         <ButtonGroup
           color="secondary"
           aria-label="choose pizza size"
@@ -179,22 +108,13 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
           disableElevation
           data-id={pizza.id}
         >
-          <Button
-            variant={size === "small" ? "contained" : undefined}
-            onClick={selectSize}
-          >
+          <Button variant={size === "small" ? "contained" : undefined}>
             Small
           </Button>
-          <Button
-            variant={size === "medium" ? "contained" : undefined}
-            onClick={selectSize}
-          >
+          <Button variant={size === "medium" ? "contained" : undefined}>
             Medium
           </Button>
-          <Button
-            variant={size === "large" ? "contained" : undefined}
-            onClick={selectSize}
-          >
+          <Button variant={size === "large" ? "contained" : undefined}>
             Large
           </Button>
         </ButtonGroup>
@@ -210,7 +130,11 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
               <AddShoppingCartIcon />
             )
           }
-          onClick={isItemInCart(pizza.id) ? removeItem(pizza) : addItem(pizza)}
+          onClick={() =>
+            isItemInCart(pizza.id)
+              ? removeItem(pizza.id)
+              : addItem(pizza.id, pizza.size)
+          }
         >
           {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
         </Button>
