@@ -17,7 +17,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
   anchorEl,
   handleClose
 }) => {
-  const { replace } = useRouter()
+  const { replace, pathname } = useRouter()
   const { clearCart } = useCart()
 
   const logout = async () => {
@@ -25,7 +25,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
 
     clearCart()
     handleClose()
-    replace("/store")
+    replace(pathname === "/" ? "/" : "/store")
   }
 
   return (

@@ -34,7 +34,7 @@ const CartContext = createContext({} as ICartContextProps)
 
 const CartContextProvider: React.FC = ({ children }) => {
   const { user } = useUser()
-  const [fetchingDetails, setFetchingDetails] = useState(true)
+  const [fetchingDetails, setFetchingDetails] = useState(false)
   const [cart, setCart] = useState<TCartItemDetails[]>([])
   const [totalQuantity, setTotalQuantity] = useState(0)
   const [totalAmount, setTotalAmount] = useState(0)
@@ -69,6 +69,7 @@ const CartContextProvider: React.FC = ({ children }) => {
     if (user?.cart?.length) {
       ;(async () => {
         try {
+          setFetchingDetails(true)
           const client = new GraphQLClient(cmsLinks.api)
           const sdk = getSdk(client)
           const { pizzas } = await sdk.getCartPizzas({

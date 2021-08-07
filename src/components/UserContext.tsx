@@ -43,7 +43,7 @@ export default function UserContextComp({ children }) {
       try {
         if (user) {
           // User is signed in.
-          const { uid, displayName, phoneNumber, photoURL } = user
+          const { uid, displayName, phoneNumber, photoURL, isAnonymous } = user
           // You could also look for the user doc in your Firestore (if you have one):
           // const userDoc = await firebase.firestore().doc(`users/${uid}`).get()
           setUser({
@@ -51,7 +51,7 @@ export default function UserContextComp({ children }) {
             displayName,
             phoneNumber,
             photoURL,
-            providerId: user.providerData[0].providerId
+            isAnonymous
           })
 
           userSnapshotUnSubscriber = firebase
@@ -79,8 +79,11 @@ export default function UserContextComp({ children }) {
 
               setUser(prevUser => ({ ...prevUser, cart: cartItems }))
             })
-        } else setUser(null)
+        } else {
+          firebase.auth().signInAnonymously()
+        }
       } catch (error) {
+        console.log(error)
         // Most probably a connection error. Handle appropriately.
       } finally {
         setLoadingUser(false)

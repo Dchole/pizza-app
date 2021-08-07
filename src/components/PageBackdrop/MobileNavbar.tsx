@@ -10,9 +10,9 @@ import CloseIcon from "@material-ui/icons/Close"
 import ButtonLink from "../ButtonLink"
 import { useEffect, useState } from "react"
 import { useMobileNavStyles } from "./useMobileNavStyles"
-import useUser from "@/hooks/useUser"
 import { useRouter } from "next/router"
 import dynamic from "next/dynamic"
+import { useUser } from "../UserContext"
 
 const AccountPopup = dynamic(() => import("../Header/AccountPopup"))
 
@@ -75,7 +75,7 @@ const MobileNavbar: React.FC<IMobileNavbarProps> = ({
           </div>
         </Zoom>
       </Grid>
-      {!user?.isLoggedIn && (
+      {(!user || user.isAnonymous) && (
         <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
           <ButtonLink href="/login" variant="outlined">
             Login
@@ -97,7 +97,7 @@ const MobileNavbar: React.FC<IMobileNavbarProps> = ({
           <SearchIcon />
         </IconButton>
       </Zoom>
-      {user?.isLoggedIn && (
+      {user && !user.isAnonymous && (
         <Zoom in={!closeBtnTransition} timeout={150} unmountOnExit mountOnEnter>
           <IconButton
             data-direction="right"
