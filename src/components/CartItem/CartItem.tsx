@@ -72,8 +72,8 @@ const CartItem: React.FC<ICartItemProps> = ({ item, handleSelect }) => {
       onClick={desktop ? handleCardClick : undefined}
       variant="outlined"
       role="button"
-      onMouseUp={handleRippleStop}
-      onMouseDown={handleRippleStart}
+      onMouseUp={desktop ? handleRippleStop : undefined}
+      onMouseDown={desktop ? handleRippleStart : undefined}
       className={classes.root}
     >
       {desktop && <TouchRipple ref={rippleRef} />}

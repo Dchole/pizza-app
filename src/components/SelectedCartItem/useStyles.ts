@@ -18,14 +18,6 @@ export const useStyles = makeStyles(theme =>
       "& .MuiTypography-h5": {
         fontFamily: theme.typography.h1.fontFamily
       }
-    },
-    input: {
-      textAlign: "center"
-    },
-    actions: {
-      marginTop: 8,
-      display: "flex",
-      justifyContent: "space-between"
     }
   })
 )

@@ -2,10 +2,6 @@ import Head from "next/head"
 import Image from "next/image"
 import Container from "@material-ui/core/Container"
 import Typography from "@material-ui/core/Typography"
-import Button from "@material-ui/core/Button"
-import PaymentIcon from "@material-ui/icons/Payment"
-import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
-import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
 import { capitalize } from "lodash"
 import { deslugify } from "@/utils/deslugify"
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
@@ -14,8 +10,32 @@ import { cmsLinks } from "cms"
 import { GetPizzaDetailsQuery, getSdk } from "@/graphql/generated"
 import { loader } from "@/utils/imageLoader"
 import useScreenSize from "@/hooks/usScreenSize"
-import { useDetailPageStyles } from "styles/use-detail-page-styles"
 import { useCart } from "@/components/CartContext"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
+import CartControls from "@/components/SelectedCartItem/CartControls"
+import { useMemo } from "react"
+
+const useStyles = makeStyles(theme =>
+  createStyles({
+    heading: {
+      display: "flex",
+      gap: 16,
+      marginBottom: 24,
+
+      "& > div": {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-evenly"
+      }
+    },
+    image: {
+      borderRadius: 10
+    },
+    actions: {
+      display: "flex"
+    }
+  })
+)
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -56,10 +76,10 @@ const CartDetail: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   title,
   pizza
 }) => {
-  console.log(pizza)
-  const classes = useDetailPageStyles()
+  const classes = useStyles()
   const desktop = useScreenSize()
-  const { getItemPrice, addItem, removeItem, isItemInCart } = useCart()
+  const { cart, getItemPrice, getItemQuantity } = useCart()
+  const item = useMemo(() => cart.find(i => i.id === pizza.id), [pizza, cart])
 
   return (
     <>
@@ -68,57 +88,29 @@ const CartDetail: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       </Head>
 
       <Container component="main" maxWidth="md" disableGutters={!desktop}>
-        <div className={classes.imageWrapper}>
+        <div className={classes.heading}>
           <Image
             loader={loader}
             src={
               pizza.image?.formats.large?.url || pizza.image?.formats.medium.url
             }
             alt={pizza.name}
-            width={200}
-            height={200}
+            width={80}
+            height={80}
+            className={classes.image}
             objectFit="cover"
           />
+          <div>
+            <Typography variant="h3" component="h1">
+              {pizza.name}
+            </Typography>
+            <Typography variant="h5" component="p">
+              <span>₵</span>&nbsp;
+              <span>{pizza && getItemPrice(pizza.id)}</span>
+            </Typography>
+          </div>
         </div>
-        <div className={classes.headerText}>
-          <Typography variant="h3" component="h1">
-            {pizza.name}
-          </Typography>
-          <Typography variant="h5" component="p">
-            <span>₵</span>&nbsp;
-            <span>{pizza && getItemPrice(pizza.id)}</span>
-          </Typography>
-        </div>
-
-        <div className={classes.actions}>
-          <Button
-            size={desktop ? "medium" : "small"}
-            color="primary"
-            variant="outlined"
-            endIcon={
-              isItemInCart(pizza.id) ? (
-                <RemoveShoppingCartIcon />
-              ) : (
-                <AddShoppingCartIcon />
-              )
-            }
-            onClick={() =>
-              isItemInCart(pizza.id)
-                ? removeItem(pizza.id)
-                : addItem(pizza.id, pizza.size)
-            }
-          >
-            {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
-          </Button>
-          <Button
-            size={desktop ? "medium" : "small"}
-            variant="contained"
-            color="primary"
-            endIcon={<PaymentIcon />}
-          >
-            Buy Now
-          </Button>
-        </div>
+        {item && <CartControls item={item} />}
       </Container>
     </>
   )
