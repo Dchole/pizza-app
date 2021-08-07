@@ -13,6 +13,7 @@ import useScreenSize from "@/hooks/usScreenSize"
 import { useCart } from "@/components/CartContext"
 import { useState } from "react"
 import { TCartItemDetails } from "@/components/CartContext"
+import PageLoader from "@/components/PageLoader"
 
 const SelectedCartItem = dynamic(() => import("@/components/SelectedCartItem"))
 const PaymentMethodDialog = dynamic(
@@ -86,7 +87,7 @@ const useStyles = makeStyles(theme =>
 const Cart = () => {
   const classes = useStyles()
   const desktop = useScreenSize("lg")
-  const { cart, clearCart, totalAmount } = useCart()
+  const { cart, fetchingDetails, clearCart, totalAmount } = useCart()
   const [openSheet, setOpenSheet] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
   const [selectedItem, setSelectedItem] = useState({} as TCartItemDetails)
@@ -114,7 +115,9 @@ const Cart = () => {
         className={classes.root}
         disableGutters={!desktop}
       >
-        {cart.length ? (
+        {fetchingDetails ? (
+          <PageLoader />
+        ) : cart.length ? (
           <>
             <div className={classes.grid}>
               <Typography variant="srOnly" component="h1">

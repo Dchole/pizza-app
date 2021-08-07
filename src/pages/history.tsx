@@ -1,7 +1,7 @@
+import clsx from "clsx"
 import timeAge from "time-age"
 import { useMemo, useState } from "react"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
-import CircularProgress from "@material-ui/core/CircularProgress"
 import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
 import Table from "@material-ui/core/Table"
@@ -16,9 +16,13 @@ import Typography from "@material-ui/core/Typography"
 import useSWR from "swr"
 import ProductList from "@/components/ProductList"
 import useScreenSize from "@/hooks/usScreenSize"
+import PageLoader from "@/components/PageLoader"
 
 const useStyles = makeStyles(theme =>
   createStyles({
+    wordWrap: {
+      whiteSpace: "nowrap"
+    },
     th: {
       fontFamily: theme.typography.h1.fontFamily,
       fontWeight: 600
@@ -72,12 +76,12 @@ const History = () => {
   return (
     <main id="transaction-history">
       {isValidating && !transactions ? (
-        <CircularProgress />
+        <PageLoader />
       ) : (
         <Container maxWidth="md" disableGutters={!desktop}>
           <Paper>
             <Toolbar>
-              <Typography variant="h3" component="h1" align="center">
+              <Typography variant="h4" component="h1" align="center">
                 Transaction history
               </Typography>
             </Toolbar>
@@ -88,7 +92,7 @@ const History = () => {
                     {fields.map((key, index, arr) => (
                       <TableCell
                         key={key}
-                        className={classes.th}
+                        className={clsx(classes.wordWrap, classes.th)}
                         align={index === arr.length - 1 ? "right" : "left"}
                       >
                         {key}
@@ -108,6 +112,7 @@ const History = () => {
                           <TableCell
                             size="small"
                             key={item.toString()}
+                            className={classes.wordWrap}
                             align={index === arr.length - 1 ? "right" : "left"}
                           >
                             {index === 1 ? (

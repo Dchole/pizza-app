@@ -14,6 +14,7 @@ interface ICartContextProps {
   cart: TCartItemDetails[]
   totalAmount: number
   totalQuantity: number
+  fetchingDetails: boolean
   addItem: (pizza_id: string, size: Enum_Pizzas_Size) => void
   removeItem: (pizza_id: string) => void
   incrementItem: (pizza_id: string, size: Enum_Pizzas_Size) => void
@@ -33,6 +34,7 @@ const CartContext = createContext({} as ICartContextProps)
 
 const CartContextProvider: React.FC = ({ children }) => {
   const { user } = useUser()
+  const [fetchingDetails, setFetchingDetails] = useState(true)
   const [cart, setCart] = useState<TCartItemDetails[]>([])
   const [totalQuantity, setTotalQuantity] = useState(0)
   const [totalAmount, setTotalAmount] = useState(0)
@@ -66,18 +68,24 @@ const CartContextProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (user?.cart?.length) {
       ;(async () => {
-        const client = new GraphQLClient(cmsLinks.api)
-        const sdk = getSdk(client)
-        const { pizzas } = await sdk.getCartPizzas({
-          filter: { id_in: user.cart?.map(({ pizza_id }) => pizza_id) }
-        })
+        try {
+          const client = new GraphQLClient(cmsLinks.api)
+          const sdk = getSdk(client)
+          const { pizzas } = await sdk.getCartPizzas({
+            filter: { id_in: user.cart?.map(({ pizza_id }) => pizza_id) }
+          })
 
-        const result = pizzas?.map(pizza => ({
-          ...user.cart?.find(({ pizza_id }) => pizza_id === pizza?.id),
-          ...pizza
-        }))
+          const result = pizzas?.map(pizza => ({
+            ...user.cart?.find(({ pizza_id }) => pizza_id === pizza?.id),
+            ...pizza
+          }))
 
-        result && setCart(result)
+          result && setCart(result)
+        } catch (error) {
+          console.log(error.message)
+        } finally {
+          setFetchingDetails(false)
+        }
       })()
     }
   }, [user?.cart])
@@ -162,6 +170,7 @@ const CartContextProvider: React.FC = ({ children }) => {
         totalAmount,
         isItemInCart,
         getItemPrice,
+        fetchingDetails,
         getItemQuantity,
         totalQuantity,
         incrementItem,
