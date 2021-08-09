@@ -1,13 +1,20 @@
-import { createStyles, lighten, makeStyles } from "@material-ui/core/styles"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 
 export const useStyles = makeStyles(theme =>
   createStyles({
+    link: {
+      "&:hover, &:focus, &:active": {
+        textDecoration: "none"
+      }
+    },
     root: {
+      padding: 8,
       marginBottom: 8,
       width: "min(100%, 600px)",
 
       [theme.breakpoints.up("sm")]: {
         display: "flex",
+        padding: 0,
         cursor: "pointer",
         position: "relative",
         outlineColor: theme.palette.primary.main,
@@ -37,19 +44,26 @@ export const useStyles = makeStyles(theme =>
     },
     title: {
       display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
+      gap: 10,
 
-      "& .MuiTypography-h3": {
+      "& > div": {
+        display: "flex",
+        flexDirection: "column",
+        gap: 6
+      },
+
+      [theme.breakpoints.up("sm")]: {
         fontWeight: 600,
+        alignItems: "center",
+        justifyContent: "space-between",
 
-        "&:active": {
-          textDecoration: "none",
-          color: theme.palette.primary.dark
-        },
+        "& .MuiTypography-h3": {
+          fontSize: theme.typography.h4.fontSize,
 
-        [theme.breakpoints.up("sm")]: {
-          fontSize: theme.typography.h4.fontSize
+          "&:active": {
+            textDecoration: "none",
+            color: theme.palette.primary.dark
+          }
         }
       },
 
@@ -94,7 +108,12 @@ export const useStyles = makeStyles(theme =>
       padding: theme.spacing(0, 1)
     },
     image: {
-      width: "100%"
+      borderRadius: 10,
+
+      [theme.breakpoints.up("sm")]: {
+        borderRadius: 0,
+        width: "100%"
+      }
     },
     input: {
       height: "100%"
@@ -115,15 +134,22 @@ export const useStyles = makeStyles(theme =>
         marginTop: 5,
         paddingLeft: 8,
         gap: 16,
-        display: "flex"
+        display: "flex",
+        justifyContent: "center",
+        margin: theme.spacing(2, "auto"),
+
+        [theme.breakpoints.up("sm")]: {
+          margin: "inherit",
+          justifyContent: "flex-start"
+        }
       }
     },
     actions: {
+      display: "flex",
       justifyContent: "space-between",
 
       [theme.breakpoints.up("sm")]: {
         gap: 16,
-        display: "flex",
         justifyContent: "flex-end"
       }
     }

@@ -8,7 +8,9 @@ import Typography from "@material-ui/core/Typography"
 import { capitalize } from "lodash"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { TCartItemDetails, useCart } from "../CartContext"
+import { Fragment, useEffect, useReducer } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
+import sizeReducer, { initialState } from "./sizeReducer"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -34,7 +36,36 @@ interface ICartControlsProps {
 const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
   const classes = useStyles()
   const desktop = useScreenSize()
-  const { getItemQuantity } = useCart()
+  const { getItemQuantity, setQuantity, incrementItem, decrementItem } =
+    useCart()
+  const [sizes, dispatch] = useReducer(
+    sizeReducer,
+    initialState,
+    initialState => ({ ...initialState, ...item.quantity })
+  )
+
+  const handleIncrement = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { size } = event.currentTarget.dataset
+    dispatch({ type: "INCREMENT", size })
+    incrementItem(item.id, size)
+  }
+
+  const handleDecrement = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { size } = event.currentTarget.dataset
+    dispatch({ type: "DECREMENT", size })
+    decrementItem(item.id, size)
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const [{ textContent }] = event.target.labels
+    const size = textContent.toLowerCase()
+    const quantity = !isNaN(+event.target.value)
+      ? +event.target.value
+      : sizes[size]
+
+    dispatch({ type: "SET_QUANTITY", size, quantity })
+    setQuantity(item.id, sizes)
+  }
 
   return (
     <>
@@ -47,7 +78,7 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
       </Typography>
       <div>
         {["small", "medium", "large"].map(size => (
-          <>
+          <Fragment key={size}>
             <Typography
               component="label"
               htmlFor={`${size}-quantity-input`}
@@ -60,24 +91,34 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
               id={`${size}-quantity-input`}
               name={size}
               classes={{ input: classes.input }}
-              value={item.quantity[size] ?? 0}
+              value={sizes[size]}
+              onChange={handleChange}
               startAdornment={
                 <InputAdornment position="start">
-                  <IconButton aria-label="increment quantity">
+                  <IconButton
+                    data-size={size}
+                    onClick={handleIncrement}
+                    aria-label="increment quantity"
+                  >
                     <AddIcon />
                   </IconButton>
                 </InputAdornment>
               }
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton aria-label="decrement quantity">
+                  <IconButton
+                    data-size={size}
+                    onClick={handleDecrement}
+                    aria-label="decrement quantity"
+                    disabled={!item.quantity[size]}
+                  >
                     <RemoveIcon />
                   </IconButton>
                 </InputAdornment>
               }
               fullWidth
             />
-          </>
+          </Fragment>
         ))}
         <div className={classes.actions}>
           <Button
