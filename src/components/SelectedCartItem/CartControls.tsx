@@ -1,3 +1,4 @@
+import Router from "next/router"
 import AddIcon from "@material-ui/icons/Add"
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
@@ -8,7 +9,7 @@ import Typography from "@material-ui/core/Typography"
 import { capitalize } from "lodash"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { TCartItemDetails, useCart } from "../CartContext"
-import { Fragment, useEffect, useReducer } from "react"
+import { Fragment, useEffect, useReducer, useRef, useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
 import sizeReducer, { initialState } from "./sizeReducer"
 
@@ -35,9 +36,10 @@ interface ICartControlsProps {
 
 const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
   const classes = useStyles()
+  const debounceTimerRef = useRef<NodeJS.Timeout>(null)
   const desktop = useScreenSize()
-  const { getItemQuantity, setQuantity, incrementItem, decrementItem } =
-    useCart()
+  const [updating, setUpdating] = useState(false)
+  const { getItemQuantity, setQuantity, removeItem, calculating } = useCart()
   const [sizes, dispatch] = useReducer(
     sizeReducer,
     initialState,
@@ -47,13 +49,11 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
   const handleIncrement = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { size } = event.currentTarget.dataset
     dispatch({ type: "INCREMENT", size })
-    incrementItem(item.id, size)
   }
 
   const handleDecrement = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { size } = event.currentTarget.dataset
     dispatch({ type: "DECREMENT", size })
-    decrementItem(item.id, size)
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,8 +64,29 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
       : sizes[size]
 
     dispatch({ type: "SET_QUANTITY", size, quantity })
-    setQuantity(item.id, sizes)
   }
+
+  const handleRemove = async () => {
+    await removeItem(item.id)
+    Router.replace("/cart")
+  }
+
+  useEffect(() => {
+    if (item.id) {
+      setUpdating(true)
+      clearTimeout(debounceTimerRef.current)
+
+      debounceTimerRef.current = setTimeout(() => {
+        const res = Object.entries(sizes).map(([size, quantity]) =>
+          quantity ? [size, quantity] : null
+        )
+
+        setQuantity(item.id, Object.fromEntries(res.filter(Boolean))).then(() =>
+          setUpdating(false)
+        )
+      }, 800)
+    }
+  }, [item.id, sizes, setQuantity])
 
   return (
     <>
@@ -93,6 +114,7 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
               classes={{ input: classes.input }}
               value={sizes[size]}
               onChange={handleChange}
+              inputProps={{ inputMode: "numeric" }}
               startAdornment={
                 <InputAdornment position="start">
                   <IconButton
@@ -110,7 +132,7 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
                     data-size={size}
                     onClick={handleDecrement}
                     aria-label="decrement quantity"
-                    disabled={!item.quantity[size]}
+                    disabled={!sizes[size]}
                   >
                     <RemoveIcon />
                   </IconButton>
@@ -125,6 +147,8 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
             size={desktop ? "small" : undefined}
             color="primary"
             variant="outlined"
+            disabled={updating || calculating}
+            onClick={handleRemove}
           >
             Remove Item
           </Button>
@@ -133,6 +157,7 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
             color="primary"
             variant="contained"
             disableElevation
+            disabled={updating || calculating}
           >
             Buy now
           </Button>

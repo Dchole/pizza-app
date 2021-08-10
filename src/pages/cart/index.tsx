@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme =>
       },
 
       [theme.breakpoints.up("sm")]: {
-        justifyContent: "flex-end",
+        justifyContent: "center",
         transform: "initial",
 
         "& .MuiButton-root": {
