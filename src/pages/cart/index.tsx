@@ -9,11 +9,12 @@ import Typography from "@material-ui/core/Typography"
 import StoreIcon from "@material-ui/icons/Store"
 import CartItem from "@/components/CartItem"
 import ButtonLink from "@/components/ButtonLink"
+import PageLoader from "@/components/PageLoader"
 import useScreenSize from "@/hooks/usScreenSize"
 import { useCart } from "@/components/CartContext"
 import { useState } from "react"
 import { TCartItemDetails } from "@/components/CartContext"
-import PageLoader from "@/components/PageLoader"
+import MobileCartItem from "@/components/CartItem/MobileCartItem"
 
 const SelectedCartItem = dynamic(() => import("@/components/SelectedCartItem"))
 const PaymentMethodDialog = dynamic(
@@ -38,15 +39,17 @@ const useStyles = makeStyles(theme =>
       }
     },
     divider: {
-      width: "min(100%, 600px)",
-      margin: theme.spacing(3, "auto")
+      width: "min(60%, 600px)",
+      margin: theme.spacing(2.25, "auto"),
+
+      [theme.breakpoints.up("sm")]: {
+        margin: theme.spacing(3, "auto")
+      }
     },
     buttonWrapper: {
+      display: "flex",
       bottom: 16,
-      left: "50%",
-      position: "fixed",
       padding: theme.spacing(0, 1),
-      transform: "translateX(-50%)",
       width: "100%",
       gap: 16,
 
@@ -57,12 +60,7 @@ const useStyles = makeStyles(theme =>
       },
 
       [theme.breakpoints.up("sm")]: {
-        display: "flex",
-        justifyContent: "flex-end",
-        bottom: "16%",
-        right: "5%",
-        left: "initial",
-        position: "inherit",
+        justifyContent: "center",
         transform: "initial",
 
         "& .MuiButton-root": {
@@ -87,6 +85,7 @@ const useStyles = makeStyles(theme =>
 const Cart = () => {
   const classes = useStyles()
   const desktop = useScreenSize("lg")
+  const tablet = useScreenSize()
   const { cart, fetchingDetails, clearCart, totalAmount } = useCart()
   const [openSheet, setOpenSheet] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
@@ -124,21 +123,27 @@ const Cart = () => {
                 Cart items
               </Typography>
               <div>
-                {cart.map(item => (
-                  <CartItem
-                    key={item.id}
-                    item={item}
-                    handleSelect={handleSelect}
-                  />
-                ))}
+                {cart.map(item =>
+                  tablet ? (
+                    <CartItem
+                      key={item.id}
+                      item={item}
+                      handleSelect={handleSelect}
+                    />
+                  ) : (
+                    <MobileCartItem key={item.id} item={item} />
+                  )
+                )}
               </div>
-              <SelectedCartItem
-                item={selectedItem}
-                handleDeselect={handleCloseSelect}
-              />
+              {selectedItem && (
+                <SelectedCartItem
+                  item={selectedItem}
+                  handleDeselect={handleCloseSelect}
+                />
+              )}
             </div>
             <Divider variant="middle" className={classes.divider} />
-            {!desktop && (
+            <div className={classes.buttonWrapper}>
               <Button
                 color="primary"
                 variant="outlined"
@@ -147,18 +152,6 @@ const Cart = () => {
               >
                 <span>Clear Cart</span>
               </Button>
-            )}
-            <div className={classes.buttonWrapper}>
-              {desktop && (
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  onClick={clearCart}
-                  fullWidth
-                >
-                  <span>Clear Cart</span>
-                </Button>
-              )}
               <Button
                 color="primary"
                 variant="contained"

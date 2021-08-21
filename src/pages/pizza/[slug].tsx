@@ -31,6 +31,11 @@ const useStyles = makeStyles(theme =>
         flexWrap: "nowrap"
       }
     },
+    imageWrapper: {
+      height: 300,
+      width: "100%",
+      position: "relative"
+    },
     description: {
       width: "100%",
       maxWidth: 450,
@@ -125,9 +130,7 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
   }
 
   const handleAddItem = () =>
-    isItemInCart(pizza.id)
-      ? removeItem(pizza.id)
-      : addItem(pizza.id, pizza.size)
+    isItemInCart(pizza.id) ? removeItem(pizza.id) : addItem(pizza.id, size)
 
   return (
     <Container
@@ -136,14 +139,17 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
       className={classes.root}
       disableGutters={!desktop}
     >
-      <Image
-        loader={loader}
-        src={pizza.image?.formats.medium.url}
-        alt={pizza.name}
-        width={300}
-        height={300}
-        objectFit="cover"
-      />
+      <div className={classes.imageWrapper}>
+        <Image
+          loader={loader}
+          src={pizza.image?.formats.medium.url}
+          alt={pizza.name}
+          width={desktop ? 300 : undefined}
+          height={desktop ? 300 : undefined}
+          layout={desktop ? undefined : "fill"}
+          objectFit="cover"
+        />
+      </div>
       <div>
         <Typography
           variant="h3"
