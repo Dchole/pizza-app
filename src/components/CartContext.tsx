@@ -75,7 +75,6 @@ const CartContextProvider: React.FC = ({ children }) => {
       // Reassign the new length to the old length
       ;(async () => {
         try {
-          console.log(user.cart.length !== cartLengthRef.current)
           if (user.cart.length !== cartLengthRef.current) {
             cartLengthRef.current = user.cart.length
             const client = new GraphQLClient(cmsLinks.api)
@@ -88,8 +87,6 @@ const CartContextProvider: React.FC = ({ children }) => {
               ...user.cart?.find(({ pizza_id }) => pizza_id === pizza?.id),
               ...pizza
             }))
-
-            console.log(result)
 
             result && setCart(result)
           } else {
@@ -126,8 +123,6 @@ const CartContextProvider: React.FC = ({ children }) => {
           (curr.quantity.large ?? 0)
         )
       }, 0)
-
-      console.log(totalAmount, totalQuantity)
 
       setTotalAmount(totalAmount)
       setTotalQuantity(totalQuantity)
