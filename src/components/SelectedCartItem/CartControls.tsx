@@ -12,6 +12,7 @@ import { TCartItemDetails, useCart } from "../CartContext"
 import { Fragment, useEffect, useReducer, useRef, useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
 import sizeReducer, { initialState } from "./sizeReducer"
+import ButtonLink from "../ButtonLink"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -152,7 +153,8 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
           >
             Remove Item
           </Button>
-          <Button
+          <ButtonLink
+            href={`/checkout/${item.slug}`}
             size={desktop ? "small" : undefined}
             color="primary"
             variant="contained"
@@ -160,7 +162,7 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
             disabled={updating || calculating}
           >
             Buy now
-          </Button>
+          </ButtonLink>
         </div>
       </div>
     </>

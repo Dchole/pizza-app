@@ -34,7 +34,11 @@ const useStyles = makeStyles(theme =>
     imageWrapper: {
       height: 300,
       width: "100%",
-      position: "relative"
+      position: "relative",
+
+      [theme.breakpoints.up("sm")]: {
+        width: 300
+      }
     },
     description: {
       width: "100%",

@@ -152,7 +152,8 @@ const Cart = () => {
               >
                 <span>Clear Cart</span>
               </Button>
-              <Button
+              <ButtonLink
+                href="/checkout"
                 color="primary"
                 variant="contained"
                 onClick={handleOpen}
@@ -167,7 +168,7 @@ const Cart = () => {
                   (<small>₵</small>&nbsp;
                   <span id="total-amount">{totalAmount}</span>)
                 </Typography>
-              </Button>
+              </ButtonLink>
             </div>
           </>
         ) : (
