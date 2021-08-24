@@ -17,6 +17,7 @@ import { loader } from "@/utils/imageLoader"
 import { useCart } from "@/components/CartContext"
 import { useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
+import ButtonLink from "@/components/ButtonLink"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -220,14 +221,15 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
           >
             {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
           </Button>
-          <Button
+          <ButtonLink
+            href={`/checkout/${pizza.slug}`}
             size={desktop ? undefined : "small"}
             variant="contained"
             color="primary"
             endIcon={<PaymentIcon />}
           >
             Order Now
-          </Button>
+          </ButtonLink>
         </div>
       </div>
     </Container>

@@ -17,12 +17,6 @@ import { TCartItemDetails } from "@/components/CartContext"
 import MobileCartItem from "@/components/CartItem/MobileCartItem"
 
 const SelectedCartItem = dynamic(() => import("@/components/SelectedCartItem"))
-const PaymentMethodDialog = dynamic(
-  () => import("@/components/PaymentMethod/Dialog")
-)
-const PaymentMethodSheet = dynamic(
-  () => import("@/components/PaymentMethod/Sheet")
-)
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -87,15 +81,7 @@ const Cart = () => {
   const desktop = useScreenSize("lg")
   const tablet = useScreenSize()
   const { cart, fetchingDetails, clearCart, totalAmount } = useCart()
-  const [openSheet, setOpenSheet] = useState(false)
-  const [openDialog, setOpenDialog] = useState(false)
   const [selectedItem, setSelectedItem] = useState({} as TCartItemDetails)
-
-  const handleOpen = () => (desktop ? setOpenDialog(true) : setOpenSheet(true))
-  const handleClose = () => {
-    setOpenDialog(false)
-    setOpenSheet(false)
-  }
 
   const handleSelect = (id: string) => {
     const item = cart.find(item => item.id === id)
@@ -156,7 +142,6 @@ const Cart = () => {
                 href="/checkout"
                 color="primary"
                 variant="contained"
-                onClick={handleOpen}
                 fullWidth
               >
                 <span>Buy all</span>
@@ -198,8 +183,6 @@ const Cart = () => {
           </Grid>
         )}
       </Container>
-      <PaymentMethodDialog open={openDialog} handleClose={handleClose} />
-      <PaymentMethodSheet open={openSheet} handleClose={handleClose} />
     </>
   )
 }
