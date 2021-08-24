@@ -1,33 +1,27 @@
-import { TextField } from "@material-ui/core"
-import { TFormikProps } from "./Form"
+import { Field } from "formik"
+import { TextField } from "formik-material-ui"
 
-interface IProps {
-  formik: TFormikProps
-}
-
-const PersonalDetails: React.FC<IProps> = ({ formik }) => {
-  const { getFieldProps, errors, touched } = formik
-
+const PersonalDetails = () => {
   return (
-    <form>
-      <TextField
-        {...getFieldProps("displayName")}
-        error={errors.displayName && touched.displayName}
-        helperText={errors.displayName}
+    <>
+      <Field
+        component={TextField}
         id="account-name"
+        name="displayName"
         label="Full Name"
         variant="outlined"
         margin="normal"
         autoComplete="name"
+        autoCapitalize="word"
         aria-required
         autoFocus
         fullWidth
       />
-      <TextField
-        {...getFieldProps("phoneNumber")}
-        error={errors.phoneNumber && touched.phoneNumber}
-        helperText={errors.phoneNumber}
+      <Field
+        component={TextField}
         id="phone-number"
+        name="phoneNumber"
+        type="tel"
         label="Phone Number"
         variant="outlined"
         margin="normal"
@@ -36,25 +30,24 @@ const PersonalDetails: React.FC<IProps> = ({ formik }) => {
         aria-required
         fullWidth
       />
-      <TextField
-        {...getFieldProps("location")}
-        error={errors.location && touched.location}
-        helperText={errors.location}
+      <Field
+        component={TextField}
         id="location"
-        label="City/Town"
+        name="location"
+        label="Location"
         variant="outlined"
         margin="normal"
         placeholder="Takoradi"
         autoComplete="address-level2"
+        autoCapitalize="word"
         aria-required
         fullWidth
       />
-      <TextField
-        {...getFieldProps("address")}
-        error={errors.address && touched.address}
-        helperText={errors.address}
+      <Field
+        component={TextField}
         id="address"
-        label="Home Address/Street Name"
+        name="address"
+        label="Home Address"
         variant="outlined"
         margin="normal"
         placeholder="Midwife, Asomdwee Street"
@@ -62,7 +55,7 @@ const PersonalDetails: React.FC<IProps> = ({ formik }) => {
         aria-required
         fullWidth
       />
-    </form>
+    </>
   )
 }
 

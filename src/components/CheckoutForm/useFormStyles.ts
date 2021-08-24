@@ -7,11 +7,15 @@ export const useFormStyles = makeStyles(theme =>
       flexDirection: "column",
       width: "50%"
     },
+    step: {
+      minHeight: 372,
+      position: "relative"
+    },
     stepContent: {
       minHeight: 300
     },
     title: {
-      marginBottom: 16
+      marginBottom: 24
     },
     method: {
       display: "flex",
@@ -36,7 +40,10 @@ export const useFormStyles = makeStyles(theme =>
       marginTop: 16,
       display: "flex",
       gap: 16,
-      justifyContent: "flex-end"
+      justifyContent: "flex-end",
+      position: "absolute",
+      bottom: 0,
+      width: "100%"
     }
   })
 )

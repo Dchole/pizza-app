@@ -1,62 +1,49 @@
-import ButtonBase from "@material-ui/core/ButtonBase"
-import Typography from "@material-ui/core/Typography"
-import MoneyIcon from "@material-ui/icons/Money"
-import CreditCardIcon from "@material-ui/icons/CreditCard"
-import MoMoIcon from "@material-ui/icons/MobileScreenShare"
 import { useFormStyles } from "./useFormStyles"
-import { useState } from "react"
+import FormControl from "@material-ui/core/FormControl"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
+import FormHelperText from "@material-ui/core/FormHelperText"
+import FormLabel from "@material-ui/core/FormLabel"
+import Radio from "@material-ui/core/Radio"
+import { RadioGroup } from "formik-material-ui"
+import { Field } from "formik"
 
-const PaymentMethod = () => {
+interface IProps {
+  error: boolean
+  isSubmitting: boolean
+}
+
+const PaymentMethod: React.FC<IProps> = ({ error, isSubmitting }) => {
   const classes = useFormStyles()
-  const [paymentMethod, setPaymentMethod] = useState("")
-
-  const handleSelect = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { method } = event.currentTarget.dataset
-    setPaymentMethod(method)
-  }
 
   return (
-    <div>
-      <Typography variant="body2" color="textSecondary">
-        Select Payment Method
-      </Typography>
-      <div className={classes.method}>
-        <ButtonBase
-          data-method="cash"
-          title="pay in cash"
-          aria-label="pay in cash"
-          onClick={handleSelect}
-          className={paymentMethod === "cash" ? classes.selected : undefined}
-        >
-          <MoneyIcon fontSize="large" />
-          <Typography variant="h6" component="p">
-            Cash
-          </Typography>
-        </ButtonBase>
-        <ButtonBase
-          data-method="credit-card"
-          title="pay with credit card"
-          aria-label="pay with credit card"
+    <FormControl component="fieldset" error={error}>
+      <FormLabel component="legend">Select Payment Method</FormLabel>
+      <Field
+        component={RadioGroup}
+        aria-label="payment method"
+        name="paymentMethod"
+      >
+        <FormControlLabel
+          value="cash"
+          control={<Radio disabled={isSubmitting} />}
+          label="Pay in cash"
+          disabled={isSubmitting}
+        />
+        <FormControlLabel
+          value="credit-card"
+          control={<Radio disabled />}
+          label="Pay with Credit Card"
           disabled
-        >
-          <CreditCardIcon fontSize="large" color="action" />
-          <Typography variant="h6" component="p" color="textSecondary">
-            Credit Cart
-          </Typography>
-        </ButtonBase>
-        <ButtonBase
-          data-method="mobile-money"
-          title="pay with mobile money"
-          aria-label="pay with mobile money"
+        />
+        <FormControlLabel
+          value="mobile-money"
+          control={<Radio disabled />}
+          label="Pay with Mobile Money"
           disabled
-        >
-          <MoMoIcon fontSize="large" color="action" />
-          <Typography variant="h6" component="p" color="textSecondary">
-            Mobile Money
-          </Typography>
-        </ButtonBase>
-      </div>
-    </div>
+        />
+      </Field>
+      <FormHelperText>Pay in cash on delivery</FormHelperText>
+    </FormControl>
   )
 }
 

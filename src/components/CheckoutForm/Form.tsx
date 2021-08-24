@@ -1,31 +1,40 @@
 import Button from "@material-ui/core/Button"
-import CircularProgress from "@material-ui/corey/CircularProgress"
 import Typography from "@material-ui/core/Typography"
+import { Form, Formik, FormikErrors, FormikProps } from "formik"
+import PaymentMethod from "./PaymentMethod"
 import PersonalDetails from "./PersonalDetails"
 import { useFormStyles } from "./useFormStyles"
+import {
+  confirmation,
+  handleSubmit,
+  initialValues,
+  paymentDetails,
+  personalDetails,
+  TValues,
+  validationSchema
+} from "./formik-config"
 import Confirm from "./Confirm"
 import { useUser } from "../UserContext"
-import { FormikProps, useFormik } from "formik"
-import { handleDetails, personalDetailsSchema, TValues } from "./formik-config"
-import PaymentMethod from "./PaymentMethod"
 
-export type TFormikProps = Omit<
-  FormikProps<TValues>,
-  "handleSubmit" | "isValid" | "isSubmitting"
->
-
-interface IActiveProps {
+interface IActiveStepProps {
   step: number
-  personalForm: TFormikProps
+  formik: FormikProps<TValues>
 }
 
-const ActiveStep: React.FC<IActiveProps> = ({ step, personalForm }) => {
+const ActiveStep: React.FC<IActiveStepProps> = ({ step, formik }) => {
+  const { errors, touched, isSubmitting } = formik
+
   switch (step) {
     case 0:
-      return <PersonalDetails formik={personalForm} />
+      return <PersonalDetails />
 
     case 1:
-      return <PaymentMethod />
+      return (
+        <PaymentMethod
+          error={errors.paymentMethod && touched.paymentMethod}
+          isSubmitting={isSubmitting}
+        />
+      )
 
     case 2:
       return <Confirm />
@@ -50,26 +59,34 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
 }) => {
   const classes = useFormStyles()
   const { user } = useUser()
-  const values: TValues = {
+  const defaultValues: TValues = {
+    ...initialValues,
     displayName: user?.displayName || "",
-    address: user?.address || "",
+    phoneNumber: user?.phoneNumber || "",
     location: user?.location || "",
-    phoneNumber: user?.phoneNumber || ""
+    address: user?.address || ""
   }
 
-  const {
-    handleSubmit: saveDetails,
-    isValid,
-    isSubmitting,
-    ...personalForm
-  } = useFormik({
-    initialValues: values,
-    onSubmit: handleDetails(handleNextStep),
-    validationSchema: personalDetailsSchema
-  })
+  const onNextStep = (errors: FormikErrors<TValues>) => async () => {
+    const steps = {
+      0: personalDetails,
+      1: paymentDetails,
+      2: confirmation
+    }
 
-  const OnNextStep = (event: any) => {
-    isValid && saveDetails(event)
+    let valid = true
+
+    Object.keys(steps[activeStep]).forEach(field => {
+      console.log(errors)
+      if (errors[field]) {
+        valid = false
+        console.log(errors)
+      }
+    })
+
+    console.log(valid)
+
+    valid && handleNextStep()
   }
 
   return (
@@ -77,28 +94,41 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
       <Typography variant="h4" component="h1" className={classes.title}>
         Complete the checkout form
       </Typography>
-      <div className={classes.stepContent}>
-        <ActiveStep step={activeStep} personalForm={personalForm} />
-      </div>
-      <div className={classes.buttonWrapper}>
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={handlePrevStep}
-          disabled={activeStep === 0}
-        >
-          Back
-        </Button>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={OnNextStep}
-          disabled={activeStep === numberOfSteps || isSubmitting}
-        >
-          {activeStep >= numberOfSteps - 1 ? "Checkout" : "Continue"}
-          {isSubmitting && <CircularProgress size={24} />}
-        </Button>
-      </div>
+      <Formik
+        initialValues={defaultValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {formik => (
+          <Form>
+            <div className={classes.step}>
+              <ActiveStep step={activeStep} formik={formik} />
+              <div className={classes.buttonWrapper}>
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  onClick={handlePrevStep}
+                  disabled={activeStep === 0}
+                >
+                  Back
+                </Button>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={
+                    activeStep === numberOfSteps - 1
+                      ? formik.submitForm
+                      : onNextStep(formik.errors)
+                  }
+                  disabled={activeStep === numberOfSteps}
+                >
+                  {activeStep >= numberOfSteps - 1 ? "Checkout" : "Continue"}
+                </Button>
+              </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </div>
   )
 }
