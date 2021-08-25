@@ -40,10 +40,7 @@ export const useFormStyles = makeStyles(theme =>
       marginTop: 16,
       display: "flex",
       gap: 16,
-      justifyContent: "flex-end",
-      position: "absolute",
-      bottom: 0,
-      width: "100%"
+      justifyContent: "flex-end"
     }
   })
 )

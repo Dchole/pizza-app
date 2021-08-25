@@ -1,4 +1,3 @@
-import { useFormStyles } from "./useFormStyles"
 import FormControl from "@material-ui/core/FormControl"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import FormHelperText from "@material-ui/core/FormHelperText"
@@ -10,11 +9,14 @@ import { Field } from "formik"
 interface IProps {
   error: boolean
   isSubmitting: boolean
+  errorMessage: string
 }
 
-const PaymentMethod: React.FC<IProps> = ({ error, isSubmitting }) => {
-  const classes = useFormStyles()
-
+const PaymentMethod: React.FC<IProps> = ({
+  error,
+  isSubmitting,
+  errorMessage
+}) => {
   return (
     <FormControl component="fieldset" error={error}>
       <FormLabel component="legend">Select Payment Method</FormLabel>
@@ -42,7 +44,9 @@ const PaymentMethod: React.FC<IProps> = ({ error, isSubmitting }) => {
           disabled
         />
       </Field>
-      <FormHelperText>Pay in cash on delivery</FormHelperText>
+      <FormHelperText error={error}>
+        {errorMessage || "Pay in cash on delivery"}
+      </FormHelperText>
     </FormControl>
   )
 }

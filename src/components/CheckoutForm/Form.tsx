@@ -33,6 +33,7 @@ const ActiveStep: React.FC<IActiveStepProps> = ({ step, formik }) => {
         <PaymentMethod
           error={errors.paymentMethod && touched.paymentMethod}
           isSubmitting={isSubmitting}
+          errorMessage={errors.paymentMethod}
         />
       )
 
@@ -67,27 +68,24 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
     address: user?.address || ""
   }
 
-  const onNextStep = (errors: FormikErrors<TValues>) => async () => {
-    const steps = {
-      0: personalDetails,
-      1: paymentDetails,
-      2: confirmation
-    }
-
-    let valid = true
-
-    Object.keys(steps[activeStep]).forEach(field => {
-      console.log(errors)
-      if (errors[field]) {
-        valid = false
-        console.log(errors)
+  const onNextStep =
+    ({ errors, setFieldTouched }: FormikProps<TValues>) =>
+    async () => {
+      const steps = {
+        0: personalDetails,
+        1: paymentDetails,
+        2: confirmation
       }
-    })
 
-    console.log(valid)
+      const fields = Object.keys(steps[activeStep])
 
-    valid && handleNextStep()
-  }
+      fields.forEach(field => setFieldTouched(field))
+      const error = Object.keys(errors).some(field => fields.includes(field))
+
+      console.log(errors)
+
+      if (!error) handleNextStep()
+    }
 
   return (
     <div className={classes.root}>
@@ -95,6 +93,7 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
         Complete the checkout form
       </Typography>
       <Formik
+        validateOnMount
         initialValues={defaultValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -103,28 +102,28 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
           <Form>
             <div className={classes.step}>
               <ActiveStep step={activeStep} formik={formik} />
-              <div className={classes.buttonWrapper}>
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  onClick={handlePrevStep}
-                  disabled={activeStep === 0}
-                >
-                  Back
-                </Button>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={
-                    activeStep === numberOfSteps - 1
-                      ? formik.submitForm
-                      : onNextStep(formik.errors)
-                  }
-                  disabled={activeStep === numberOfSteps}
-                >
-                  {activeStep >= numberOfSteps - 1 ? "Checkout" : "Continue"}
-                </Button>
-              </div>
+            </div>
+            <div className={classes.buttonWrapper}>
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={handlePrevStep}
+                disabled={activeStep === 0}
+              >
+                Back
+              </Button>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={
+                  activeStep === numberOfSteps - 1
+                    ? formik.submitForm
+                    : onNextStep(formik)
+                }
+                disabled={activeStep === numberOfSteps}
+              >
+                {activeStep >= numberOfSteps - 1 ? "Checkout" : "Continue"}
+              </Button>
             </div>
           </Form>
         )}
