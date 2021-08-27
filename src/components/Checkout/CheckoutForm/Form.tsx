@@ -3,7 +3,7 @@ import Typography from "@material-ui/core/Typography"
 import { Form, Formik, FormikErrors, FormikProps } from "formik"
 import PaymentMethod from "./PaymentMethod"
 import PersonalDetails from "./PersonalDetails"
-import { useFormStyles } from "./useFormStyles"
+import { useFormStyles } from "../styles/useFormStyles"
 import {
   confirmation,
   handleSubmit,
@@ -14,7 +14,7 @@ import {
   validationSchema
 } from "./formik-config"
 import Confirm from "./Confirm"
-import { useUser } from "../UserContext"
+import { useUser } from "../../UserContext"
 
 interface IActiveStepProps {
   step: number
