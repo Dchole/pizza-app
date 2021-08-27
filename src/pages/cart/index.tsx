@@ -15,7 +15,6 @@ import { useCart } from "@/components/CartContext"
 import { useState } from "react"
 import { TCartItemDetails } from "@/components/CartContext"
 import MobileCartItem from "@/components/CartItem/MobileCartItem"
-import useDevice from "@/hooks/useDevice"
 
 const SelectedCartItem = dynamic(() => import("@/components/SelectedCartItem"))
 
@@ -79,7 +78,6 @@ const useStyles = makeStyles(theme =>
 
 const Cart = () => {
   const classes = useStyles()
-  const device = useDevice()
   const desktop = useScreenSize("lg")
   const tablet = useScreenSize()
   const { cart, fetchingDetails, clearCart, totalAmount } = useCart()
@@ -141,7 +139,7 @@ const Cart = () => {
                 <span>Clear Cart</span>
               </Button>
               <ButtonLink
-                href={device === "desktop" ? "/checkout" : "/mobile-checkout"}
+                href="/checkout"
                 color="primary"
                 variant="contained"
                 fullWidth
