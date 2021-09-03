@@ -82,8 +82,6 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
       fields.forEach(field => setFieldTouched(field))
       const error = Object.keys(errors).some(field => fields.includes(field))
 
-      console.log(errors)
-
       if (!error) handleNextStep()
     }
 

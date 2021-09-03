@@ -21,13 +21,6 @@ import useScreenSize from "@/hooks/usScreenSize"
 import TouchRipple from "@material-ui/core/ButtonBase/TouchRipple"
 import { useRef } from "react"
 
-const PaymentMethodDialog = dynamic(
-  () => import("@/components/PaymentMethod/Dialog")
-)
-const PaymentMethodSheet = dynamic(
-  () => import("@/components/PaymentMethod/Sheet")
-)
-
 interface ICartItemProps {
   item: TCartItemDetails
   handleSelect: (id: string) => void
