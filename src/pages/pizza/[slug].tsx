@@ -222,7 +222,10 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
             {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
           </Button>
           <ButtonLink
-            href={`/checkout/${pizza.slug}`}
+            href={{
+              pathname: `/checkout/${pizza.slug}`,
+              query: { [size]: 1 }
+            }}
             size={desktop ? undefined : "small"}
             variant="contained"
             color="primary"
