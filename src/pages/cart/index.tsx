@@ -121,7 +121,7 @@ const Cart = () => {
                   )
                 )}
               </div>
-              {selectedItem && (
+              {tablet && selectedItem && (
                 <SelectedCartItem
                   item={selectedItem}
                   handleDeselect={handleCloseSelect}
