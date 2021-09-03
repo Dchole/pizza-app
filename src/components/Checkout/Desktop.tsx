@@ -1,21 +1,15 @@
 import Image from "next/image"
 import Divider from "@material-ui/core/Divider"
 import Typography from "@material-ui/core/Typography"
-import { useState } from "react"
 import { useCart } from "@/components/CartContext"
 import { loader } from "@/utils/imageLoader"
-import Steps, { steps } from "@/components/Checkout/CheckoutForm/Steps"
-import CheckoutForm from "@/components/Checkout/CheckoutForm"
 import PageLoader from "@/components/PageLoader"
 import { useDesktopStyles } from "./styles/useDesktopStyles"
+import FormSteps from "./CheckoutForm/FormSteps"
 
 const Desktop = () => {
   const classes = useDesktopStyles()
-  const [activeStep, setActiveStep] = useState(0)
   const { cart, getItemPrice, getItemQuantity, fetchingDetails } = useCart()
-
-  const handleNextStep = () => setActiveStep(activeStep + 1)
-  const handlePrevStep = () => setActiveStep(activeStep - 1)
 
   return (
     <main className={classes.root}>
@@ -59,14 +53,7 @@ const Desktop = () => {
         )}
       </div>
       <Divider orientation="vertical" className={classes.divider} light />
-      <CheckoutForm
-        numberOfSteps={steps.length}
-        activeStep={activeStep}
-        handleNextStep={handleNextStep}
-        handlePrevStep={handlePrevStep}
-      />
-      <Divider orientation="vertical" className={classes.divider} light />
-      <Steps activeStep={activeStep} />
+      <FormSteps />
     </main>
   )
 }

@@ -154,7 +154,7 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
             Remove Item
           </Button>
           <ButtonLink
-            href={`/checkout/${item.slug}`}
+            href={{ pathname: `/checkout/${item.slug}`, query: { ...sizes } }}
             size={desktop ? "small" : undefined}
             color="primary"
             variant="contained"

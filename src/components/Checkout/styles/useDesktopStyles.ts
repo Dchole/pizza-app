@@ -13,6 +13,25 @@ export const useDesktopStyles = makeStyles(theme =>
     image: {
       borderRadius: 10
     },
+    imageWrapper: {
+      position: "relative",
+      marginBottom: 8,
+      width: "100%",
+      height: 236
+    },
+    quantity: {
+      display: "flex",
+      gap: 8,
+      marginTop: 16
+    },
+    item: {
+      minWidth: 273
+    },
+    itemText: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between"
+    },
     itemList: {
       minWidth: 320,
       marginBottom: 12,
