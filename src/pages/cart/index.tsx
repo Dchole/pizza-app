@@ -139,7 +139,15 @@ const Cart = () => {
                 <span>Clear Cart</span>
               </Button>
               <ButtonLink
-                href="/checkout"
+                href={{
+                  pathname:
+                    cart.length === 1
+                      ? `/checkout/${cart[0].slug}`
+                      : "/checkout",
+                  query: {
+                    ...(cart.length === 1 ? cart[0].quantity : {})
+                  }
+                }}
                 color="primary"
                 variant="contained"
                 fullWidth
