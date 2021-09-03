@@ -5,7 +5,13 @@ export const useMobileStyles = makeStyles(theme =>
     header: {
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between"
+      justifyContent: "space-between",
+
+      "& .header-title": {
+        gap: 16,
+        display: "flex",
+        alignItems: "center"
+      }
     },
     avatar: {
       width: 50,

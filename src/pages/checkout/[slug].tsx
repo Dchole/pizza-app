@@ -1,16 +1,13 @@
+import Head from "next/head"
 import SingleItemDesktop from "@/components/Checkout/SingleItemDesktop"
-import {
-  GetPizzaDetailsQuery,
-  GetPizzasQuery,
-  getSdk
-} from "@/graphql/generated"
-import useScreenSize from "@/hooks/usScreenSize"
+import SingleItemMobile from "@/components/Checkout/SingleItemMobile"
+import { GetPizzasQuery, getSdk } from "@/graphql/generated"
 import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
-import Head from "next/head"
 import { useRouter } from "next/router"
 import { useMemo, useState } from "react"
+import useScreenSize from "@/hooks/usScreenSize"
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -83,7 +80,9 @@ const CheckoutItem: React.FC<InferGetStaticPropsType<typeof getStaticProps>> =
 
         {desktop ? (
           <SingleItemDesktop pizza={pizza} sizes={sizes} price={price} />
-        ) : null}
+        ) : (
+          <SingleItemMobile pizza={pizza} price={price} />
+        )}
       </>
     )
   }
