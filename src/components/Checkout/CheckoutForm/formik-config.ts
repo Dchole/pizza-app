@@ -1,5 +1,7 @@
 import * as Yup from "yup"
+import firebase from "@/lib/firebase"
 import { FormikHelpers } from "formik"
+import { formatMobile } from "@/utils/format-mobile"
 
 export const personalDetails = {
   displayName: "",
@@ -53,16 +55,15 @@ export const mobileValidationSchema = Yup.object().shape({
     .label("Payment Method")
 })
 
-export const handleSubmit = async (
-  values: TValues,
-  actions: FormikHelpers<TValues>
-) => {
-  console.log(values, actions)
-  try {
-    const req = await Promise.resolve(42)
-  } catch (error) {
-    console.log(error.message)
-  } finally {
-    actions.setSubmitting(false)
+export const handleSubmit =
+  (sendCode: (phoneNumber: string) => Promise<void>, handleOpen?: () => void) =>
+  async (values: TValues, actions: FormikHelpers<TValues>) => {
+    try {
+      await sendCode(values.phoneNumber)
+      handleOpen?.()
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      actions.setSubmitting(false)
+    }
   }
-}

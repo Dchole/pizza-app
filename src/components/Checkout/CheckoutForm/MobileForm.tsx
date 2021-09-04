@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { Field, Form, Formik } from "formik"
 import {
   handleSubmit,
@@ -5,14 +6,20 @@ import {
   mobileValidationSchema
 } from "./formik-config"
 import Button from "@material-ui/core/Button"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import Divider from "@material-ui/core/Divider"
 import FormControl from "@material-ui/core/FormControl"
 import InputLabel from "@material-ui/core/InputLabel"
 import MenuItem from "@material-ui/core/MenuItem"
 import Typography from "@material-ui/core/Typography"
 import PersonalDetails from "./PersonalDetails"
+import firebase from "@/lib/firebase"
 import { Select } from "formik-material-ui"
 import { makeStyles, createStyles } from "@material-ui/core/styles"
+import useConfirmation from "./useConfirmation"
+import dynamic from "next/dynamic"
+
+const ConfirmDialog = dynamic(() => import("./ConfirmDialog"))
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -35,6 +42,32 @@ const useStyles = makeStyles(theme =>
 const MobileForm = () => {
   const classes = useStyles()
   const { code, ...values } = initialValues
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [verifier, setVerifier] =
+    useState<firebase.auth.RecaptchaVerifier | null>(null)
+
+  const { sendCode, handleResend, confirmationResult } =
+    useConfirmation(verifier)
+
+  const handleOpen = () => setOpenConfirmDialog(true)
+  const handleClose = () => setOpenConfirmDialog(false)
+
+  useEffect(() => {
+    const recaptchaVerifier = new firebase.auth.RecaptchaVerifier("checkout", {
+      size: "invisible",
+      callback: response => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        console.log(response)
+      },
+      "expired-callback": () => {
+        // Response expired. Ask user to solve reCAPTCHA again.
+        // ...
+        console.log("Recaptcha Expired")
+      }
+    })
+
+    setVerifier(recaptchaVerifier)
+  }, [])
 
   return (
     <>
@@ -49,7 +82,7 @@ const MobileForm = () => {
       <Formik
         initialValues={values}
         validationSchema={mobileValidationSchema}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(sendCode, handleOpen)}
       >
         {({ isSubmitting }) => (
           <Form>
@@ -83,18 +116,21 @@ const MobileForm = () => {
               </Field>
             </FormControl>
             <Button
+              id="checkout"
               type="submit"
               color="primary"
               variant="contained"
               disabled={isSubmitting}
+              disableElevation={isSubmitting}
               className={classes.button}
               fullWidth
             >
-              Checkout
+              {isSubmitting ? <CircularProgress size={24} /> : "Checkout"}
             </Button>
           </Form>
         )}
       </Formik>
+      <ConfirmDialog open={openConfirmDialog} handleClose={handleClose} />
     </>
   )
 }

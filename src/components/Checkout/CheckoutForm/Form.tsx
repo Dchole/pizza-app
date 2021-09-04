@@ -1,12 +1,11 @@
 import Button from "@material-ui/core/Button"
 import Typography from "@material-ui/core/Typography"
-import { Form, Formik, FormikErrors, FormikProps } from "formik"
+import { Form, Formik, FormikProps } from "formik"
 import PaymentMethod from "./PaymentMethod"
 import PersonalDetails from "./PersonalDetails"
 import { useFormStyles } from "../styles/useFormStyles"
 import {
   confirmation,
-  handleSubmit,
   initialValues,
   paymentDetails,
   personalDetails,
@@ -14,11 +13,14 @@ import {
   validationSchema
 } from "./formik-config"
 import Confirm from "./Confirm"
+import useConfirmation from "./useConfirmation"
+import firebase from "@/lib/firebase"
 import { useUser } from "../../UserContext"
+import { useEffect, useState } from "react"
 
 interface IActiveStepProps {
   step: number
-  formik: FormikProps<TValues>
+  formik: FormikProps<Partial<TValues>>
 }
 
 const ActiveStep: React.FC<IActiveStepProps> = ({ step, formik }) => {
@@ -60,6 +62,8 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
 }) => {
   const classes = useFormStyles()
   const { user } = useUser()
+  const [sent, setSent] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState("")
   const defaultValues: TValues = {
     ...initialValues,
     displayName: user?.displayName || "",
@@ -67,10 +71,40 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
     location: user?.location || "",
     address: user?.address || ""
   }
+  const [verifier, setVerifier] =
+    useState<firebase.auth.RecaptchaVerifier | null>(null)
+
+  const { sendCode, handleComplete } = useConfirmation(verifier)
+
+  useEffect(() => {
+    const recaptchaVerifier = new firebase.auth.RecaptchaVerifier("checkout", {
+      size: "invisible",
+      callback: response => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        console.log(response)
+      },
+      "expired-callback": () => {
+        // Response expired. Ask user to solve reCAPTCHA again.
+        // ...
+        console.log("Recaptcha Expired")
+      }
+    })
+
+    setVerifier(recaptchaVerifier)
+  }, [])
+
+  useEffect(() => {
+    if (!sent && phoneNumber) {
+      sendCode(phoneNumber)
+      setSent(true)
+    }
+  }, [phoneNumber, sent, sendCode])
 
   const onNextStep =
-    ({ errors, setFieldTouched }: FormikProps<TValues>) =>
+    ({ errors, setFieldTouched, values }: FormikProps<Partial<TValues>>) =>
     async () => {
+      setPhoneNumber(values.phoneNumber)
+
       const steps = {
         0: personalDetails,
         1: paymentDetails,
@@ -94,7 +128,7 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
         validateOnMount
         initialValues={defaultValues}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}
+        onSubmit={handleComplete}
       >
         {formik => (
           <Form>
