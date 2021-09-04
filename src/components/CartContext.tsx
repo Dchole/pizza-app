@@ -4,8 +4,8 @@ import { GraphQLClient } from "graphql-request"
 import { useEffect, useRef } from "react"
 import { createContext, useContext, useState } from "react"
 import { ICartItem, useUser } from "./UserContext"
-import firebase from "@/lib/firebase"
 import { useCallback } from "react"
+import firebase from "@/lib/firebase"
 
 export type TCartItemDetails = NonNullable<GetPizzasQuery["pizzas"]>[0] &
   ICartItem

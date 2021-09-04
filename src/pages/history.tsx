@@ -62,7 +62,7 @@ const History = () => {
           const data = transaction.data()
 
           return {
-            "Transaction ID": data.transactionID,
+            "Transaction ID": transaction.id,
             "Product Name": data.products,
             Amount: data.amount.toFixed(2),
             Date: timeAge(data.createdAt)

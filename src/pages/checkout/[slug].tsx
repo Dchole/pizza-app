@@ -6,7 +6,7 @@ import { cmsLinks } from "cms"
 import { GraphQLClient } from "graphql-request"
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
 import { useRouter } from "next/router"
-import { useMemo, useState } from "react"
+import { createContext, useContext, useMemo, useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -50,6 +50,8 @@ const initialSizes = {
   large: 0
 }
 
+const PriceContext = createContext(0)
+
 const CheckoutItem: React.FC<InferGetStaticPropsType<typeof getStaticProps>> =
   ({ pizza }) => {
     const desktop = useScreenSize()
@@ -78,13 +80,25 @@ const CheckoutItem: React.FC<InferGetStaticPropsType<typeof getStaticProps>> =
           </title>
         </Head>
 
-        {desktop ? (
-          <SingleItemDesktop pizza={pizza} sizes={sizes} price={price} />
-        ) : (
-          <SingleItemMobile pizza={pizza} price={price} />
-        )}
+        <PriceContext.Provider value={price}>
+          {desktop ? (
+            <SingleItemDesktop pizza={pizza} sizes={sizes} price={price} />
+          ) : (
+            <SingleItemMobile pizza={pizza} price={price} />
+          )}
+        </PriceContext.Provider>
       </>
     )
   }
+
+export const usePrice = () => {
+  const price = useContext(PriceContext)
+
+  if (!price) {
+    throw new Error("usePrice was used outside PriceContext Provider")
+  }
+
+  return price
+}
 
 export default CheckoutItem
