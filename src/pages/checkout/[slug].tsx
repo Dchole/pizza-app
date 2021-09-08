@@ -8,6 +8,7 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
 import { useRouter } from "next/router"
 import { useMemo, useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
+import ConfirmationProvider from "@/components/Checkout/Context"
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -78,11 +79,13 @@ const CheckoutItem: React.FC<InferGetStaticPropsType<typeof getStaticProps>> =
           </title>
         </Head>
 
-        {desktop ? (
-          <SingleItemDesktop pizza={pizza} sizes={sizes} price={price} />
-        ) : (
-          <SingleItemMobile pizza={pizza} price={price} />
-        )}
+        <ConfirmationProvider name={pizza.name} price={price}>
+          {desktop ? (
+            <SingleItemDesktop pizza={pizza} sizes={sizes} price={price} />
+          ) : (
+            <SingleItemMobile pizza={pizza} price={price} />
+          )}
+        </ConfirmationProvider>
       </>
     )
   }

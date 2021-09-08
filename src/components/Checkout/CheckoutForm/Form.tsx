@@ -1,12 +1,11 @@
 import Button from "@material-ui/core/Button"
 import Typography from "@material-ui/core/Typography"
-import { Form, Formik, FormikErrors, FormikProps } from "formik"
+import { Form, Formik, FormikProps } from "formik"
 import PaymentMethod from "./PaymentMethod"
 import PersonalDetails from "./PersonalDetails"
 import { useFormStyles } from "../styles/useFormStyles"
 import {
   confirmation,
-  handleSubmit,
   initialValues,
   paymentDetails,
   personalDetails,
@@ -14,11 +13,14 @@ import {
   validationSchema
 } from "./formik-config"
 import Confirm from "./Confirm"
+import firebase from "@/lib/firebase"
 import { useUser } from "../../UserContext"
+import { useEffect, useState } from "react"
+import { useConfirmation } from "../Context"
 
 interface IActiveStepProps {
   step: number
-  formik: FormikProps<TValues>
+  formik: FormikProps<Partial<TValues>>
 }
 
 const ActiveStep: React.FC<IActiveStepProps> = ({ step, formik }) => {
@@ -60,6 +62,8 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
 }) => {
   const classes = useFormStyles()
   const { user } = useUser()
+  const [sent, setSent] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState("")
   const defaultValues: TValues = {
     ...initialValues,
     displayName: user?.displayName || "",
@@ -68,9 +72,20 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
     address: user?.address || ""
   }
 
+  const { sendCode, handleComplete } = useConfirmation()
+
+  useEffect(() => {
+    if (!sent && phoneNumber) {
+      sendCode(phoneNumber)
+      setSent(true)
+    }
+  }, [phoneNumber, sent, sendCode])
+
   const onNextStep =
-    ({ errors, setFieldTouched }: FormikProps<TValues>) =>
+    ({ errors, setFieldTouched, values }: FormikProps<Partial<TValues>>) =>
     async () => {
+      setPhoneNumber(values.phoneNumber)
+
       const steps = {
         0: personalDetails,
         1: paymentDetails,
@@ -81,8 +96,6 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
 
       fields.forEach(field => setFieldTouched(field))
       const error = Object.keys(errors).some(field => fields.includes(field))
-
-      console.log(errors)
 
       if (!error) handleNextStep()
     }
@@ -96,7 +109,7 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
         validateOnMount
         initialValues={defaultValues}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}
+        onSubmit={handleComplete}
       >
         {formik => (
           <Form>

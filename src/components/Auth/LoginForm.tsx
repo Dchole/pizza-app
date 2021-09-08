@@ -120,7 +120,11 @@ const LoginForm: React.FC<{ appVerifier: firebase.auth.RecaptchaVerifier }> = ({
                   disabled={loading || isSubmitting}
                   disableElevation={loading || isSubmitting}
                 >
-                  {isSubmitting ? "Sign in" : <CircularProgress size={24} />}
+                  {isSubmitting || loading ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    "Sign in"
+                  )}
                 </Button>
               )}
             </div>

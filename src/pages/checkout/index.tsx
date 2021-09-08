@@ -3,6 +3,7 @@ import { useCart } from "@/components/CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
 import CheckoutDesktop from "@/components/Checkout/Desktop"
 import MobileCheckout from "@/components/Checkout/Mobile"
+import ConfirmationProvider from "@/components/Checkout/Context"
 
 const Checkout = () => {
   const desktop = useScreenSize()
@@ -15,7 +16,9 @@ const Checkout = () => {
           Checkout {totalQuantity} items for {totalAmount}
         </title>
       </Head>
-      {desktop ? <CheckoutDesktop /> : <MobileCheckout />}
+      <ConfirmationProvider price={totalAmount}>
+        {desktop ? <CheckoutDesktop /> : <MobileCheckout />}
+      </ConfirmationProvider>
     </>
   )
 }

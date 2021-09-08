@@ -10,7 +10,7 @@ export type TAuthView = "login" | "register" | null
 const AuthDrawer = () => {
   const classes = useDrawerStyles()
   const desktop = useScreenSize()
-  const { asPath, push, pathname } = useRouter()
+  const { asPath, push } = useRouter()
   const authView = useMemo(
     () =>
       asPath.endsWith("#login") || asPath.endsWith("#register")

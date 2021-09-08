@@ -15,13 +15,6 @@ import { useStyles } from "./useStyles"
 import { useCart, TCartItemDetails } from "../CartContext"
 import useScreenSize from "@/hooks/usScreenSize"
 
-const PaymentMethodDialog = dynamic(
-  () => import("@/components/PaymentMethod/Dialog")
-)
-const PaymentMethodSheet = dynamic(
-  () => import("@/components/PaymentMethod/Sheet")
-)
-
 interface ICartItemProps {
   item: TCartItemDetails
 }
