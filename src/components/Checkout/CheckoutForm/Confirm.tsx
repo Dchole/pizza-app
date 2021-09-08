@@ -1,9 +1,9 @@
 import { useRef } from "react"
 import { Field } from "formik"
 import { TextField } from "formik-material-ui"
+import { useConfirmation } from "../Context"
 import Button from "@material-ui/core/Button"
 import InputAdornment from "@material-ui/core/InputAdornment"
-import useConfirmation from "./useConfirmation"
 
 const Confirm = () => {
   const { handleResend } = useConfirmation()

@@ -13,10 +13,10 @@ import {
   validationSchema
 } from "./formik-config"
 import Confirm from "./Confirm"
-import useConfirmation from "./useConfirmation"
 import firebase from "@/lib/firebase"
 import { useUser } from "../../UserContext"
 import { useEffect, useState } from "react"
+import { useConfirmation } from "../Context"
 
 interface IActiveStepProps {
   step: number
@@ -71,27 +71,8 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
     location: user?.location || "",
     address: user?.address || ""
   }
-  const [verifier, setVerifier] =
-    useState<firebase.auth.RecaptchaVerifier | null>(null)
 
-  const { sendCode, handleComplete } = useConfirmation(verifier)
-
-  useEffect(() => {
-    const recaptchaVerifier = new firebase.auth.RecaptchaVerifier("checkout", {
-      size: "invisible",
-      callback: response => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-        console.log(response)
-      },
-      "expired-callback": () => {
-        // Response expired. Ask user to solve reCAPTCHA again.
-        // ...
-        console.log("Recaptcha Expired")
-      }
-    })
-
-    setVerifier(recaptchaVerifier)
-  }, [])
+  const { sendCode, handleComplete } = useConfirmation()
 
   useEffect(() => {
     if (!sent && phoneNumber) {

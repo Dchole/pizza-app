@@ -13,11 +13,10 @@ import InputLabel from "@material-ui/core/InputLabel"
 import MenuItem from "@material-ui/core/MenuItem"
 import Typography from "@material-ui/core/Typography"
 import PersonalDetails from "./PersonalDetails"
-import firebase from "@/lib/firebase"
 import { Select } from "formik-material-ui"
 import { makeStyles, createStyles } from "@material-ui/core/styles"
-import useConfirmation from "./useConfirmation"
 import dynamic from "next/dynamic"
+import { useConfirmation } from "../Context"
 
 const ConfirmDialog = dynamic(() => import("./ConfirmDialog"))
 
@@ -43,31 +42,11 @@ const MobileForm = () => {
   const classes = useStyles()
   const { code, ...values } = initialValues
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-  const [verifier, setVerifier] =
-    useState<firebase.auth.RecaptchaVerifier | null>(null)
 
-  const { sendCode, handleResend, confirmationResult } =
-    useConfirmation(verifier)
+  const { sendCode } = useConfirmation()
 
   const handleOpen = () => setOpenConfirmDialog(true)
   const handleClose = () => setOpenConfirmDialog(false)
-
-  useEffect(() => {
-    const recaptchaVerifier = new firebase.auth.RecaptchaVerifier("checkout", {
-      size: "invisible",
-      callback: response => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-        console.log(response)
-      },
-      "expired-callback": () => {
-        // Response expired. Ask user to solve reCAPTCHA again.
-        // ...
-        console.log("Recaptcha Expired")
-      }
-    })
-
-    setVerifier(recaptchaVerifier)
-  }, [])
 
   return (
     <>

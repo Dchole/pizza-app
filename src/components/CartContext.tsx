@@ -174,13 +174,9 @@ const CartContextProvider: React.FC = ({ children }) => {
   )
 
   const clearCart = async () => {
-    const cart = await firebase
-      .firestore()
-      .collection(`users/${user?.uid}/cart`)
-      .get()
-    const batch = firebase.firestore().batch()
-
-    cart.forEach(doc => doc.exists && batch.delete(doc.ref))
+    for (const item of cart) {
+      removeItem(item.id)
+    }
   }
 
   const isItemInCart = (pizza_id: string) =>
