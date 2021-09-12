@@ -13,10 +13,9 @@ import {
   validationSchema
 } from "./formik-config"
 import Confirm from "./Confirm"
-import firebase from "@/lib/firebase"
 import { useUser } from "../../UserContext"
 import { useEffect, useState } from "react"
-import { useConfirmation } from "../Context"
+import { useConfirm } from "../Context"
 
 interface IActiveStepProps {
   step: number
@@ -72,7 +71,7 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
     address: user?.address || ""
   }
 
-  const { sendCode, handleComplete } = useConfirmation()
+  const { sendCode, handleComplete } = useConfirm()
 
   useEffect(() => {
     if (!sent && phoneNumber) {

@@ -1,7 +1,7 @@
 import { FormikHelpers } from "formik"
-import firebase from "@/lib/firebase"
 import * as Yup from "yup"
 import Router from "next/router"
+import { ConfirmationResult } from "@firebase/auth"
 
 export const initialValues = {
   phoneNumber: "",
@@ -21,7 +21,7 @@ export const validationSchema = Yup.object().shape({
 export const handleSubmit = async (
   { code }: TValues,
   { setSubmitting }: FormikHelpers<TValues>,
-  confirmationResult: firebase.auth.ConfirmationResult
+  confirmationResult: ConfirmationResult
 ) => {
   const { pathname, replace } = Router
 

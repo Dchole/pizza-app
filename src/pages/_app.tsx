@@ -7,11 +7,14 @@ import Head from "next/head"
 import { AppProps } from "next/app"
 import { useEffect } from "react"
 import { ThemeProvider } from "@material-ui/core/styles"
+import { initializeFirebase } from "@/lib/firebase"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import Layout from "@/components/Layout"
 import theme from "@/lib/theme"
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  initializeFirebase()
+
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side")

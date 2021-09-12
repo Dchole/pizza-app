@@ -1,7 +1,5 @@
 import * as Yup from "yup"
-import firebase from "@/lib/firebase"
 import { FormikHelpers } from "formik"
-import { formatMobile } from "@/utils/format-mobile"
 
 export const personalDetails = {
   displayName: "",

@@ -16,7 +16,7 @@ import PersonalDetails from "./PersonalDetails"
 import { Select } from "formik-material-ui"
 import { makeStyles, createStyles } from "@material-ui/core/styles"
 import dynamic from "next/dynamic"
-import { useConfirmation } from "../Context"
+import { useConfirm } from "../Context"
 
 const ConfirmDialog = dynamic(() => import("./ConfirmDialog"))
 
@@ -43,7 +43,7 @@ const MobileForm = () => {
   const { code, ...values } = initialValues
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
-  const { sendCode } = useConfirmation()
+  const { sendCode } = useConfirm()
 
   const handleOpen = () => setOpenConfirmDialog(true)
   const handleClose = () => setOpenConfirmDialog(false)

@@ -1,6 +1,11 @@
 import { useState, useEffect, createContext, useContext } from "react"
-import firebase from "@/lib/firebase"
-
+import {
+  browserSessionPersistence,
+  getAuth,
+  signInAnonymously,
+  User
+} from "firebase/auth"
+import { collection, doc, getFirestore, onSnapshot } from "firebase/firestore"
 export interface ICartItem {
   pizza_id: string
   quantity: {
@@ -10,7 +15,7 @@ export interface ICartItem {
   }
 }
 
-interface IUserData extends firebase.User {
+interface IUserData extends User {
   location: string
   address: string
   cart: ICartItem[]
@@ -38,7 +43,7 @@ export default function UserContextComp({ children }) {
     let cartSnapshotUnSubscriber: () => void
 
     // Listen authenticated user
-    const userUnsubscriber = firebase.auth().onAuthStateChanged(async user => {
+    const userUnsubscriber = getAuth().onAuthStateChanged(async user => {
       try {
         if (user) {
           // User is signed in.
@@ -53,20 +58,19 @@ export default function UserContextComp({ children }) {
             isAnonymous
           })
 
-          userSnapshotUnSubscriber = firebase
-            .firestore()
-            .doc(`users/${uid}`)
-            .onSnapshot(doc => {
+          userSnapshotUnSubscriber = onSnapshot(
+            doc(getFirestore(), `users/${uid}`),
+            doc => {
               return (
                 doc.exists &&
                 setUser(prevUser => ({ ...prevUser, ...doc.data() }))
               )
-            })
+            }
+          )
 
-          cartSnapshotUnSubscriber = firebase
-            .firestore()
-            .collection(`users/${uid}/cart`)
-            .onSnapshot(doc => {
+          cartSnapshotUnSubscriber = onSnapshot(
+            collection(getFirestore(), `users/${uid}/cart`),
+            doc => {
               const cartItems = doc.docs.map(item => {
                 const cart = {
                   pizza_id: item.id,
@@ -77,13 +81,13 @@ export default function UserContextComp({ children }) {
               })
 
               setUser(prevUser => ({ ...prevUser, cart: cartItems }))
-            })
+            }
+          )
         } else {
-          firebase
-            .auth()
-            .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+          getAuth()
+            .setPersistence(browserSessionPersistence)
             .then(() => {
-              return firebase.auth().signInAnonymously()
+              return signInAnonymously(getAuth())
             })
         }
       } catch (error) {
@@ -94,7 +98,7 @@ export default function UserContextComp({ children }) {
       }
     })
 
-    const tokenUnsubscriber = firebase.auth().onIdTokenChanged(async res => {
+    const tokenUnsubscriber = getAuth().onIdTokenChanged(async res => {
       try {
         const token = await res?.getIdToken()
         setToken(token)
@@ -112,7 +116,7 @@ export default function UserContextComp({ children }) {
     }
   }, [])
 
-  const updateUser = (user: firebase.User) =>
+  const updateUser = (user: User) =>
     setUser(prevUser => ({ ...prevUser, ...user }))
 
   return (

@@ -16,8 +16,8 @@ import Typography from "@material-ui/core/Typography"
 import ProductList from "@/components/ProductList"
 import useScreenSize from "@/hooks/usScreenSize"
 import PageLoader from "@/components/PageLoader"
-import firebase from "@/lib/firebase"
 import { useUser } from "@/components/UserContext"
+import { collection, getDocs, getFirestore, query } from "@firebase/firestore"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -53,12 +53,13 @@ const History = () => {
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await firebase
-          .firestore()
-          .collection(`users/${user?.uid}/transactions`)
-          .get()
+        const q = query(
+          collection(getFirestore(), `users/${user?.uid}/transactions`)
+        )
 
-        const transactions = res.docs.map(transaction => {
+        const querySnapshot = await getDocs(q)
+
+        const transactions = querySnapshot.docs.map(transaction => {
           const data = transaction.data()
 
           return {

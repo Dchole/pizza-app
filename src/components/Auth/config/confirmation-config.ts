@@ -2,7 +2,6 @@ import { fetcher } from "@/utils/fetcher"
 import { FormikHelpers } from "formik"
 import Router from "next/router"
 import * as Yup from "yup"
-import firebase from "@/lib/firebase"
 
 export const initialValues = {
   code: ""

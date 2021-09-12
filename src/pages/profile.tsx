@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic"
 import { useMemo, useState } from "react"
 import {
   createStyles,
@@ -17,9 +18,13 @@ import Typography from "@material-ui/core/Typography"
 import { userAccountData } from "@/utils/user-account-data"
 import { slugify } from "@/utils/slugify"
 import { green, red } from "@material-ui/core/colors"
-import firebase from "@/lib/firebase"
-import useScreenSize from "@/hooks/usScreenSize"
 import { useUser } from "@/components/UserContext"
+import { doc, getFirestore, setDoc } from "@firebase/firestore"
+import useScreenSize from "@/hooks/usScreenSize"
+
+const ConfirmDrawer = dynamic(
+  () => import("@/components/Checkout/CheckoutForm/ConfirmDialog")
+)
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -61,12 +66,17 @@ const Profile = () => {
   const desktop = useScreenSize()
   const { user } = useUser()
   const [edit, setEdit] = useState("")
+  const [open, setOpen] = useState(false)
   const [updating, setUpdating] = useState(false)
   const userData = useMemo(() => user && userAccountData(user), [user])
 
-  const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
+  const handleEdit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     const { key } = event.currentTarget.dataset
-    setEdit(key || "")
+    await setEdit(key || "")
+    handleOpen()
   }
 
   const saveEdit = async () => {
@@ -76,10 +86,10 @@ const Profile = () => {
 
     try {
       setUpdating(true)
-      await firebase
-        .firestore()
-        .doc(`users/${user?.uid}`)
-        .set({ [edit]: value })
+
+      await setDoc(doc(getFirestore(), `users/${user?.uid}`), {
+        [edit]: value
+      })
 
       setEdit("")
     } catch (error) {
@@ -161,6 +171,8 @@ const Profile = () => {
           </section>
         ))}
       </Container>
+      <div id="checkout"></div>
+      <ConfirmDrawer open={open} handleClose={handleClose} />
     </main>
   )
 }

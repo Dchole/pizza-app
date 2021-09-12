@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react"
 import { createContext, useContext, useState } from "react"
 import { ICartItem, useUser } from "./UserContext"
 import { useCallback } from "react"
-import firebase from "@/lib/firebase"
+import { deleteDoc, doc, getFirestore, setDoc } from "@firebase/firestore"
 
 export type TCartItemDetails = NonNullable<GetPizzasQuery["pizzas"]>[0] &
   ICartItem
@@ -131,44 +131,36 @@ const CartContextProvider: React.FC = ({ children }) => {
   }, [user?.cart, getItemPrice])
 
   const addItem = async (pizza_id: string, size: string) => {
-    firebase
-      .firestore()
-      .doc(`users/${user?.uid}/cart/${pizza_id}`)
-      .set({ quantity: { [size]: 1 } })
+    setDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`), {
+      quantity: { [size]: 1 }
+    })
   }
 
   const removeItem = async (pizza_id: string) => {
-    firebase.firestore().doc(`users/${user?.uid}/cart/${pizza_id}`).delete()
+    deleteDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`))
   }
 
   const incrementItem = async (pizza_id: string, size: string) => {
     const item = user.cart.find(item => item.pizza_id === pizza_id)
 
-    firebase
-      .firestore()
-      .doc(`users/${user?.uid}/cart/${pizza_id}`)
-      .set({
-        quantity: { ...item.quantity, [size]: (item.quantity[size] ?? 0) + 1 }
-      })
+    setDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`), {
+      quantity: { ...item.quantity, [size]: (item.quantity[size] ?? 0) + 1 }
+    })
   }
 
   const decrementItem = async (pizza_id: string, size: string) => {
     const item = user.cart.find(item => item.pizza_id === pizza_id)
 
-    firebase
-      .firestore()
-      .doc(`users/${user?.uid}/cart/${pizza_id}`)
-      .set({
-        quantity: { ...item.quantity, [size]: (item.quantity[size] ?? 0) - 1 }
-      })
+    setDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`), {
+      quantity: { ...item.quantity, [size]: (item.quantity[size] ?? 0) - 1 }
+    })
   }
 
   const setQuantity = useCallback(
     async (pizza_id: string, quantity: ICartItem["quantity"]) => {
-      firebase
-        .firestore()
-        .doc(`users/${user?.uid}/cart/${pizza_id}`)
-        .set({ quantity })
+      setDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`), {
+        quantity
+      })
     },
     [user?.uid]
   )
