@@ -21,9 +21,10 @@ import { green, red } from "@material-ui/core/colors"
 import { useUser } from "@/components/UserContext"
 import { doc, getFirestore, setDoc } from "@firebase/firestore"
 import useScreenSize from "@/hooks/usScreenSize"
+import useConfirmation from "@/hooks/useConfirmation"
 
-const ConfirmDrawer = dynamic(
-  () => import("@/components/Checkout/CheckoutForm/ConfirmDialog")
+const ConfirmationDialog = dynamic(
+  () => import("@/components/ConfirmationDialog")
 )
 
 const useStyles = makeStyles(theme =>
@@ -68,15 +69,15 @@ const Profile = () => {
   const [edit, setEdit] = useState("")
   const [open, setOpen] = useState(false)
   const [updating, setUpdating] = useState(false)
+  const { sendCode, confirmCode, handleResend } = useConfirmation()
   const userData = useMemo(() => user && userAccountData(user), [user])
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const handleEdit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { key } = event.currentTarget.dataset
-    await setEdit(key || "")
-    handleOpen()
+    setEdit(key || "")
   }
 
   const saveEdit = async () => {
@@ -92,6 +93,10 @@ const Profile = () => {
       })
 
       setEdit("")
+      if (edit === "phoneNumber") {
+        await sendCode(value)
+        handleOpen()
+      }
     } catch (error) {
       console.log(error.message)
     } finally {
@@ -172,7 +177,13 @@ const Profile = () => {
         ))}
       </Container>
       <div id="checkout"></div>
-      <ConfirmDrawer open={open} handleClose={handleClose} />
+      <ConfirmationDialog
+        open={open}
+        handleClose={handleClose}
+        title="Enter confirmation code to verify phone number"
+        confirmCode={confirmCode}
+        handleResend={handleResend}
+      />
     </main>
   )
 }

@@ -41,7 +41,6 @@ const ProductCard: React.FC<IProductProps> = ({ pizza }) => {
           objectFit="cover"
           width={300}
           height={240}
-          unoptimized
         />
         <div className="details">
           <Typography variant="h5" component="strong" align="center">

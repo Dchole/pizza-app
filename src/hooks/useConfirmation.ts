@@ -34,7 +34,7 @@ const useConfirmation = (name?: string, price?: number) => {
     location: user?.location,
     address: user?.address
   })
-
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "")
   const [appVerifier, setAppVerifier] = useState<RecaptchaVerifier>(null)
 
   const [confirmationResult, setConfirmationResult] =
@@ -75,6 +75,7 @@ const useConfirmation = (name?: string, price?: number) => {
   const sendCode = useCallback(
     async (phoneNumber: string) => {
       try {
+        setPhoneNumber(phoneNumber)
         const result = await signInWithPhoneNumber(
           getAuth(),
           "+" + formatMobile(phoneNumber),
@@ -88,7 +89,7 @@ const useConfirmation = (name?: string, price?: number) => {
     [appVerifier]
   )
 
-  const handleResend = async (phoneNumber: string) => {
+  const handleResend = async () => {
     const { verifyPhoneNumber } = new PhoneAuthProvider(getAuth())
     const verifierID = await verifyPhoneNumber(
       "+" + formatMobile(phoneNumber),
@@ -99,13 +100,20 @@ const useConfirmation = (name?: string, price?: number) => {
     setCountDown(twoMinutes)
   }
 
+  const confirmCode = async (code: string) => {
+    await confirmationResult.confirm(code)
+
+    if (user?.providerData[0].providerId !== "phone") {
+      linkWithPhoneNumber(getAuth().currentUser, user.phoneNumber, appVerifier)
+    }
+  }
+
   const handleComplete = async <ValuesType extends typeof confirmation>(
     values: Partial<ValuesType>,
     actions: FormikHelpers<Partial<ValuesType>>
   ) => {
     try {
-      const userCrendentials = await confirmationResult.confirm(values.code)
-      setCredentials(userCrendentials)
+      await confirmCode(values.code)
 
       const item = cart.find(pizza => pizza.slug === query.slug)
       item && removeItem(item.id)
@@ -140,17 +148,11 @@ const useConfirmation = (name?: string, price?: number) => {
     setAccountDetails(prevDetails => ({ ...prevDetails, ...values }))
   }
 
-  const mergeAccounts = () => {
-    if (user?.providerData[0].providerId !== "phone") {
-      linkWithPhoneNumber(getAuth().currentUser, user.phoneNumber, appVerifier)
-    }
-  }
-
   return {
     sendCode,
     countDown,
+    confirmCode,
     handleResend,
-    mergeAccounts,
     handleDetails,
     accountDetails,
     handleComplete

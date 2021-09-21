@@ -6,11 +6,12 @@ import useConfirmation from "@/hooks/useConfirmation"
 interface IContext {
   countDown: number
   sendCode: (phoneNumber: string) => Promise<void>
-  handleResend: (phoneNumber: string) => Promise<void>
+  handleResend: () => Promise<void>
   handleComplete: (
     values: Partial<TValues>,
     actions: FormikHelpers<Partial<TValues>>
   ) => Promise<void>
+  confirmCode: (code: string) => Promise<void>
 }
 
 const Context = createContext({} as IContext)
@@ -20,7 +21,7 @@ const ConfirmationProvider: React.FC<{ name?: string; price?: number }> = ({
   name,
   price
 }) => {
-  const confirm = useConfirmation()
+  const confirm = useConfirmation(name, price)
 
   return <Context.Provider value={confirm}>{children}</Context.Provider>
 }

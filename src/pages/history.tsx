@@ -57,10 +57,13 @@ const History = () => {
           collection(getFirestore(), `users/${user?.uid}/transactions`)
         )
 
+        console.log({ q })
         const querySnapshot = await getDocs(q)
 
         const transactions = querySnapshot.docs.map(transaction => {
           const data = transaction.data()
+
+          console.log({ data })
 
           return {
             "Transaction ID": transaction.id,
