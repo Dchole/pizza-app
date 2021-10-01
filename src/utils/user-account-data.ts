@@ -3,10 +3,10 @@ import { keyToText } from "./key-to-text"
 
 export const userAccountData = (user: TUser) => {
   const account = {
-    displayName: user.displayName,
-    phoneNumber: user.phoneNumber,
-    location: user.location,
-    address: user.address
+    displayName: user?.displayName || "",
+    phoneNumber: user?.phoneNumber || "",
+    location: user?.location || "",
+    address: user?.address || ""
   }
 
   return Object.entries(account).map(([key, value]) => ({

@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic"
 import { useMemo, useState } from "react"
 import {
   createStyles,
@@ -17,9 +18,14 @@ import Typography from "@material-ui/core/Typography"
 import { userAccountData } from "@/utils/user-account-data"
 import { slugify } from "@/utils/slugify"
 import { green, red } from "@material-ui/core/colors"
-import firebase from "@/lib/firebase"
-import useScreenSize from "@/hooks/usScreenSize"
 import { useUser } from "@/components/UserContext"
+import { doc, getFirestore, setDoc } from "@firebase/firestore"
+import useScreenSize from "@/hooks/usScreenSize"
+import useConfirmation from "@/hooks/useConfirmation"
+
+const ConfirmationDialog = dynamic(
+  () => import("@/components/ConfirmationDialog")
+)
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -61,8 +67,13 @@ const Profile = () => {
   const desktop = useScreenSize()
   const { user } = useUser()
   const [edit, setEdit] = useState("")
+  const [open, setOpen] = useState(false)
   const [updating, setUpdating] = useState(false)
+  const { sendCode, confirmCode, handleResend } = useConfirmation()
   const userData = useMemo(() => user && userAccountData(user), [user])
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { key } = event.currentTarget.dataset
@@ -76,14 +87,20 @@ const Profile = () => {
 
     try {
       setUpdating(true)
-      await firebase
-        .firestore()
-        .doc(`users/${user?.uid}`)
-        .set({ [edit]: value })
+
+      await setDoc(doc(getFirestore(), `users/${user?.uid}`), {
+        [edit]: value
+      })
 
       setEdit("")
+      if (edit === "phoneNumber") {
+        await sendCode(value)
+        handleOpen()
+      }
     } catch (error) {
-      console.log(error.message)
+      if (error instanceof Error) {
+        console.log(error.message)
+      }
     } finally {
       setUpdating(false)
     }
@@ -161,6 +178,14 @@ const Profile = () => {
           </section>
         ))}
       </Container>
+      <div id="checkout"></div>
+      <ConfirmationDialog
+        open={open}
+        handleClose={handleClose}
+        title="Enter confirmation code to verify phone number"
+        confirmCode={confirmCode}
+        handleResend={handleResend}
+      />
     </main>
   )
 }

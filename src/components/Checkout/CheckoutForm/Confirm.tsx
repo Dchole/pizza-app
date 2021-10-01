@@ -1,12 +1,12 @@
 import { useRef } from "react"
 import { Field } from "formik"
 import { TextField } from "formik-material-ui"
-import { useConfirmation } from "../Context"
+import { useConfirm } from "../Context"
 import Button from "@material-ui/core/Button"
 import InputAdornment from "@material-ui/core/InputAdornment"
 
 const Confirm = () => {
-  const { handleResend } = useConfirmation()
+  const { handleResend } = useConfirm()
   const inputRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -29,10 +29,7 @@ const Confirm = () => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <Button
-                color="secondary"
-                onClick={() => handleResend(inputRef.current.value)}
-              >
+              <Button color="secondary" onClick={handleResend}>
                 Resend Code
               </Button>
             </InputAdornment>

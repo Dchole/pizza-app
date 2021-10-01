@@ -1,7 +1,8 @@
 import { FormikHelpers } from "formik"
-import firebase from "@/lib/firebase"
 import * as Yup from "yup"
 import Router from "next/router"
+import { ConfirmationResult, updateProfile } from "@firebase/auth"
+import { deNullify } from "@/utils/de-nullify"
 
 export const initialValues = {
   displayName: "",
@@ -23,15 +24,17 @@ export const validationSchema = Yup.object().shape({
 export const handleSubmit = async (
   { code, displayName }: TValues,
   { setSubmitting }: FormikHelpers<TValues>,
-  confirmationResult: firebase.auth.ConfirmationResult
+  confirmationResult: ConfirmationResult | null
 ) => {
   const { pathname, replace } = Router
 
   try {
     setSubmitting(true)
 
-    const { user } = await confirmationResult.confirm(code)
-    await user.updateProfile({ displayName })
+    const confirmation = deNullify(confirmationResult)
+    const { user } = await confirmation.confirm(code)
+
+    await updateProfile(user, { displayName })
 
     replace(pathname === "/" ? "/store" : window.location.pathname)
   } catch (error) {

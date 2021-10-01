@@ -10,11 +10,11 @@ import {
   validationSchema
 } from "./config/login-config"
 import { useFormStyles } from "./styles/useFormStyles"
-import firebase from "@/lib/firebase"
 import useAuth from "@/hooks/useAuth"
 import Toast from "../Toast"
+import { RecaptchaVerifier } from "@firebase/auth"
 
-const LoginForm: React.FC<{ appVerifier: firebase.auth.RecaptchaVerifier }> = ({
+const LoginForm: React.FC<{ appVerifier: RecaptchaVerifier | null }> = ({
   appVerifier
 }) => {
   const classes = useFormStyles()
@@ -37,7 +37,7 @@ const LoginForm: React.FC<{ appVerifier: firebase.auth.RecaptchaVerifier }> = ({
           handleSubmit(values, actions, confirmationResult)
         }
       >
-        {({ values, isSubmitting }) => (
+        {({ values, isSubmitting, submitForm }) => (
           <Form id="sign-in" name="sign-in">
             <Field
               id="phone-number-input"
@@ -117,6 +117,7 @@ const LoginForm: React.FC<{ appVerifier: firebase.auth.RecaptchaVerifier }> = ({
                   type="submit"
                   variant="contained"
                   color="primary"
+                  onClick={submitForm}
                   disabled={loading || isSubmitting}
                   disableElevation={loading || isSubmitting}
                 >

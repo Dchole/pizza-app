@@ -13,6 +13,7 @@ import { Fragment, useEffect, useReducer, useRef, useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
 import sizeReducer, { initialState } from "./sizeReducer"
 import ButtonLink from "../ButtonLink"
+import { deNullify } from "@/utils/de-nullify"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -35,9 +36,11 @@ interface ICartControlsProps {
   item: TCartItemDetails
 }
 
+type TSizes = "small" | "medium" | "large"
+
 const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
   const classes = useStyles()
-  const debounceTimerRef = useRef<NodeJS.Timeout>(null)
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   const desktop = useScreenSize()
   const [updating, setUpdating] = useState(false)
   const { getItemQuantity, setQuantity, removeItem, calculating } = useCart()
@@ -49,17 +52,19 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
 
   const handleIncrement = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { size } = event.currentTarget.dataset
-    dispatch({ type: "INCREMENT", size })
+
+    dispatch({ type: "INCREMENT", size: deNullify(size) as TSizes })
   }
 
   const handleDecrement = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { size } = event.currentTarget.dataset
-    dispatch({ type: "DECREMENT", size })
+    dispatch({ type: "DECREMENT", size: deNullify(size) as TSizes })
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const [{ textContent }] = event.target.labels
-    const size = textContent.toLowerCase()
+    const [{ textContent }] = deNullify(event.target.labels)
+    const size = deNullify(textContent).toLowerCase() as TSizes
+
     const quantity = !isNaN(+event.target.value)
       ? +event.target.value
       : sizes[size]
@@ -75,16 +80,17 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
   useEffect(() => {
     if (item.id) {
       setUpdating(true)
-      clearTimeout(debounceTimerRef.current)
+      debounceTimerRef.current && clearTimeout(debounceTimerRef.current)
 
       debounceTimerRef.current = setTimeout(() => {
         const res = Object.entries(sizes).map(([size, quantity]) =>
           quantity ? [size, quantity] : null
         )
 
-        setQuantity(item.id, Object.fromEntries(res.filter(Boolean))).then(() =>
-          setUpdating(false)
-        )
+        const filteredRes = res.filter(Boolean) as [string, number][]
+        const quantities = Object.fromEntries(filteredRes) as typeof sizes
+
+        setQuantity(item.id, quantities).then(() => setUpdating(false))
       }, 800)
     }
   }, [item.id, sizes, setQuantity])
@@ -113,7 +119,7 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
               id={`${size}-quantity-input`}
               name={size}
               classes={{ input: classes.input }}
-              value={sizes[size]}
+              value={sizes[size as TSizes]}
               onChange={handleChange}
               inputProps={{ inputMode: "numeric" }}
               startAdornment={
@@ -133,7 +139,7 @@ const CartControls: React.FC<ICartControlsProps> = ({ item }) => {
                     data-size={size}
                     onClick={handleDecrement}
                     aria-label="decrement quantity"
-                    disabled={!sizes[size]}
+                    disabled={!sizes[size as TSizes]}
                   >
                     <RemoveIcon />
                   </IconButton>

@@ -1,11 +1,12 @@
 import { GetPizzasQuery, getSdk } from "@/graphql/generated"
-import { cmsLinks } from "cms"
+import { cmsLinks } from "@/cms"
 import { GraphQLClient } from "graphql-request"
 import { useEffect, useRef } from "react"
 import { createContext, useContext, useState } from "react"
 import { ICartItem, useUser } from "./UserContext"
 import { useCallback } from "react"
-import firebase from "@/lib/firebase"
+import { deleteDoc, doc, getFirestore, setDoc } from "@firebase/firestore"
+import { deNullify } from "@/utils/de-nullify"
 
 export type TCartItemDetails = NonNullable<GetPizzasQuery["pizzas"]>[0] &
   ICartItem
@@ -33,8 +34,8 @@ interface ICartContextProps {
 const CartContext = createContext({} as ICartContextProps)
 
 const CartContextProvider: React.FC = ({ children }) => {
-  const { user } = useUser()
   const cartLengthRef = useRef(0)
+  const { user } = useUser()
   const [calculating, setCalculating] = useState(false)
   const [fetchingDetails, setFetchingDetails] = useState(true)
   const [cart, setCart] = useState<TCartItemDetails[]>([])
@@ -48,7 +49,14 @@ const CartContextProvider: React.FC = ({ children }) => {
       return item
         ? Object.entries(item.quantity).reduce(
             (acc, [size, quantity]) =>
-              acc + item[`price_of_${size}`] * quantity,
+              acc +
+              item[
+                `price_of_${size}` as
+                  | "price_of_small"
+                  | "price_of_medium"
+                  | "price_of_large"
+              ] *
+                quantity,
             0
           )
         : 0
@@ -70,34 +78,35 @@ const CartContextProvider: React.FC = ({ children }) => {
   useEffect(() => {
     // Check if new item has been added to cart
     // then fetch item details
-    if (user?.cart.length) {
+    if (user?.cart?.length) {
       // If item length has been changed
       // Reassign the new length to the old length
       ;(async () => {
         try {
-          if (user.cart.length !== cartLengthRef.current) {
-            cartLengthRef.current = user.cart.length
+          if (user.cart?.length !== cartLengthRef.current) {
+            cartLengthRef.current = user.cart?.length ?? 0
             const client = new GraphQLClient(cmsLinks.api)
             const sdk = getSdk(client)
             const { pizzas } = await sdk.getCartPizzas({
-              filter: { id_in: user.cart.map(({ pizza_id }) => pizza_id) }
+              filter: { id_in: user.cart?.map(({ pizza_id }) => pizza_id) }
             })
 
-            const result = pizzas?.map(pizza => ({
+            const result = deNullify(pizzas).map(pizza => ({
               ...user.cart?.find(({ pizza_id }) => pizza_id === pizza?.id),
               ...pizza
             }))
 
+            //@ts-ignore
             result && setCart(result)
           } else {
             setCart(prevCart =>
               prevCart.map(item => ({
                 ...item,
-                ...user.cart.find(({ pizza_id }) => item.id === pizza_id)
+                ...user.cart?.find(({ pizza_id }) => item.id === pizza_id)
               }))
             )
           }
-        } catch (error) {
+        } catch (error: any) {
           console.log(error.message)
         } finally {
           setFetchingDetails(false)
@@ -109,7 +118,7 @@ const CartContextProvider: React.FC = ({ children }) => {
   }, [user?.cart])
 
   useEffect(() => {
-    if (user?.cart.length) {
+    if (user?.cart?.length) {
       setCalculating(true)
       const totalAmount = user?.cart.reduce((prev, curr) => {
         return prev + getItemPrice(curr.pizza_id)
@@ -131,44 +140,38 @@ const CartContextProvider: React.FC = ({ children }) => {
   }, [user?.cart, getItemPrice])
 
   const addItem = async (pizza_id: string, size: string) => {
-    firebase
-      .firestore()
-      .doc(`users/${user?.uid}/cart/${pizza_id}`)
-      .set({ quantity: { [size]: 1 } })
+    setDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`), {
+      quantity: { [size]: 1 }
+    })
   }
 
   const removeItem = async (pizza_id: string) => {
-    firebase.firestore().doc(`users/${user?.uid}/cart/${pizza_id}`).delete()
+    deleteDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`))
   }
 
   const incrementItem = async (pizza_id: string, size: string) => {
-    const item = user.cart.find(item => item.pizza_id === pizza_id)
+    const item = user?.cart?.find(item => item.pizza_id === pizza_id)
 
-    firebase
-      .firestore()
-      .doc(`users/${user?.uid}/cart/${pizza_id}`)
-      .set({
-        quantity: { ...item.quantity, [size]: (item.quantity[size] ?? 0) + 1 }
-      })
+    setDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`), {
+      //@ts-ignore
+      quantity: { ...item?.quantity, [size]: (item.quantity[size] ?? 0) + 1 }
+    })
   }
 
   const decrementItem = async (pizza_id: string, size: string) => {
-    const item = user.cart.find(item => item.pizza_id === pizza_id)
+    const item = user?.cart?.find(item => item.pizza_id === pizza_id)
 
-    firebase
-      .firestore()
-      .doc(`users/${user?.uid}/cart/${pizza_id}`)
-      .set({
-        quantity: { ...item.quantity, [size]: (item.quantity[size] ?? 0) - 1 }
-      })
+    setDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`), {
+      //@ts-ignore
+      quantity: { ...item?.quantity, [size]: (item.quantity[size] ?? 0) - 1 }
+    })
   }
 
   const setQuantity = useCallback(
     async (pizza_id: string, quantity: ICartItem["quantity"]) => {
-      firebase
-        .firestore()
-        .doc(`users/${user?.uid}/cart/${pizza_id}`)
-        .set({ quantity })
+      setDoc(doc(getFirestore(), `users/${user?.uid}/cart/${pizza_id}`), {
+        quantity
+      })
     },
     [user?.uid]
   )

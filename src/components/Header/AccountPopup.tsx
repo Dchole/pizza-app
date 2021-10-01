@@ -3,10 +3,10 @@ import MenuItem from "@material-ui/core/MenuItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import Link from "../Link"
-import firebase from "@/lib/firebase"
 import { accountLinks } from "./links"
 import { useCart } from "../CartContext"
 import { useRouter } from "next/router"
+import { getAuth } from "@firebase/auth"
 
 interface IAccountPopupProps {
   anchorEl: HTMLButtonElement | null
@@ -21,7 +21,7 @@ const AccountPopup: React.FC<IAccountPopupProps> = ({
   const { clearCart } = useCart()
 
   const logout = async () => {
-    await firebase.auth().signOut()
+    await getAuth().signOut()
 
     clearCart()
     handleClose()

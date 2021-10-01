@@ -3,7 +3,6 @@ import Drawer from "@material-ui/core/Drawer"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemAvatar from "@material-ui/core/ListItemAvatar"
-import ListItemText from "@material-ui/core/ListItemText"
 import Typography from "@material-ui/core/Typography"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { useCart } from "./CartContext"
@@ -63,7 +62,7 @@ const CheckoutDrawer: React.FC<ICheckoutDrawerProps> = ({
             <ListItemAvatar>
               <Avatar
                 alt={item.name}
-                src={item.image.formats.thumbnail.url}
+                src={item.image?.formats.thumbnail.url}
                 className={classes.avatar}
               />
             </ListItemAvatar>

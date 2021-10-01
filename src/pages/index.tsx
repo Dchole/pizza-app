@@ -10,7 +10,7 @@ import {
   GetReviewsQuery,
   getSdk
 } from "@/graphql/generated"
-import { cmsLinks } from "cms"
+import { cmsLinks } from "@/cms"
 
 export const getStaticProps: GetStaticProps<
   GetPopularPizzasQuery & GetReviewsQuery

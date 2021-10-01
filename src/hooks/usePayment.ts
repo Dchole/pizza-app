@@ -1,7 +1,7 @@
-import firebase from "@/lib/firebase"
 import { usePaystackPayment } from "react-paystack"
 import { useCart } from "@/components/CartContext"
 import { useUser } from "@/components/UserContext"
+import { addDoc, collection, getFirestore } from "@firebase/firestore"
 
 const usePayment = (product?: string, amount?: number) => {
   const { user } = useUser()
@@ -20,14 +20,11 @@ const usePayment = (product?: string, amount?: number) => {
 
   const handleCheckout = () =>
     initializePayment(async (res: any) => {
-      firebase
-        .firestore()
-        .collection(`users/${user?.uid}/transactions`)
-        .add({
-          transactionID: res.transaction,
-          products: product ? [product] : cart.map(item => item.name),
-          amount: amount ?? totalAmount
-        })
+      addDoc(collection(getFirestore(), `users/${user?.uid}/transactions`), {
+        transactionID: res.transaction,
+        products: product ? [product] : cart.map(item => item.name),
+        amount: amount ?? totalAmount
+      })
 
       clearCart()
     })

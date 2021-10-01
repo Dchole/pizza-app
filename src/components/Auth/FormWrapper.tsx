@@ -5,13 +5,19 @@ import Typography from "@material-ui/core/Typography"
 import GoogleIcon from "./GoogleIcon"
 import { useWrapperStyles } from "./styles/useWrapperStyles"
 import { useEffect, useState } from "react"
-import firebase from "@/lib/firebase"
 import useScreenSize from "@/hooks/usScreenSize"
 import RegisterForm from "./RegisterForm"
 import LoginForm from "./LoginForm"
 import Link from "../Link"
 import { useRouter } from "next/router"
 import useDevice from "@/hooks/useDevice"
+import {
+  getAuth,
+  GoogleAuthProvider,
+  RecaptchaVerifier,
+  signInWithPopup,
+  signInWithRedirect
+} from "@firebase/auth"
 
 interface IProps {
   view?: "login" | "register" | null
@@ -23,16 +29,15 @@ const FormWrapper: React.FC<IProps> = ({ view }) => {
   const desktop = useScreenSize()
   const device = useDevice()
   const onLoginView = view === "login" || pathname === "/login"
-  const [appVerifier, setAppVerifier] =
-    useState<firebase.auth.RecaptchaVerifier | null>(null)
+  const [appVerifier, setAppVerifier] = useState<RecaptchaVerifier | null>(null)
 
   const loginWithGoogle = async () => {
     try {
-      const provider = new firebase.auth.GoogleAuthProvider()
+      const provider = new GoogleAuthProvider()
 
       device === "desktop"
-        ? await firebase.auth().signInWithPopup(provider)
-        : await firebase.auth().signInWithRedirect(provider)
+        ? await signInWithPopup(getAuth(), provider)
+        : await signInWithRedirect(getAuth(), provider)
 
       replace(pathname === "/" ? "/store" : window.location.pathname)
     } catch (error) {
@@ -42,11 +47,11 @@ const FormWrapper: React.FC<IProps> = ({ view }) => {
 
   useEffect(() => {
     try {
-      const recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+      const recaptchaVerifier = new RecaptchaVerifier(
         onLoginView ? "sign-in-button" : "sign-up-button",
         {
           size: "invisible",
-          callback: response => {
+          callback: (response: any) => {
             // reCAPTCHA solved, allow signInWithPhoneNumber.
             console.log(response)
           },
@@ -55,7 +60,8 @@ const FormWrapper: React.FC<IProps> = ({ view }) => {
             // ...
             console.log("Recaptcha Expired")
           }
-        }
+        },
+        getAuth()
       )
 
       setAppVerifier(recaptchaVerifier)

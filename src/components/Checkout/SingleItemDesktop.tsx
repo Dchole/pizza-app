@@ -20,7 +20,7 @@ interface IProps {
     medium?: number
     large?: number
   }
-  pizza: GetPizzasQuery["pizzas"][0]
+  pizza: NonNullable<GetPizzasQuery["pizzas"]>[0]
   price: number
 }
 
@@ -34,9 +34,8 @@ const SingleItemDesktop: React.FC<IProps> = ({ sizes, pizza, price }) => {
       quantity ? [size, quantity] : null
     )
 
-    console.log(Object.fromEntries(res.filter(Boolean)))
-
-    return Object.fromEntries(res.filter(Boolean))
+    const filtered = res.filter(Boolean) as [string, number][]
+    return Object.fromEntries(filtered)
   }, [sizes])
 
   return (
@@ -47,14 +46,14 @@ const SingleItemDesktop: React.FC<IProps> = ({ sizes, pizza, price }) => {
             <AvatarGroup max={3}>
               <Avatar
                 variant="rounded"
-                key={pizza.id}
-                alt={pizza.name}
-                src={pizza.image.formats?.thumbnail.url}
+                key={pizza?.id}
+                alt={pizza?.name}
+                src={pizza?.image?.formats.thumbnail.url}
                 className={tabletClasses.avatar}
               />
             </AvatarGroup>
             <Typography variant="h6" component="p">
-              {pizza.name}
+              {pizza?.name}
             </Typography>
           </div>
           <Typography className={tabletClasses.price}>
@@ -75,15 +74,15 @@ const SingleItemDesktop: React.FC<IProps> = ({ sizes, pizza, price }) => {
               <div className={classes.imageWrapper}>
                 <Image
                   loader={loader}
-                  src={pizza.image.formats.medium.url}
-                  alt={pizza.name}
+                  src={pizza?.image?.formats.medium.url}
+                  alt={pizza?.name}
                   layout="fill"
                   objectFit="cover"
                 />
               </div>
               <div className={classes.itemText}>
                 <Typography variant="h5" component="p" align="center">
-                  {pizza.name}
+                  {pizza?.name}
                 </Typography>
                 <Typography>
                   <Typography

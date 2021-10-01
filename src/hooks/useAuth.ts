@@ -1,25 +1,34 @@
 import { useState } from "react"
-import firebase from "@/lib/firebase"
 import { formatMobile } from "@/utils/format-mobile"
+import {
+  ConfirmationResult,
+  getAuth,
+  PhoneAuthProvider,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
+} from "@firebase/auth"
+import { deNullify } from "@/utils/de-nullify"
 
-const useAuth = (appVerifier: firebase.auth.RecaptchaVerifier) => {
+const useAuth = (appVerifier: RecaptchaVerifier | null) => {
   const [step, setStep] = useState(0)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [confirmationResult, setConfirmationResult] =
-    useState<firebase.auth.ConfirmationResult>(null)
+    useState<ConfirmationResult | null>(null)
 
   const handleNextStep = async (phoneNumber: string) => {
     try {
       setLoading(true)
 
-      const result = await firebase
-        .auth()
-        .signInWithPhoneNumber("+" + formatMobile(phoneNumber), appVerifier)
+      const result = await signInWithPhoneNumber(
+        getAuth(),
+        "+" + formatMobile(phoneNumber),
+        deNullify(appVerifier)
+      )
 
       setConfirmationResult(result)
       !step && setStep(step + 1)
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message)
     } finally {
       setLoading(false)
@@ -27,8 +36,8 @@ const useAuth = (appVerifier: firebase.auth.RecaptchaVerifier) => {
   }
 
   const handleResend = async (phoneNumber: string) => {
-    const { verifyPhoneNumber } = new firebase.auth.PhoneAuthProvider_Instance()
-    verifyPhoneNumber("+" + formatMobile(phoneNumber), appVerifier)
+    const { verifyPhoneNumber } = new PhoneAuthProvider(getAuth())
+    verifyPhoneNumber("+" + formatMobile(phoneNumber), deNullify(appVerifier))
   }
 
   const clearError = () => setError("")

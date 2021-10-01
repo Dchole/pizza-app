@@ -1,14 +1,15 @@
 import Head from "next/head"
 import SingleItemDesktop from "@/components/Checkout/SingleItemDesktop"
 import SingleItemMobile from "@/components/Checkout/SingleItemMobile"
-import { GetPizzasQuery, getSdk } from "@/graphql/generated"
-import { cmsLinks } from "cms"
+import { GetPizzaDetailsQuery, getSdk } from "@/graphql/generated"
+import { cmsLinks } from "@/cms"
 import { GraphQLClient } from "graphql-request"
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
 import { useRouter } from "next/router"
 import { useMemo, useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
 import ConfirmationProvider from "@/components/Checkout/Context"
+import { deNullify } from "@/utils/de-nullify"
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = new GraphQLClient(cmsLinks.api)
@@ -25,18 +26,17 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-interface IProps {
-  pizza: GetPizzasQuery["pizzas"][0]
-}
-
-export const getStaticProps: GetStaticProps<IProps> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<{
+  pizza: NonNullable<GetPizzaDetailsQuery["pizzas"]>[0]
+}> = async ({ params }) => {
   const client = new GraphQLClient(cmsLinks.api)
   const sdk = getSdk(client)
-  const {
-    pizzas: [pizza]
-  } = await sdk.getPizzaDetails({
+
+  const { pizzas } = await sdk.getPizzaDetails({
     filter: { slug: params?.slug as string }
   })
+
+  const [pizza] = deNullify(pizzas)
 
   return {
     props: {
@@ -63,8 +63,14 @@ const CheckoutItem: React.FC<InferGetStaticPropsType<typeof getStaticProps>> =
       let amount = 0
 
       for (const [size, quantity] of params.entries()) {
-        copiedSizes[size] = Number(quantity)
-        amount += pizza[`price_of_${size}`] * Number(quantity)
+        copiedSizes[size as "small" | "medium" | "large"] = Number(quantity)
+
+        const price = `price_of_${size}` as
+          | "price_of_small"
+          | "price_of_medium"
+          | "price_of_large"
+
+        amount += (pizza?.[price] ?? 0) * Number(quantity)
       }
 
       setSizes(copiedSizes)
@@ -75,11 +81,11 @@ const CheckoutItem: React.FC<InferGetStaticPropsType<typeof getStaticProps>> =
       <>
         <Head>
           <title>
-            Checkout {pizza.name} for ₵{price}
+            Checkout {pizza?.name} for ₵{price}
           </title>
         </Head>
 
-        <ConfirmationProvider name={pizza.name} price={price}>
+        <ConfirmationProvider name={pizza?.name} price={price}>
           {desktop ? (
             <SingleItemDesktop pizza={pizza} sizes={sizes} price={price} />
           ) : (

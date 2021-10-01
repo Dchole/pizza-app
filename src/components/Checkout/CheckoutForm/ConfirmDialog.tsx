@@ -7,7 +7,7 @@ import Confirm from "./Confirm"
 import { Form, Formik } from "formik"
 import { forwardRef } from "react"
 import { TransitionProps } from "@material-ui/core/transitions"
-import { useConfirmation } from "../Context"
+import { useConfirm } from "../Context"
 
 interface IProps {
   open: boolean
@@ -22,7 +22,7 @@ const Transition = forwardRef(function Transition(
 })
 
 const ConfirmDialog: React.FC<IProps> = ({ open, handleClose }) => {
-  const { handleComplete } = useConfirmation()
+  const { handleComplete } = useConfirm()
 
   return (
     <Dialog

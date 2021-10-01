@@ -27,7 +27,7 @@ const MobileCheckout = () => {
                 variant="rounded"
                 key={item.id}
                 alt={item.name}
-                src={item.image.formats?.thumbnail.url}
+                src={item.image?.formats.thumbnail.url}
                 className={classes.avatar}
               />
             ))}

@@ -1,6 +1,5 @@
 import Image from "next/image"
 import Router from "next/router"
-import dynamic from "next/dynamic"
 import { capitalize } from "lodash"
 import Avatar from "@material-ui/core/Avatar"
 import Button from "@material-ui/core/Button"

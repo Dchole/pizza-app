@@ -13,14 +13,13 @@ import {
   validationSchema
 } from "./formik-config"
 import Confirm from "./Confirm"
-import firebase from "@/lib/firebase"
 import { useUser } from "../../UserContext"
 import { useEffect, useState } from "react"
-import { useConfirmation } from "../Context"
+import { useConfirm } from "../Context"
 
 interface IActiveStepProps {
   step: number
-  formik: FormikProps<Partial<TValues>>
+  formik: FormikProps<TValues>
 }
 
 const ActiveStep: React.FC<IActiveStepProps> = ({ step, formik }) => {
@@ -33,9 +32,9 @@ const ActiveStep: React.FC<IActiveStepProps> = ({ step, formik }) => {
     case 1:
       return (
         <PaymentMethod
-          error={errors.paymentMethod && touched.paymentMethod}
+          error={Boolean(errors.paymentMethod && touched.paymentMethod)}
           isSubmitting={isSubmitting}
-          errorMessage={errors.paymentMethod}
+          errorMessage={errors.paymentMethod || ""}
         />
       )
 
@@ -72,7 +71,7 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
     address: user?.address || ""
   }
 
-  const { sendCode, handleComplete } = useConfirmation()
+  const { sendCode, handleComplete } = useConfirm()
 
   useEffect(() => {
     if (!sent && phoneNumber) {
@@ -81,12 +80,21 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
     }
   }, [phoneNumber, sent, sendCode])
 
-  const onNextStep =
-    ({ errors, setFieldTouched, values }: FormikProps<Partial<TValues>>) =>
-    async () => {
+  function onNextStep<TValues extends { phoneNumber: string }>({
+    errors,
+    setFieldTouched,
+    values
+  }: FormikProps<TValues>) {
+    return async () => {
       setPhoneNumber(values.phoneNumber)
 
-      const steps = {
+      type TSteps = {
+        [key: number]:
+          | typeof personalDetails
+          | typeof paymentDetails
+          | typeof confirmation
+      }
+      const steps: TSteps = {
         0: personalDetails,
         1: paymentDetails,
         2: confirmation
@@ -99,6 +107,7 @@ const CheckoutForm: React.FC<ICheckoutFormProps> = ({
 
       if (!error) handleNextStep()
     }
+  }
 
   return (
     <div className={classes.root}>
