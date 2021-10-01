@@ -6,6 +6,7 @@ import {
   User
 } from "firebase/auth"
 import { collection, doc, getFirestore, onSnapshot } from "firebase/firestore"
+
 export interface ICartItem {
   pizza_id: string
   quantity: {
@@ -33,7 +34,7 @@ interface IContextProps {
 
 export const UserContext = createContext({} as IContextProps)
 
-export default function UserContextComp({ children }) {
+const UserContextComp: React.FC = ({ children }) => {
   const [user, setUser] = useState<TUser>(null)
   const [token, setToken] = useState("")
   const [loadingUser, setLoadingUser] = useState(true) // Helpful, to update the UI accordingly.
@@ -62,7 +63,7 @@ export default function UserContextComp({ children }) {
             doc(getFirestore(), `users/${uid}`),
             doc => {
               return (
-                doc.exists &&
+                doc.exists() &&
                 setUser(prevUser => ({ ...prevUser, ...doc.data() }))
               )
             }
@@ -100,7 +101,7 @@ export default function UserContextComp({ children }) {
 
     const tokenUnsubscriber = getAuth().onIdTokenChanged(async res => {
       try {
-        const token = await res?.getIdToken()
+        const token = (await res?.getIdToken()) || ""
         setToken(token)
       } catch (error) {
         console.log(error)
@@ -116,7 +117,7 @@ export default function UserContextComp({ children }) {
     }
   }, [])
 
-  const updateUser = (user: User) =>
+  const updateUser = (user: TUser) =>
     setUser(prevUser => ({ ...prevUser, ...user }))
 
   return (
@@ -128,3 +129,5 @@ export default function UserContextComp({ children }) {
 
 // Custom hook that shorthands the context!
 export const useUser = () => useContext(UserContext)
+
+export default UserContextComp

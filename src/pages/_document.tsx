@@ -10,7 +10,9 @@ import theme from "@/lib/theme"
 // 4% slower but 12% smaller output than doing it in a single step.
 //
 // It's using .browserslistrc
-let cleanCSS
+let cleanCSS: {
+  minify: (arg0: string) => { (): any; new (): any; styles: string }
+}
 if (process.env.NODE_ENV === "production") {
   /* eslint-disable global-require */
   const CleanCSS = require("clean-css")

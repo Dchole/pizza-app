@@ -58,8 +58,7 @@ const Filter: React.FC<IFilterProps> = ({ showing, handleClose }) => {
   })
 
   useMemo(() => {
-    if ((value as Exclude<typeof value, string>)?.name === inputValue)
-      filter([value as Exclude<typeof value, string>])
+    if (value?.name === inputValue) filter([value])
   }, [value, inputValue, filter])
 
   useEffect(() => {

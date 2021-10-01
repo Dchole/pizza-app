@@ -98,7 +98,9 @@ const Profile = () => {
         handleOpen()
       }
     } catch (error) {
-      console.log(error.message)
+      if (error instanceof Error) {
+        console.log(error.message)
+      }
     } finally {
       setUpdating(false)
     }

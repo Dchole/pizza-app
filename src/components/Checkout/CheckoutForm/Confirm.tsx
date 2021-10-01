@@ -29,10 +29,7 @@ const Confirm = () => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <Button
-                color="secondary"
-                onClick={() => handleResend(inputRef.current.value)}
-              >
+              <Button color="secondary" onClick={handleResend}>
                 Resend Code
               </Button>
             </InputAdornment>

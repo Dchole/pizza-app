@@ -7,7 +7,7 @@ export const initialState = {
 export type TState = typeof initialState
 type TAction = {
   type: "INCREMENT" | "DECREMENT" | "SET_QUANTITY"
-  size: string
+  size: "small" | "medium" | "large"
   quantity?: number
 }
 

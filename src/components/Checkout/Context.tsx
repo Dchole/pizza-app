@@ -1,5 +1,4 @@
 import { createContext, useContext } from "react"
-import { TValues } from "./CheckoutForm/formik-config"
 import { FormikHelpers } from "formik"
 import useConfirmation from "@/hooks/useConfirmation"
 
@@ -7,9 +6,13 @@ interface IContext {
   countDown: number
   sendCode: (phoneNumber: string) => Promise<void>
   handleResend: () => Promise<void>
-  handleComplete: (
-    values: Partial<TValues>,
-    actions: FormikHelpers<Partial<TValues>>
+  handleComplete: <
+    ValuesType extends {
+      code: string
+    }
+  >(
+    values: ValuesType,
+    actions: FormikHelpers<ValuesType>
   ) => Promise<void>
   confirmCode: (code: string) => Promise<void>
 }

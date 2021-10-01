@@ -6,7 +6,7 @@ import { capitalize } from "lodash"
 import { deslugify } from "@/utils/deslugify"
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
 import { GraphQLClient } from "graphql-request"
-import { cmsLinks } from "cms"
+import { cmsLinks } from "@/cms"
 import { GetPizzaDetailsQuery, getSdk } from "@/graphql/generated"
 import { loader } from "@/utils/imageLoader"
 import useScreenSize from "@/hooks/usScreenSize"
@@ -14,6 +14,7 @@ import { useCart } from "@/components/CartContext"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
 import CartControls from "@/components/SelectedCartItem/CartControls"
 import { useMemo } from "react"
+import { deNullify } from "@/utils/de-nullify"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -54,20 +55,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<{
   title: string
-  pizza: GetPizzaDetailsQuery["pizzas"][0]
+  pizza: NonNullable<GetPizzaDetailsQuery["pizzas"]>[0]
 }> = async ({ params }) => {
-  const title = deslugify(params.slug as string)
+  const title = deslugify(params?.slug as string)
     .split(" ")
     .map(word => capitalize(word))
     .join(" ")
 
   const client = new GraphQLClient(cmsLinks.api)
   const sdk = getSdk(client)
-  const {
-    pizzas: [pizza]
-  } = await sdk.getPizzaDetails({
+  const { pizzas } = await sdk.getPizzaDetails({
     filter: { slug: params?.slug as string }
   })
+
+  const [pizza] = deNullify(pizzas)
 
   return { props: { title, pizza } }
 }
@@ -79,7 +80,7 @@ const CartDetail: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const classes = useStyles()
   const desktop = useScreenSize()
   const { cart, getItemPrice } = useCart()
-  const item = useMemo(() => cart.find(i => i.id === pizza.id), [pizza, cart])
+  const item = useMemo(() => cart.find(i => i.id === pizza?.id), [pizza, cart])
 
   return (
     <>
@@ -92,9 +93,10 @@ const CartDetail: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           <Image
             loader={loader}
             src={
-              pizza.image?.formats.large?.url || pizza.image?.formats.medium.url
+              pizza?.image?.formats.large?.url ||
+              pizza?.image?.formats.medium.url
             }
-            alt={pizza.name}
+            alt={pizza?.name}
             width={80}
             height={80}
             className={classes.image}
@@ -102,7 +104,7 @@ const CartDetail: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           />
           <div>
             <Typography variant="h3" component="h1">
-              {pizza.name}
+              {pizza?.name}
             </Typography>
             <Typography variant="h5" component="p">
               <span>₵</span>&nbsp;

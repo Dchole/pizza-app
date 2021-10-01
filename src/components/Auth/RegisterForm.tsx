@@ -10,13 +10,11 @@ import {
   validationSchema
 } from "./config/register-config"
 import { useFormStyles } from "./styles/useFormStyles"
-import { useState } from "react"
-import { formatMobile } from "@/utils/format-mobile"
 import useAuth from "@/hooks/useAuth"
 import Toast from "../Toast"
 import { RecaptchaVerifier } from "@firebase/auth"
 
-const RegisterForm: React.FC<{ appVerifier: RecaptchaVerifier }> = ({
+const RegisterForm: React.FC<{ appVerifier: RecaptchaVerifier | null }> = ({
   appVerifier
 }) => {
   const classes = useFormStyles()

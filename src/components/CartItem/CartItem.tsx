@@ -47,11 +47,11 @@ const CartItem: React.FC<ICartItemProps> = ({ item, handleSelect }) => {
   }
 
   const handleRippleStop = (event: React.MouseEvent<HTMLDivElement>) => {
-    rippleRef.current.stop(event)
+    rippleRef.current?.stop(event)
   }
 
   const handleRippleStart = (event: React.MouseEvent<HTMLDivElement>) => {
-    rippleRef.current.start(event)
+    rippleRef.current?.start(event)
   }
 
   const handleCardClick = () => {
@@ -61,7 +61,6 @@ const CartItem: React.FC<ICartItemProps> = ({ item, handleSelect }) => {
   return (
     <Card
       tabIndex={0}
-      // @ts-ignore
       onClick={desktop ? handleCardClick : undefined}
       variant="outlined"
       role="button"
@@ -70,25 +69,43 @@ const CartItem: React.FC<ICartItemProps> = ({ item, handleSelect }) => {
       className={classes.root}
     >
       {desktop && <TouchRipple ref={rippleRef} />}
-      <CardActionArea
-        component={desktop ? undefined : Link}
-        href={desktop ? undefined : `/cart/${item.slug}`}
-        className={classes.actionArea}
-        tabIndex={desktop ? -1 : undefined}
-        disableRipple={desktop}
-      >
-        <CardMedia className={classes.cover}>
-          <Image
-            loader={loader}
-            src={item.image?.formats.small.url}
-            alt={item.name}
-            title={item.name}
-            className={classes.image}
-            layout="fill"
-            objectFit="cover"
-          />
-        </CardMedia>
-      </CardActionArea>
+      {desktop ? (
+        <CardActionArea
+          className={classes.actionArea}
+          tabIndex={-1}
+          disableRipple
+        >
+          <CardMedia className={classes.cover}>
+            <Image
+              loader={loader}
+              src={item.image?.formats.small.url}
+              alt={item.name}
+              title={item.name}
+              className={classes.image}
+              layout="fill"
+              objectFit="cover"
+            />
+          </CardMedia>
+        </CardActionArea>
+      ) : (
+        <CardActionArea
+          component={Link}
+          href={`/cart/${item.slug}`}
+          className={classes.actionArea}
+        >
+          <CardMedia className={classes.cover}>
+            <Image
+              loader={loader}
+              src={item.image?.formats.small.url}
+              alt={item.name}
+              title={item.name}
+              className={classes.image}
+              layout="fill"
+              objectFit="cover"
+            />
+          </CardMedia>
+        </CardActionArea>
+      )}
       <CardContent className={classes.content}>
         <div className={classes.title}>
           <Typography

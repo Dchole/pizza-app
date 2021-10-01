@@ -51,7 +51,7 @@ const FormWrapper: React.FC<IProps> = ({ view }) => {
         onLoginView ? "sign-in-button" : "sign-up-button",
         {
           size: "invisible",
-          callback: response => {
+          callback: (response: any) => {
             // reCAPTCHA solved, allow signInWithPhoneNumber.
             console.log(response)
           },

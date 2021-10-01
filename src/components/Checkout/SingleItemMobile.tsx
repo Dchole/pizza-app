@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography"
 import MobileForm from "./CheckoutForm/MobileForm"
 
 interface IProps {
-  pizza: GetPizzasQuery["pizzas"][0]
+  pizza: NonNullable<GetPizzasQuery["pizzas"]>[0]
   price: number
 }
 
@@ -21,14 +21,14 @@ const SingleItemMobile: React.FC<IProps> = ({ pizza, price }) => {
             <AvatarGroup max={3}>
               <Avatar
                 variant="rounded"
-                key={pizza.id}
-                alt={pizza.name}
-                src={pizza.image.formats?.thumbnail.url}
+                key={pizza?.id}
+                alt={pizza?.name}
+                src={pizza?.image?.formats?.thumbnail.url}
                 className={classes.avatar}
               />
             </AvatarGroup>
             <Typography variant="h6" component="p">
-              {pizza.name}
+              {pizza?.name}
             </Typography>
           </div>
           <Typography className={classes.price}>

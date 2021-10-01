@@ -21,6 +21,7 @@ import {
   getFirestore,
   Timestamp
 } from "@firebase/firestore"
+import { deNullify } from "@/utils/de-nullify"
 
 const twoMinutes = 60 * 2
 const useConfirmation = (name?: string, price?: number) => {
@@ -35,12 +36,12 @@ const useConfirmation = (name?: string, price?: number) => {
     address: user?.address
   })
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "")
-  const [appVerifier, setAppVerifier] = useState<RecaptchaVerifier>(null)
+  const [appVerifier, setAppVerifier] = useState<RecaptchaVerifier | null>(null)
 
   const [confirmationResult, setConfirmationResult] =
-    useState<ConfirmationResult>(null)
+    useState<ConfirmationResult | null>(null)
 
-  const [credentials, setCredentials] = useState<UserCredential>(null)
+  const [credentials, setCredentials] = useState<UserCredential | null>(null)
 
   const { push, query } = useRouter()
   const { cart, removeItem, clearCart, totalAmount } = useCart()
@@ -56,7 +57,7 @@ const useConfirmation = (name?: string, price?: number) => {
       "checkout",
       {
         size: "invisible",
-        callback: response => {
+        callback: (response: any) => {
           // reCAPTCHA solved, allow signInWithPhoneNumber.
           console.log(response)
         },
@@ -79,7 +80,7 @@ const useConfirmation = (name?: string, price?: number) => {
         const result = await signInWithPhoneNumber(
           getAuth(),
           "+" + formatMobile(phoneNumber),
-          appVerifier
+          deNullify(appVerifier)
         )
 
         setCountDown(twoMinutes)
@@ -93,7 +94,7 @@ const useConfirmation = (name?: string, price?: number) => {
     const { verifyPhoneNumber } = new PhoneAuthProvider(getAuth())
     const verifierID = await verifyPhoneNumber(
       "+" + formatMobile(phoneNumber),
-      appVerifier
+      deNullify(appVerifier)
     )
 
     setVerifierID(verifierID)
@@ -101,16 +102,20 @@ const useConfirmation = (name?: string, price?: number) => {
   }
 
   const confirmCode = async (code: string) => {
-    await confirmationResult.confirm(code)
+    const confirmation = deNullify(confirmationResult)
+    await confirmation.confirm(code)
+    const user = getAuth().currentUser
 
-    if (user?.providerData[0].providerId !== "phone") {
-      linkWithPhoneNumber(getAuth().currentUser, user.phoneNumber, appVerifier)
+    if (!user) return
+
+    if (user.providerData[0].providerId !== "phone") {
+      linkWithPhoneNumber(user, user.phoneNumber || "", deNullify(appVerifier))
     }
   }
 
   const handleComplete = async <ValuesType extends typeof confirmation>(
-    values: Partial<ValuesType>,
-    actions: FormikHelpers<Partial<ValuesType>>
+    values: ValuesType,
+    actions: FormikHelpers<ValuesType>
   ) => {
     try {
       await confirmCode(values.code)
@@ -137,7 +142,7 @@ const useConfirmation = (name?: string, price?: number) => {
       })
 
       push("/store")
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.message)
     } finally {
       actions.setSubmitting(false)

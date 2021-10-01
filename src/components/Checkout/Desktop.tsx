@@ -21,7 +21,7 @@ const Desktop = () => {
             <div key={item.pizza_id} className="item-details">
               <Image
                 loader={loader}
-                src={item.image.formats.thumbnail.url}
+                src={item.image?.formats.thumbnail.url}
                 alt={item.name}
                 width={80}
                 height={80}

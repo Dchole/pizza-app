@@ -9,7 +9,7 @@ import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart"
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart"
 import { capitalize } from "lodash"
 import { GetPizzaDetailsQuery, getSdk } from "@/graphql/generated"
-import { cmsLinks } from "cms"
+import { cmsLinks } from "@/cms"
 import { GraphQLClient } from "graphql-request"
 import { GetStaticPaths, GetStaticProps } from "next"
 import { createStyles, makeStyles } from "@material-ui/core/styles"
@@ -18,6 +18,7 @@ import { useCart } from "@/components/CartContext"
 import { useState } from "react"
 import useScreenSize from "@/hooks/usScreenSize"
 import ButtonLink from "@/components/ButtonLink"
+import { deNullify } from "@/utils/de-nullify"
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -105,7 +106,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 interface IPizzaDetails {
-  pizza: NonNullable<NonNullable<GetPizzaDetailsQuery["pizzas"]>[0]>
+  pizza: NonNullable<GetPizzaDetailsQuery["pizzas"]>[0]
 }
 
 export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
@@ -117,12 +118,11 @@ export const getStaticProps: GetStaticProps<IPizzaDetails> = async ({
     filter: { slug: params?.slug as string }
   })
 
-  if (!pizzas) throw new Error("Response shouldn't be undefined or null")
-
-  const [pizza] = pizzas
-
+  const [pizza] = deNullify(pizzas, "Response shouldn't be undefined or null")
   return { props: { pizza } }
 }
+
+type TPrice = "price_of_small" | "price_of_medium" | "price_of_large"
 
 const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
   const classes = useStyles()
@@ -134,8 +134,16 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
     setSize(event.target.value as string)
   }
 
-  const handleAddItem = () =>
-    isItemInCart(pizza.id) ? removeItem(pizza.id) : addItem(pizza.id, size)
+  const handleAddItem = () => {
+    try {
+      const item = deNullify(pizza)
+      isItemInCart(item.id) ? removeItem(item.id) : addItem(item.id, size)
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message)
+      }
+    }
+  }
 
   return (
     <Container
@@ -147,8 +155,8 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
       <div className={classes.imageWrapper}>
         <Image
           loader={loader}
-          src={pizza.image?.formats.medium.url}
-          alt={pizza.name}
+          src={pizza?.image?.formats.medium.url}
+          alt={pizza?.name}
           width={desktop ? 300 : undefined}
           height={desktop ? 300 : undefined}
           layout={desktop ? undefined : "fill"}
@@ -161,14 +169,14 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
           component="h1"
           align={desktop ? "left" : "center"}
         >
-          {pizza.name}
+          {pizza?.name}
         </Typography>
         <Typography
           color="textSecondary"
           className={classes.description}
           align={desktop ? "left" : "center"}
         >
-          {pizza.description}
+          {pizza?.description}
         </Typography>
         <div className={classes.select}>
           <Typography
@@ -181,10 +189,10 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
               color="textSecondary"
               variant="h5"
               component="span"
-              aria-label={`${pizza[`price_of_${size}`]} cedis`}
+              aria-label={`${pizza?.[`price_of_${size}` as TPrice]} cedis`}
             >
               <small>₵</small>
-              {pizza[`price_of_${size}`]}
+              {pizza?.[`price_of_${size}` as TPrice]}
             </Typography>
           </Typography>
           <div className={classes.inputWrapper}>
@@ -211,7 +219,7 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
             color="primary"
             size={desktop ? undefined : "small"}
             endIcon={
-              isItemInCart(pizza.id) ? (
+              pizza && isItemInCart(pizza.id) ? (
                 <RemoveShoppingCartIcon />
               ) : (
                 <AddShoppingCartIcon />
@@ -219,11 +227,13 @@ const Pizza: React.FC<IPizzaDetails> = ({ pizza }) => {
             }
             onClick={handleAddItem}
           >
-            {isItemInCart(pizza.id) ? "Remove from Cart" : "Add to Cart"}
+            {pizza && isItemInCart(pizza.id)
+              ? "Remove from Cart"
+              : "Add to Cart"}
           </Button>
           <ButtonLink
             href={{
-              pathname: `/checkout/${pizza.slug}`,
+              pathname: `/checkout/${pizza?.slug}`,
               query: { [size]: 1 }
             }}
             size={desktop ? undefined : "small"}

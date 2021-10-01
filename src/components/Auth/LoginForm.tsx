@@ -14,7 +14,7 @@ import useAuth from "@/hooks/useAuth"
 import Toast from "../Toast"
 import { RecaptchaVerifier } from "@firebase/auth"
 
-const LoginForm: React.FC<{ appVerifier: RecaptchaVerifier }> = ({
+const LoginForm: React.FC<{ appVerifier: RecaptchaVerifier | null }> = ({
   appVerifier
 }) => {
   const classes = useFormStyles()

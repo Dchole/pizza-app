@@ -14,15 +14,10 @@
     "isolatedModules": true,
     "downlevelIteration": true,
     "jsx": "preserve",
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@/lib/*": ["lib/*"],
-      "@/data/*": ["data/*"],
-      "@/hooks/*": ["hooks/*"],
-      "@/utils/*": ["utils/*"],
-      "@/graphql/*": ["graphql/*"],
-      "@/indexedDB/*": ["indexedDB/*"],
-      "@/components/*": ["components/*"]
+      "@/*": ["src/*"],
+      "#/*": ["public/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

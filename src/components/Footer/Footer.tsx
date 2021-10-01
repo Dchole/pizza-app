@@ -33,7 +33,7 @@ const Footer = () => {
         },
         body: JSON.stringify({ email: inputRef.current?.value })
       })
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.message)
     } finally {
       inputRef.current!.value = ""

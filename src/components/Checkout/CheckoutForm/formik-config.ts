@@ -55,11 +55,18 @@ export const mobileValidationSchema = Yup.object().shape({
 
 export const handleSubmit =
   (sendCode: (phoneNumber: string) => Promise<void>, handleOpen?: () => void) =>
-  async (values: TValues, actions: FormikHelpers<TValues>) => {
+  async <
+    ValuesType extends {
+      phoneNumber: string
+    }
+  >(
+    values: ValuesType,
+    actions: FormikHelpers<ValuesType>
+  ) => {
     try {
       await sendCode(values.phoneNumber)
       handleOpen?.()
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.message)
     } finally {
       actions.setSubmitting(false)
